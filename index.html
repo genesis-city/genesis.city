@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Decentraland Map</title>
+    <link rel="shortcut icon" type="image/png" href="/img/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css" type="text/css">
+
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
+
+    <script type="text/javascript">
+      var zoom = 6;
+      var side = 400
+      var n = 5;
+      var tiles = 61;
+      var extent = [0, 0, side*tiles, side*tiles];
+      var dclExtent = [-150-n/2, -150-n/2, 150+n/2, 150+n/2];
+      var origin = [side*0, side * tiles];
+
+      function map_range (value, in_min, in_max, out_min, out_max) {
+        return (value+side/n/2 - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+      } 
+
+      function initialize() {
+        var projection = new ol.proj.Projection({
+          code: 'decentraland-images',
+          units: 'pixels',
+          extent: extent,
+        });
+        var resolutions = [];
+        var viewResolutions = [];
+        for (var i = 0; i <= zoom; ++i) {
+          resolutions.push(Math.pow(2, zoom-i));
+        }
+        for (var i = 0; i <= 5; ++i) {
+          viewResolutions.push(side/Math.pow(2, 3+i))
+        }
+        //console.log(resolutions);
+        //console.log(viewResolutions);
+        var map = new ol.Map({
+          target: 'map',
+          layers: [
+            new ol.layer.Tile({
+              source: new ol.source.TileImage({
+                url: 'map/latest/{z}/{x},{y}.png',
+                wrapX: false,
+                tileGrid: new ol.tilegrid.TileGrid({
+                  extent: extent,
+                  origin: origin,
+                  tileSize: [side, side],
+                  resolutions: resolutions,
+                  minZoom: zoom
+                }),
+              }),
+            }), 
+            /*
+            new ol.layer.Tile({
+               source: new ol.source.TileDebug(),
+            })
+            */
+          ],
+          view: new ol.View({
+              projection: projection,
+              center: ol.extent.getCenter(extent),
+              resolutions: viewResolutions,
+              zoom: 4,
+              minZoom: 2,
+            })
+        });
+        map.on('pointermove', function(event) {
+          let x = (map_range(event.coordinate[0], extent[0], extent[2], dclExtent[0], dclExtent[2]));
+          let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
+          let xf = 1 * Math.floor((x));
+          let yf = 1 * Math.floor((y));
+          //document.getElementById('coords').innerHTML = `(${xf}, ${yf}) / ${x}, ${y}`
+          document.getElementById('coords').innerHTML = `(${xf}, ${yf})`
+        });
+      }
+    </script>
+    <style type="text/css">
+      #map {
+        min-height: 100%; 
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background: rgba(51,51,51,0.7);
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+      #coords {
+        z-index: 1;
+        position: absolute;
+        top: 1em;
+        right: 1em;
+        padding: 0.1em;
+        background: rgb(112, 112, 112);
+        color: white;
+        border: 0;
+      }
+      #date {
+        z-index: 1;
+        position: absolute;
+        bottom: 1em;
+        right: 1em;
+        padding: 0.1em;
+        background: rgb(112, 112, 112);
+        color: white;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body onload="initialize()">
+    <div id="map">
+    </div>
+    <div id="coords"></div>
+    <div id="date">
+      last updated Nov 4th, 2021.
+    </div>
+  </body>
+</html>
+
