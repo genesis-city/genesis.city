@@ -1,7 +1,7 @@
 from PIL import Image
 import os
 
-side = 100
+side = 10
 result_side = 61*side
 maxsize = (side, side)
 result_size = (result_side, result_side)
@@ -20,6 +20,6 @@ for count, input_img_path in enumerate(os.listdir("map/latest/6")):
     print(x, y)
     merge_images(result, input_img_path, x, y)
 
-result.save("full/2020-12-25.png", "png")
+result.save("full/2021-11-05.png", "png")
 
 
