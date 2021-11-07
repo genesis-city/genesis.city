@@ -6,7 +6,6 @@ from PIL import Image
 
 def main():
     for count, filename in enumerate(os.listdir("raw")):
-        print(filename)
         if 'DS_Store' in filename or 'Thumbs' in filename:
             continue
         n = 5
