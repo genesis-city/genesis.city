@@ -74,9 +74,6 @@
           //document.getElementById('coords').innerHTML = `(${xf}, ${yf}) / ${x}, ${y}`
           document.getElementById('coords').innerHTML = `(${xf}, ${yf})`
         });
-        map.on('drawend', function(evt) { 
-          console.log(evt.feature.getGeometry().getCoordinates());
-        });
       }
     </script>
     <style type="text/css">
@@ -120,7 +117,8 @@
     </div>
     <div id="coords"></div>
     <div id="date">
-      🆕⌛🔜 updating since Nov 1st, 2021.
+      <!-- 🆕⌛🔜 updating since Nov 1st, 2021. -->
+      Last updated Nov 6th, 2021.
     </div>
   </body>
 </html>
