@@ -20,6 +20,6 @@ for count, input_img_path in enumerate(os.listdir("map/latest/6")):
     print(x, y)
     merge_images(result, input_img_path, x, y)
 
-result.save("full/2021-11-05.png", "png")
+result.save("full/2021-11-06.png", "png")
 
 
