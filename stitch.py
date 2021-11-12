@@ -1,7 +1,7 @@
 from PIL import Image
 import os
 
-side = 10
+side = 100
 result_side = 61*side
 maxsize = (side, side)
 result_size = (result_side, result_side)
