@@ -101,25 +101,33 @@
         height: 100%;
         margin: 0;
       }
-      #coords {
+      .overlay {
         z-index: 1;
         position: absolute;
-        top: 1em;
-        right: 1em;
         padding: 0.1em;
         background: rgb(112, 112, 112);
         color: white;
         border: 0;
       }
+
+      #coords {
+        top: 1em;
+        right: 1em;
+      }
       #date {
-        z-index: 1;
-        position: absolute;
         bottom: 1em;
         right: 1em;
-        padding: 0.1em;
-        background: rgb(112, 112, 112);
+      }
+
+      #social {
+        bottom: 1em;
+        left: 1em;
+        background: rgba(1,1,1,0);
+      }
+
+      #social a {
         color: white;
-        border: 0;
+        text-decoration: none;
       }
     </style>
 
@@ -128,8 +136,16 @@
   <body onload="initialize()">
     <div id="map">
     </div>
-    <div id="coords"></div>
-    <div id="date">
+    <div class="overlay" id="social">
+      <a href="https://github.com/maraoz/genesis.city/" target="_blank">
+        <img src="./img/github.png" alt="GitHub" height="32" width="32">
+      </a>
+      <a href="https://rarible.com/token/0xF6793dA657495ffeFF9Ee6350824910Abc21356C:79643025524252912328501563119982762407448275703446082421711029927493081497601" target="_blank">
+        <img src="./img/rarible.png" alt="Rarible" height="32" width="32">
+      </a>
+    </div>
+    <div class="overlay" id="coords"></div>
+    <div class="overlay" id="date">
       <!-- 🆕⌛🔜 updating since Nov 1st, 2021. -->
       Last updated Nov 6th, 2021.
     </div>
