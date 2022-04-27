@@ -150,6 +150,146 @@
       <!-- 🆕⌛🔜 updating since Nov 1st, 2021. -->
       Last updated Mar 14th, 2022.
     </div>
+    <div id="context-menu">
+      <div class="item"></div>
+    </div>
+    <script>
+      const contextMenu = document.getElementById("context-menu");
+      const scope = document.querySelector("body");
+
+      const normalizePosition = (mouseX, mouseY) => {
+        // ? compute what is the mouse position relative to the container element (scope)
+        let {
+          left: scopeOffsetX,
+          top: scopeOffsetY,
+        } = scope.getBoundingClientRect();
+
+        scopeOffsetX = scopeOffsetX < 0 ? 0 : scopeOffsetX;
+        scopeOffsetY = scopeOffsetY < 0 ? 0 : scopeOffsetY;
+
+        const scopeX = mouseX - scopeOffsetX;
+        const scopeY = mouseY - scopeOffsetY;
+
+        // ? check if the element will go out of bounds
+        const outOfBoundsOnX =
+          scopeX + contextMenu.clientWidth > scope.clientWidth;
+
+        const outOfBoundsOnY =
+          scopeY + contextMenu.clientHeight > scope.clientHeight;
+
+        let normalizedX = mouseX;
+        let normalizedY = mouseY;
+
+        // ? normalize on X
+        if (outOfBoundsOnX) {
+          normalizedX =
+            scopeOffsetX + scope.clientWidth - contextMenu.clientWidth;
+        }
+
+        // ? normalize on Y
+        if (outOfBoundsOnY) {
+          normalizedY =
+            scopeOffsetY + scope.clientHeight - contextMenu.clientHeight;
+        }
+
+        return { normalizedX, normalizedY };
+      };
+
+      scope.addEventListener("contextmenu", (event) => {
+        event.preventDefault();
+
+        const { clientX: mouseX, clientY: mouseY } = event;
+
+        const { normalizedX, normalizedY } = normalizePosition(mouseX, mouseY);
+
+        let coordsString = document.getElementById("coords").innerText.replace(/[()]/g, '').split(/, /g)
+        if (coordsString.length < 2) {
+          return
+        }
+        const maxCoords = 152
+        var x = parseInt(coordsString[0])
+        var y = parseInt(coordsString[1])
+        if (x < -maxCoords || x > maxCoords || y < -maxCoords || y > maxCoords) {
+          return
+        }
+        contextMenu.firstElementChild.innerHTML = `
+          <a href="https://play.decentraland.org/?position=${coordsString[0]}%2C${coordsString[1]}" target="_blank">Jump in to (${coordsString[0]}, ${coordsString[1]}) <i class="JumpInIcon"></i></a>
+        `;
+
+        contextMenu.classList.remove("visible");
+
+        contextMenu.style.top = `${normalizedY}px`;
+        contextMenu.style.left = `${normalizedX}px`;
+
+        setTimeout(() => {
+          contextMenu.classList.add("visible");
+        });
+      });
+
+      scope.addEventListener("click", (e) => {
+        // ? close the menu if the user clicks outside of it
+        // if (e.target.offsetParent != contextMenu) {
+          contextMenu.classList.remove("visible");
+        // }
+      });
+    </script>
+    <style>
+      #context-menu {
+        position: fixed;
+        z-index: 10000;
+        background: rgb(255, 45, 85);
+        border-radius: 5px;
+        transform: scale(0);
+        transform-origin: top left;
+        justify-content: center;
+        box-shadow: 0px 0px 15px black;
+        flex: none;
+      }
+
+      #context-menu.visible {
+        transform: scale(1);
+        transition: transform 100ms ease-in-out;
+      }
+
+      #context-menu .item {
+        display: flex;
+        align-items: center;
+        text-transform: uppercase;
+        font-size: 15px;
+        color: #eee;
+        cursor: pointer;
+        border-radius: inherit;
+        text-align: center;
+      }
+
+      #context-menu .item a:link, #context-menu .item a:visited {
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        padding: 12px 20px;
+        color: #eee;
+        line-height: 22px;
+        font-size: 15px;
+        font-weight: 500;
+        font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", "sans-serif";
+      }
+
+      .JumpInIcon {
+        background: url(./img/jumpin.svg);
+        background-size: 16px 16px;
+        width: 16px;
+        height: 16px;
+        background-repeat: no-repeat;
+        display: inline-block;
+        margin-left: 6px;
+        line-height: 22px;
+      }
+
+      #context-menu .item:hover {
+        background: rgb(195, 33, 63);
+      }
+    </style>
   </body>
 </html>
 
