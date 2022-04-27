@@ -203,10 +203,17 @@
         const { normalizedX, normalizedY } = normalizePosition(mouseX, mouseY);
 
         let coordsString = document.getElementById("coords").innerText.replace(/[()]/g, '').split(/, /g)
+        if (coordsString.length < 2) {
+          return
+        }
+        const maxCoords = 152
+        var x = parseInt(coordsString[0])
+        var y = parseInt(coordsString[1])
+        if (x < -maxCoords || x > maxCoords || y < -maxCoords || y > maxCoords) {
+          return
+        }
         contextMenu.firstElementChild.innerHTML = `
-          <div class="">
-          <a href="https://play.decentraland.org/?position=${coordsString[0]}%2C${coordsString[1]}" target="_blank">Jump in to location ${coordsString[0]}, ${coordsString[1]} in Decentraland</a>
-          </div>
+          <a href="https://play.decentraland.org/?position=${coordsString[0]}%2C${coordsString[1]}" target="_blank">Jump in to (${coordsString[0]}, ${coordsString[1]}) <i class="JumpInIcon"></i></a>
         `;
 
         contextMenu.classList.remove("visible");
@@ -221,22 +228,22 @@
 
       scope.addEventListener("click", (e) => {
         // ? close the menu if the user clicks outside of it
-        if (e.target.offsetParent != contextMenu) {
+        // if (e.target.offsetParent != contextMenu) {
           contextMenu.classList.remove("visible");
-        }
+        // }
       });
     </script>
     <style>
       #context-menu {
         position: fixed;
         z-index: 10000;
-        width: 200px;
-        /* height: 150px; */
-        background: #1b1a1a;
+        background: rgb(255, 45, 85);
         border-radius: 5px;
         transform: scale(0);
         transform-origin: top left;
         justify-content: center;
+        box-shadow: 0px 0px 15px black;
+        flex: none;
       }
 
       #context-menu.visible {
@@ -245,7 +252,9 @@
       }
 
       #context-menu .item {
-        padding: 8px 10px;
+        display: flex;
+        align-items: center;
+        text-transform: uppercase;
         font-size: 15px;
         color: #eee;
         cursor: pointer;
@@ -253,8 +262,32 @@
         text-align: center;
       }
 
+      #context-menu .item a:link, #context-menu .item a:visited {
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        padding: 12px 20px;
+        color: #eee;
+        line-height: 22px;
+        font-size: 15px;
+        font-weight: 500;
+        font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", "sans-serif";
+      }
+
+      .JumpInIcon {
+        background: url(./img/jumpin.svg);
+        background-size: 16px 16px;
+        width: 16px;
+        height: 16px;
+        background-repeat: no-repeat;
+        display: inline-block;
+        margin-left: 6px;
+        line-height: 22px;
+      }
+
       #context-menu .item:hover {
-        background: #343434;
+        background: rgb(195, 33, 63);
       }
     </style>
   </body>
