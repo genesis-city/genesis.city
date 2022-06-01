@@ -20,7 +20,7 @@
 
     <script type="text/javascript">
       var zoom = 6;
-      var side = 400
+      var side = 180
       var n = 5;
       var tiles = 61;
       var extent = [0, 0, side*tiles, side*tiles];
@@ -59,7 +59,8 @@
                   origin: origin,
                   tileSize: [side, side],
                   resolutions: resolutions,
-                  minZoom: zoom
+                  minZoom: 5,
+                  maxZoom: 6
                 }),
               }),
             }), 
