@@ -42,8 +42,8 @@
         for (var i = 0; i <= zoom; ++i) {
           resolutions.push(Math.pow(2, zoom-i));
         }
-        for (var i = 0; i <= 5; ++i) {
-          viewResolutions.push(side/Math.pow(2, 3+i))
+        for (var i = 0; i <= 8; ++i) {
+          viewResolutions.push(side/Math.pow(2, 2+i))
         }
         //console.log(resolutions);
         //console.log(viewResolutions);
@@ -60,7 +60,7 @@
                   tileSize: [side, side],
                   resolutions: resolutions,
                   minZoom: 1,
-                  maxZoom: 6
+                  maxZoom: 10
                 }),
               }),
             }), 
