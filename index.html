@@ -59,7 +59,7 @@
                   origin: origin,
                   tileSize: [side, side],
                   resolutions: resolutions,
-                  minZoom: 5,
+                  minZoom: 1,
                   maxZoom: 6
                 }),
               }),
@@ -74,8 +74,8 @@
               projection: projection,
               center: ol.extent.getCenter(extent),
               resolutions: viewResolutions,
-              zoom: 4,
-              minZoom: 2,
+              zoom: 3,
+              minZoom: 1,
             })
         });
         map.on('pointermove', function(event) {
