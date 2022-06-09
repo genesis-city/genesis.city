@@ -32,7 +32,7 @@ def main():
                 if os.path.isfile('map/latest/' + str(zoomLevel + 1) + '/' + path):
                     images.append(Image.open('map/latest/' + str(zoomLevel + 1) + '/' + path))
                 else:
-                    images.append(Image.new('RGB', (half_image_size, half_image_size), (112, 112, 112)))
+                    images.append(Image.new('RGB', (half_image_size, half_image_size), (26, 26, 26)))
 
             for index, image in enumerate(images):
                 im = image.resize((int(half_image_size), int(half_image_size)))
