@@ -4,6 +4,22 @@ import os
 from PIL import Image
 
 def main():
+    # preprocess.py start
+    for count, filename in enumerate(os.listdir("raw")):
+        if 'DS_Store' in filename or 'Thumbs' in filename:
+            continue
+        n = 5
+        zoom = 6
+        pad = 30 #(2**zoom) / 2
+        x, y = tuple(int(d) for d in filename.split(".")[0].split(","))
+        dst = str(int(pad+(x//n))) + "," + str(int(pad-(y//n))) + ".jpg"
+        src = 'raw/' + filename
+        dst = 'map/latest/' + str(zoom) + "/" + dst
+        im = Image.open(src)
+        print(src, "->", dst)
+        im.save(dst)
+    # preprocess.py end
+
     images = []
     size = 4
     original_side = 61
