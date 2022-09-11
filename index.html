@@ -20,7 +20,7 @@
 
     <script type="text/javascript">
       var zoom = 6;
-      var side = 180
+      var side = 200
       var n = 5;
       var tiles = 61;
       var extent = [0, 0, side*tiles, side*tiles];
@@ -42,8 +42,8 @@
         for (var i = 0; i <= zoom; ++i) {
           resolutions.push(Math.pow(2, zoom-i));
         }
-        for (var i = 0; i <= 8; ++i) {
-          viewResolutions.push(side/Math.pow(2, 2+i))
+        for (var i = 1; i <= 9; ++i) {
+          viewResolutions.push(side/Math.pow(2, 1+i))
         }
         //console.log(resolutions);
         //console.log(viewResolutions);
@@ -64,11 +64,9 @@
                 }),
               }),
             }), 
-            /*
-            new ol.layer.Tile({
-               source: new ol.source.TileDebug(),
-            })
-            */
+            // new ol.layer.Tile({
+            //    source: new ol.source.TileDebug(),
+            // })
           ],
           view: new ol.View({
               projection: projection,
