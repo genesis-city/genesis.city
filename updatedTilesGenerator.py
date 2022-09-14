@@ -1,0 +1,6 @@
+coords_file = open("coords.txt", "r")
+data = coords_file.read()
+dataList = data.replace('\n', ';').split(";")
+print(dataList)
+print(len(dataList))
+coords_file.close()
