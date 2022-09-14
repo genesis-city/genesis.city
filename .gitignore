@@ -6,3 +6,4 @@ log.out
 *.swo
 .env/
 env/
+coords.txt
