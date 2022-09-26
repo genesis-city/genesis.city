@@ -27,11 +27,24 @@
       var dclExtent = [-150-n/2, -150-n/2, 150+n/2, 150+n/2];
       var origin = [side*0, side * tiles];
 
+      const stroke = new ol.style.Stroke({color: '#ffffff', width: 1});
+      const fill = new ol.style.Fill({color: '#ffffff'});
+      const vectorLayer = new ol.layer.Vector({
+          source: new ol.source.Vector({
+            url: 'https://gist.githubusercontent.com/rheredia-dev/7b14fb9586f6f4bdee5b819bcda2718d/raw/bd2baf1d98ed8c3aac351ae157314ff303adbc0d/geo.json',
+            format: new ol.format.GeoJSON(),
+          }),
+          style: function (feature) {
+              return new ol.style.Style({fill : new ol.style.Fill({color: 'rgba(255, 255, 255, 0.5)'})})
+          },
+        });
+
       function map_range (value, in_min, in_max, out_min, out_max) {
         return (value+side/n/2 - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
       } 
 
       function initialize() {
+        showUpdatedLayer = true
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
           units: 'pixels',
@@ -67,6 +80,7 @@
             // new ol.layer.Tile({
             //    source: new ol.source.TileDebug(),
             // })
+            vectorLayer
           ],
           view: new ol.View({
               projection: projection,
@@ -84,6 +98,11 @@
           //document.getElementById('coords').innerHTML = `(${xf}, ${yf}) / ${x}, ${y}`
           document.getElementById('coords').innerHTML = `(${xf}, ${yf})`
         });
+      }
+
+      function toggleUpdatedLayer() {
+        showUpdatedLayer = !showUpdatedLayer
+        vectorLayer.setVisible(showUpdatedLayer)
       }
     </script>
     <style type="text/css">
@@ -145,6 +164,7 @@
       </a>
     </div>
     <div class="overlay" id="coords"></div>
+    <div class="overlay" id="updated-layer-toggle"><button onclick="toggleUpdatedLayer()">Toggle Updated</button></div>
     <div class="overlay" id="date">
       <!-- 🆕⌛🔜 updating since Nov 1st, 2021. -->
       Last updated Sep 19th, 2022.
