@@ -28,17 +28,32 @@
       var origin = [side*0, side * tiles];
 
       const vectorLayer = new ol.layer.Vector({
-          source: new ol.source.Vector({
-            url: 'geo.json',
-            format: new ol.format.GeoJSON(),
-          }),
-          style: function (feature) {
-              return new ol.style.Style({
-                fill : new ol.style.Fill({color: 'rgba(255, 60, 10, 0.95)'}),
-                stroke: new ol.style.Stroke({color: 'rgba(255, 60, 10, 0.25)', width: 1}),
-              })
-          },
-        });
+        source: new ol.source.Vector({
+          url: 'geo.json',
+          format: new ol.format.GeoJSON(),
+        }),
+        style: function (feature) {
+            return new ol.style.Style({
+              fill : new ol.style.Fill({color: 'rgba(255, 60, 10, 0.95)'}),
+              stroke: new ol.style.Stroke({color: 'rgba(255, 60, 10, 0.25)', width: 1}),
+            })
+        },
+      });
+
+      const estatesLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          url: 'estates.json',
+          format: new ol.format.GeoJSON(),
+        }),
+        style: function (feature) {
+            return new ol.style.Style({
+              // fill : new ol.style.Fill({color: 'rgba(255, 60, 10, 0.95)'}),
+              stroke: new ol.style.Stroke({color: 'rgba(255, 0, 0, 1)', width: 1}),
+            })
+        },
+      });
+
+
 
       function map_range (value, in_min, in_max, out_min, out_max) {
         return (value+side/n/2 - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -46,7 +61,9 @@
 
       function initialize() {
         showUpdatedLayer = false;
+        showEstatesLayer = false;
         vectorLayer.setVisible(showUpdatedLayer);
+        estatesLayer.setVisible(showEstatesLayer);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
           units: 'pixels',
@@ -82,7 +99,8 @@
             // new ol.layer.Tile({
             //    source: new ol.source.TileDebug(),
             // })
-            vectorLayer
+            vectorLayer,
+            estatesLayer
           ],
           view: new ol.View({
               projection: projection,
@@ -105,6 +123,11 @@
       function toggleUpdatedLayer() {
         showUpdatedLayer = !showUpdatedLayer;
         vectorLayer.setVisible(showUpdatedLayer);
+      }
+
+      function toggleEstatesLayer() {
+        showEstatesLayer = !showEstatesLayer;
+        estatesLayer.setVisible(showEstatesLayer);
       }
     </script>
     <style type="text/css">
@@ -173,6 +196,8 @@
     <div class="overlay" id="coords"></div>
     <div class="overlay" id="updates">
       <div class="layer-controls">
+        <input onclick="toggleEstatesLayer()" type="checkbox" id="estates-layer-toggle" name="estates-layer-toggle" value="show-estates">
+        <label for="estates-layer-toggle"> Show estates</label><br>
         <input onclick="toggleUpdatedLayer()" type="checkbox" id="updated-layer-toggle" name="updated-layer-toggle" value="show-updated">
         <label for="updated-layer-toggle"> Show recently changed content.</label><br>
       </div>
