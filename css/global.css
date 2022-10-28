@@ -51,12 +51,10 @@ html, body {
 #context-menu {
   position: fixed;
   z-index: 10000;
-  background: rgb(255, 45, 85);
-  border-radius: 5px;
   transform: scale(0);
   transform-origin: top left;
-  justify-content: center;
-  box-shadow: 0px 0px 15px black;
+  border-radius: 0 2rem 2rem 2rem;
+  overflow: hidden;
   flex: none;
 }
 
@@ -65,28 +63,16 @@ html, body {
   transition: transform 100ms ease-in-out;
 }
 
-#context-menu .item {
-  display: flex;
-  align-items: center;
-  text-transform: uppercase;
-  font-size: 15px;
-  color: #eee;
-  cursor: pointer;
-  border-radius: inherit;
-  text-align: center;
-}
-
-#context-menu .item a:link, #context-menu .item a:visited {
-  white-space: nowrap;
+#context-menu .item a:link, 
+#context-menu .item a:visited {
   display: flex;
   align-items: center;
   text-decoration: none;
-  padding: 12px 20px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0.8rem 1rem;
   color: #eee;
-  line-height: 22px;
-  font-size: 15px;
-  font-weight: 500;
-  font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", "sans-serif";
+  font-weight: bold;
 }
 
 .JumpInIcon {
@@ -94,12 +80,9 @@ html, body {
   background-size: 16px 16px;
   width: 16px;
   height: 16px;
+  background-size: 1rem 1rem;
+  width: 1rem;
+  height: 1rem;
   background-repeat: no-repeat;
-  display: inline-block;
-  margin-left: 6px;
-  line-height: 22px;
-}
-
-#context-menu .item:hover {
-  background: rgb(195, 33, 63);
+  margin-left: .4rem;
 }
