@@ -124,19 +124,26 @@
     </div>
     <div class="overlay info" >
       <div id="coords"></div>
-      <div id="updates">
-        <img src="./img/layer.svg" />
-
-        <div class="layer-controls">
-          <input onclick="toggleUpdatedLayer()" type="checkbox" id="updated-layer-toggle" name="updated-layer-toggle" value="show-updated">
-          <label for="updated-layer-toggle">Show estates.</label><br>
+      <img class="controls-menu" src="./img/layer.svg" />
+    </div>
+    <div class="controls" id="updates">
+      <div class="header" >
+        <p>Map layers</p>
+        <img src="./img/close.svg" />
+      </div>
+      <div class="layer-controls">
+        <span>Show recent changes</span>
+        <div class="toggle">
+          <input class="toggle-input" onclick="toggleUpdatedLayer()" id="updated-layer-toggle" type="checkbox" name="updated-layer-toggle" value="show-updated">
+          <label class="toggle-label" for="updated-layer-toggle">Toggle</label>
         </div>
-        <div class="layer-controls">
+        <!-- <div class="toggle">
           <input onclick="toggleUpdatedLayer()" type="checkbox" id="updated-layer-toggle" name="updated-layer-toggle" value="show-updated">
-          <label for="updated-layer-toggle">Show recently changed content.</label><br>
-        </div>
+          <label for="updated-layer-toggle">Show recently changed content.</label>
+        </div> -->
       </div>
     </div>
+
     <div class="overlay"  id="date">
       Last updated Oct 24th, 2022
     </div>
