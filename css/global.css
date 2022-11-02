@@ -40,18 +40,51 @@ html, body {
 }
 
 #updates {
-  bottom: 1em;
-  right: 1em;
-  background: rgba(1,1,1,0.85);
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
 }
+
+.layer-controls {
+  padding: .5rem;
+  cursor: pointer;
+  display: flex;
+  align-content: center;
+  background: rgba(22,20,26,.75);
+  background: rgba(13, 14, 21, 0.5);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.layer-controls input {
+  margin: 0 .5rem 0 0;
+  width: 1rem;
+  height: 1rem;
+}
+.layer-controls label {
+  cursor: pointer;
+  color: rgb(191, 186, 197);
+}
+
+.layer-controls:hover label {
+  color: white;
+  /* cursor: pointer; */
+}
+
 #date {
-  margin-top: 1em;
+  background: rgba(36, 35, 38, 0.5);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  text-align: right;
+  font-size: .8rem;
+  bottom: 0;
+  padding: .5rem;
+  right: 1rem;
 }
 
 #social {
-  bottom: 1em;
-  left: 1em;
-  background: rgba(1,1,1,0);
+  bottom: 1rem;
+  left: 1rem;
 }
 
 #social a {
