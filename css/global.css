@@ -65,7 +65,7 @@ html, body {
   right: 1rem;
   padding: 0.75rem;
   border-radius: .5rem;
-  background: rgba(13, 14, 21, 0.6);
+  background: rgba(18, 27, 34, 0.8);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   color: white;
@@ -74,33 +74,30 @@ html, body {
   display: flex;
   align-content: center;
   justify-content: space-between;
+  padding: .25rem;
 }
 .controls .header p {
-  margin: 0;
+  margin: 0 0 .5rem 0;
   font-weight: bold;
 }
-
-.layer-controls {
-  margin-top: .5rem;
-  padding: .25rem 0;
+.controls .options {
   background: rgba(20, 26, 31, 0.8);
+  border-radius: .5rem;
+  padding: .25rem 0;
 }
-/* .toggle {
-  padding: .5rem .75rem;
-  cursor: pointer;
-}
-.toggle input {
-  display: none;
-}
-.toggle label {
-  color: #E2E4E9;
-  font-size: .9rem;
-}
-.toggle:hover label {
-  color: white; 
-} */
 
 /* Toggle */
+.layer-controls {
+  padding: 0.5rem 0.75rem;
+  min-width: 15rem;
+  display: flex;
+  justify-content: space-between;
+  color: #E2E4E9;
+  font-size: .9em;
+}
+.layer-controls .label {
+  margin-right: 1rem;
+}
 .toggle {
   position: relative;
   display: inline-block;
@@ -110,8 +107,8 @@ html, body {
 }
 .toggle-label {
   display: block;
-  width: 36px;
-  height: 24px;
+  width: 32px;
+  height: 22px;
   text-indent: -150%;
   clip: rect(0 0 0 0);
   color: transparent;
@@ -127,27 +124,28 @@ html, body {
 .toggle-label::before {
   width: 100%;
   height: 100%;
-  background-color: #dedede;
-  border-radius: 9999em;
+  background-color: #414D58;
+  border-radius: 1rem;
   -webkit-transition: background-color 0.25s ease;
   transition: background-color 0.25s ease;
 }
 .toggle-label::after {
   top: 2px;
   left: 2px;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background-color: #fff;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
+  background-color: #1a1f22;
+  box-shadow: 0px 2px 2px rgba(24, 33, 44, 0.25);
   -webkit-transition: left 0.25s ease;
   transition: left 0.25s ease;
 }
 .toggle-input:checked + .toggle-label::before {
-  background-color: #89c12d;
+  background-color: #35d477;
 }
 .toggle-input:checked + .toggle-label::after {
-  left: 14px;
+  left: 12px;
+  background-color: #fff;
 }
 
 
