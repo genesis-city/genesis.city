@@ -100,9 +100,9 @@ html, body {
   /* Hack to run locally */
   background: url("../img/jumpin.svg");
   /* Hack to run locally */
-  background-size: 1rem 1rem;
-  width: 1rem;
-  height: 1rem;
+  background-size: .9rem .9rem;
+  width: .9rem;
+  height: .9rem;
   background-repeat: no-repeat;
   margin-left: .4rem;
 }
