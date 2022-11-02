@@ -122,11 +122,19 @@
         <img src="./img/rarible.png" alt="Rarible" height="32" width="32">
       </a>
     </div>
-    <div class="overlay" id="coords"></div>
-    <div class="overlay" id="updates">
-      <div class="layer-controls">
-        <input onclick="toggleUpdatedLayer()" type="checkbox" id="updated-layer-toggle" name="updated-layer-toggle" value="show-updated">
-        <label for="updated-layer-toggle">Show recently changed content.</label><br>
+    <div class="overlay info" >
+      <div id="coords"></div>
+      <div id="updates">
+        <img src="./img/layer.svg" />
+
+        <div class="layer-controls">
+          <input onclick="toggleUpdatedLayer()" type="checkbox" id="updated-layer-toggle" name="updated-layer-toggle" value="show-updated">
+          <label for="updated-layer-toggle">Show estates.</label><br>
+        </div>
+        <div class="layer-controls">
+          <input onclick="toggleUpdatedLayer()" type="checkbox" id="updated-layer-toggle" name="updated-layer-toggle" value="show-updated">
+          <label for="updated-layer-toggle">Show recently changed content.</label><br>
+        </div>
       </div>
     </div>
     <div class="overlay"  id="date">

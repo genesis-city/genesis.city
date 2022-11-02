@@ -29,23 +29,35 @@ html, body {
   border-radius: .5rem;
 }
 
-#coords {
+.overlay.info {
   top: 1rem;
   right: 1rem;
+  display: flex;
+}
+
+#coords {
+  height: 2.5rem;
+  border-radius: .5rem;
   padding: 0.8rem;
   font-family: monospace;
   background: rgba(13, 14, 21, 0.6);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+  line-height: 1;
 }
 
-#updates {
-  bottom: 1rem;
-  right: 1rem;
+#updates img {
+  background: rgba(13, 14, 21, 0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   padding: 0.5rem;
+  height: 2.5rem;
+  border-radius: .5rem;
+  cursor: pointer;
+  margin-left: .5rem;
 }
 
-.layer-controls {
+#updates .layer-controls {
   padding: .5rem;
   cursor: pointer;
   display: flex;
@@ -56,17 +68,17 @@ html, body {
   backdrop-filter: blur(8px);
 }
 
-.layer-controls input {
+#updates .layer-controls input {
   margin: 0 .5rem 0 0;
   width: 1rem;
   height: 1rem;
 }
-.layer-controls label {
+#updates .layer-controls label {
   cursor: pointer;
   color: rgb(191, 186, 197);
 }
 
-.layer-controls:hover label {
+#updates .layer-controls:hover label {
   color: white;
   /* cursor: pointer; */
 }
