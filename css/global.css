@@ -70,6 +70,9 @@ html, body {
 .coords {
   height: 2.75rem;
   font-family: monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Layers menu */
