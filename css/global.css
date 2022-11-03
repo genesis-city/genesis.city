@@ -31,11 +31,31 @@ html, body {
   background: #1a1a1a;
 }
 
-.overlay {
-  z-index: 1;
-  position: absolute;
-  color: white;
-  border-radius: .5rem;
+/* Zoom controls */
+.ol-zoom {
+  background: rgba(18, 27, 34, 0.8);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  padding: 0.25rem;
+}
+.ol-control {
+  border-radius: 0.5rem;
+}
+.ol-control button {
+  background-color: transparent;
+  margin: 0;
+  height: 1.75rem;
+  width: 1.75rem;
+  font-size: 1rem;
+}
+.ol-control:hover {
+  background-color: rgba(18, 27, 34, 0.6);
+}
+.ol-control button:focus, 
+.ol-control button:hover {
+  background-color: rgb(23 30 33);
+  cursor: pointer;
+  border-radius: .25rem;
 }
 
 /* Coordinates */
