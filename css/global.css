@@ -230,11 +230,11 @@ html, body {
   font-weight: bold;
 }
 .JumpInIcon {
-  background: url(./img/jumpin.svg);
+  background: url(../img/jumpin.svg);
   background-size: .9rem .9rem;
+  background-repeat: no-repeat;
   width: .9rem;
   height: .9rem;
-  background-repeat: no-repeat;
   margin-left: .4rem;
 }
 
