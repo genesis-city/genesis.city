@@ -7,6 +7,19 @@ html, body {
   font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", "sans-serif";
 }
 
+.overlay {
+  z-index: 1;
+  position: absolute;
+  color: white;
+  border-radius: .5rem;
+}
+.blur {
+  background: rgba(18, 27, 34, 0.8);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  padding: 0.5rem;
+}
+
 /* Map */
 #map {
   min-height: 100%; 
@@ -24,30 +37,21 @@ html, body {
   color: white;
   border-radius: .5rem;
 }
-.overlay.info {
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-}
 
 /* Coordinates */
-#coords {
+.overlay.info {
+  top: .5rem;
+  right: .5rem;
+  display: flex;
+}
+.coords {
   height: 2.25rem;
   border-radius: .5rem;
-  padding: 0.8rem;
   font-family: monospace;
-  background: rgba(18, 27, 34, 0.8);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  line-height: 1;
 }
 
 /* Layers menu */
-.controls-menu {
-  background: rgba(18, 27, 34, 0.6);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  padding: 0.5rem;
+.menu {
   border-radius: .5rem;
   cursor: pointer;
   margin-left: .25rem;
@@ -57,13 +61,10 @@ html, body {
 .controls {
   position: absolute;
   z-index: 1;
-  top: 3.5rem;
-  right: 1rem;
+  top: 3rem;
+  right: .5rem;
   padding: 0.75rem;
   border-radius: .5rem;
-  background: rgba(18, 27, 34, 0.8);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
   color: white;
 }
 .controls .header {
@@ -71,9 +72,10 @@ html, body {
   align-content: center;
   justify-content: space-between;
   padding: .25rem;
+  margin-bottom: .5rem;
 }
 .controls .header p {
-  margin: 0 0 .5rem 0;
+  margin: 0;
   font-weight: bold;
 }
 .controls .options {
