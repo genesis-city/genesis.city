@@ -78,35 +78,66 @@ html, body {
   margin-left: .25rem;
   height: 2.75rem;
   width: 2.75rem;
+  border: none;
 }
-.controls {
+.menu::after {
+  content: "";
+  background: url(../img/layer.svg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 1rem;
+  display: block;
+}
+.menu-content {
+  display: none;
   position: absolute;
   z-index: 1;
-  top: 3.5rem;
-  right: .5rem;
+  top: 3rem;
+  right: 0;
   padding: 0.75rem;
   border-radius: .5rem;
   color: white;
 }
-.controls .header {
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.show { display: block }
+.menu-content .header {
   display: flex;
   align-content: center;
   justify-content: space-between;
   padding: .25rem;
   margin-bottom: .5rem;
 }
-.controls .header p {
+.menu-content .header p {
   margin: 0;
   font-weight: bold;
+  font-size: .9em;
 }
-.controls .options {
+.menu-content .header a {
+  cursor: pointer;
+  background: url(../img/close.svg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 1.25rem;
+  width: 1.25rem;
+  display: block;
+  opacity: .5;
+}
+.menu-content .header a:hover {
+  opacity: 1;
+}
+.menu-content .options {
   background: rgba(20, 26, 31, 0.8);
   border-radius: .5rem;
   padding: .25rem 0;
 }
 
 /* Toggle */
-.layer-controls {
+.layer-control {
   padding: 0.5rem 0.75rem;
   min-width: 15rem;
   display: flex;
@@ -114,7 +145,7 @@ html, body {
   color: #E2E4E9;
   font-size: .9em;
 }
-.layer-controls .label {
+.layer-control .label {
   margin-right: 1rem;
 }
 .toggle {

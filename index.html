@@ -126,23 +126,29 @@
 
     <div class="overlay info" >
       <div class="blur coords" id="coords"></div>
-      <img class="blur menu" src="./img/layer.svg" />
-    </div>
+      
+      <div class="dropdown">
+        <button onclick="toggleMenu()" class="blur menu"></button>
+        
+        <div class="blur menu-content" id="updates">
+          <div class="header">
+            <p>Map layers</p>
+            <a onclick="toggleMenu()"></a>
+          </div>
+          <div class="options">
 
-    <div class="blur controls" id="updates">
-      <div class="header">
-        <p>Map layers</p>
-        <img src="./img/close.svg" />
-      </div>
-      <div class="options">
-        <div class="layer-controls">
-          <span class="label" >Show recent changes</span>
-          <div class="toggle">
-            <input class="toggle-input" onclick="toggleUpdatedLayer()" id="updated-layer-toggle" type="checkbox" name="updated-layer-toggle" value="show-updated">
-            <label class="toggle-label" for="updated-layer-toggle">Toggle</label>
+            <div class="layer-control">
+              <span class="label">Show recent changes</span>
+              <div class="toggle">
+                <input class="toggle-input" onclick="toggleUpdatedLayer()" id="updated-layer-toggle" type="checkbox" name="updated-layer-toggle" value="show-updated">
+                <label class="toggle-label" for="updated-layer-toggle">Toggle</label>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
+
     </div>
 
     <div class="overlay blur date"  id="date">
@@ -232,6 +238,27 @@
           contextMenu.classList.remove("visible");
         // }
       });
+
+
+      // Layers Menu
+      // When the user clicks on the button, toggle between hiding and showing the dropdown content
+      function toggleMenu() {
+        document.getElementById("updates").classList.toggle("show");
+      }
+
+      // Close the dropdown if the user clicks outside of it
+      // window.onclick = function(event) {
+      //   if (!event.target.matches('.menu')) {
+      //     var dropdowns = document.getElementsByClassName("menu-content");
+      //     var i;
+      //     for (i = 0; i < dropdowns.length; i++) {
+      //       var openDropdown = dropdowns[i];
+      //       if (openDropdown.classList.contains('show')) {
+      //         openDropdown.classList.remove('show');
+      //       }
+      //     }
+      //   }
+      // }
     </script>
   </body>
 </html>
