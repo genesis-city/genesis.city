@@ -112,9 +112,9 @@
   </head>
 
   <body onload="initialize()">
-    <div id="map">
-    </div>
+    <div id="map"></div>
 
+    <!-- Social links -->
     <div class="overlay blur" id="social">
       <a href="https://github.com/genesis-city/genesis.city" target="_blank">
         <img src="./img/github.svg" alt="GitHub">
@@ -124,19 +124,18 @@
       </a>
     </div>
 
+    <!-- Map information and layes controls -->
     <div class="overlay info" >
       <div class="blur coords" id="coords"></div>
-      
       <div class="dropdown">
         <button onclick="toggleMenu()" class="blur menu"></button>
-        
         <div class="blur menu-content" id="updates">
           <div class="header">
             <p>Map layers</p>
             <a onclick="toggleMenu()"></a>
           </div>
           <div class="options">
-
+            <!-- Layer controls -->
             <div class="layer-control">
               <span class="label">Show recent changes</span>
               <div class="toggle">
@@ -144,17 +143,19 @@
                 <label class="toggle-label" for="updated-layer-toggle">Toggle</label>
               </div>
             </div>
-
+            <!--  -->
           </div>
         </div>
       </div>
 
     </div>
 
+    <!-- Last update -->
     <div class="overlay blur date"  id="date">
       Last updated Oct 24th, 2022
     </div>
 
+    <!-- Jump in button -->
     <div id="context-menu">
       <div class="item"></div>
     </div>
