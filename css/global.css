@@ -67,12 +67,16 @@ html, body {
   right: .5rem;
   display: flex;
 }
-.coords {
+.blur.coords {
   height: 2.75rem;
   font-family: monospace;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0;
+}
+.blur.coords span {
+  padding: 0 0.75rem;
 }
 
 /* Layers menu */
