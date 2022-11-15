@@ -181,7 +181,7 @@ html, body {
 .toggle-label::before {
   width: 100%;
   height: 100%;
-  background-color: #38434c;
+  background-color: #686d71;
   border-radius: 1rem;
   -webkit-transition: background-color 0.25s ease;
   transition: background-color 0.25s ease;
