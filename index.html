@@ -3,7 +3,7 @@
   <head>
     <title>An unofficial map of Decentraland</title>
     <link rel="shortcut icon" type="image/png" href="/img/favicon.png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
 
     <meta property="og:title" content="Genesis City Map" />
     <meta property="og:description" content="An unofficial map of Decentraland" />
@@ -16,7 +16,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://genesis.city/img/cover.jpg" />
 
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
 
     <script type="text/javascript">
       var zoom = 6;
@@ -40,16 +40,17 @@
         },
       });
 
+
       const estatesLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
           url: 'estates.json', 
           format: new ol.format.GeoJSON(),
         }),
         style: function (feature) {
-            return new ol.style.Style({
-              fill : new ol.style.Fill({color: 'rgba(0, 255, 255, 0.1)'}),
-              stroke: new ol.style.Stroke({color: 'rgba(0, 255, 255, 1)', width: 1}),
-            })
+          return new ol.style.Style({
+            fill : new ol.style.Fill({color: 'rgba(0, 255, 255, 0.1)'}),
+            stroke: new ol.style.Stroke({color: 'rgba(0, 255, 255, 1)', width: 1}),
+          })
         },
       });
 
@@ -115,8 +116,8 @@
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
           let xf = 1 * Math.floor((x));
           let yf = 1 * Math.floor((y));
-          //document.getElementById('coords').innerHTML = `(${xf}, ${yf}) / ${x}, ${y}`
           document.getElementById('coords').innerHTML = `(${xf}, ${yf})`
+
         });
       }
 
