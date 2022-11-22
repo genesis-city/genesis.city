@@ -48,6 +48,7 @@ html, body {
   height: 1.75rem;
   width: 1.75rem;
   font-size: 1rem;
+  color: #fff;
 }
 .ol-control:hover {
   background-color: rgba(18, 27, 34, 0.6);
@@ -59,6 +60,7 @@ html, body {
   background-color: rgba(18, 27, 34, 0.8);
   cursor: pointer;
   border-radius: .25rem;
+  color: #fff;
 }
 
 /* Coordinates */
