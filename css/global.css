@@ -1,0 +1,284 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;700&display=swap');
+
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", "sans-serif";
+}
+
+.overlay {
+  z-index: 1;
+  position: absolute;
+  color: white;
+  border-radius: .5rem;
+}
+.blur {
+  background: rgba(18, 27, 34, 0.8);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  padding: 0.75rem;
+  border-radius: .5rem;
+}
+
+/* Map */
+#map {
+  min-height: 100%; 
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: #1a1a1a;
+}
+
+/* Zoom controls */
+.ol-zoom {
+  background: rgba(18, 27, 34, 0.8);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  padding: 0.25rem;
+}
+.ol-control {
+  border-radius: 0.5rem;
+}
+.ol-control button {
+  background-color: transparent;
+  margin: 0;
+  height: 1.75rem;
+  width: 1.75rem;
+  font-size: 1rem;
+}
+.ol-control:hover {
+  background-color: rgba(18, 27, 34, 0.6);
+  -webkit-transition: background-color 0.25s ease;
+  transition: background-color 0.25s ease;
+}
+.ol-control button:focus, 
+.ol-control button:hover {
+  background-color: rgba(18, 27, 34, 0.8);
+  cursor: pointer;
+  border-radius: .25rem;
+}
+
+/* Coordinates */
+.overlay.info {
+  top: .5rem;
+  right: .5rem;
+  display: flex;
+}
+.blur.coords {
+  height: 2.75rem;
+  font-family: monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+.blur.coords span {
+  padding: 0 0.75rem;
+}
+
+/* Layers menu */
+.menu {
+  cursor: pointer;
+  margin-left: .25rem;
+  height: 2.75rem;
+  width: 2.75rem;
+  border: none;
+}
+.menu::after {
+  content: "";
+  background: url(../img/layer.svg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 1rem;
+  display: block;
+}
+.menu-content {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  top: 3rem;
+  right: 0;
+  padding: 0.75rem;
+  border-radius: .5rem;
+  color: white;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.show { display: block }
+.menu-content .header {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  padding: .25rem;
+  margin-bottom: .5rem;
+}
+.menu-content .header p {
+  margin: 0;
+  font-weight: bold;
+  font-size: .9em;
+}
+.menu-content .header a {
+  cursor: pointer;
+  background: url(../img/close.svg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 1.25rem;
+  width: 1.25rem;
+  display: block;
+  opacity: .5;
+}
+.menu-content .header a:hover {
+  opacity: 1;
+}
+.menu-content .options {
+  background: rgba(20, 26, 31, 0.8);
+  border-radius: .5rem;
+  padding: .25rem 0;
+}
+
+/* Toggle */
+.layer-control {
+  padding: 0.5rem 0.75rem;
+  min-width: 15rem;
+  display: flex;
+  justify-content: space-between;
+  color: #E2E4E9;
+  font-size: .9em;
+}
+.layer-control .label {
+  margin-right: 1rem;
+}
+.toggle {
+  position: relative;
+  display: inline-block;
+}
+.toggle-input {
+  display: none;
+}
+.toggle-label {
+  display: block;
+  width: 32px;
+  height: 22px;
+  text-indent: -150%;
+  clip: rect(0 0 0 0);
+  color: transparent;
+  user-select: none;
+}
+.toggle-label::before,
+.toggle-label::after {
+  content: "";
+  display: block;
+  position: absolute;
+  cursor: pointer;
+}
+.toggle-label::before {
+  width: 100%;
+  height: 100%;
+  background-color: #686d71;
+  border-radius: 1rem;
+  -webkit-transition: background-color 0.25s ease;
+  transition: background-color 0.25s ease;
+}
+.toggle-label::after {
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #1a1f22;
+  box-shadow: 0px 2px 2px rgba(24, 33, 44, 0.25);
+  -webkit-transition: left 0.25s ease;
+  transition: left 0.25s ease;
+}
+.toggle-input:checked + .toggle-label::before {
+  background-color: #35d477;
+}
+.toggle-input:checked + .toggle-label::after {
+  left: 12px;
+  background-color: #fff;
+}
+
+/* Jump In button */
+#context-menu {
+  position: fixed;
+  z-index: 10000;
+  transform: scale(0);
+  transform-origin: top left;
+  border-radius: 0 2rem 2rem 2rem;
+  overflow: hidden;
+  background-image: linear-gradient(120deg, #f3007d 0%, #ff2d55 100%);
+  box-shadow: 0px 2px 8px #ff659a69;
+  outline: 2px solid #f3007d55;
+}
+#context-menu:hover {
+  background-image: linear-gradient(120deg, #ff188f 0%, #ff2a51 100%);
+  box-shadow: 0px 2px 8px #ff659a69, 0px 4px 12px #ffffff55;
+}
+#context-menu.visible {
+  transform: scale(1);
+  transition: transform 100ms ease-in-out;
+}
+#context-menu .item a:link, 
+#context-menu .item a:visited {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0.8rem 1rem;
+  color: #eee;
+  font-weight: bold;
+}
+.JumpInIcon {
+  background: url(../img/jumpin.svg);
+  background-size: .9rem .9rem;
+  background-repeat: no-repeat;
+  width: .9rem;
+  height: .9rem;
+  margin-left: .4rem;
+}
+
+/* Last update */
+.date {
+  background: rgba(36, 35, 38, 0.5);
+  text-align: right;
+  font-size: .75rem;
+  bottom: .5rem;
+  right: .5rem;
+  padding: .25rem .5rem;
+  cursor: default;
+}
+
+/* Social links */
+#social {
+  background: rgba(36, 35, 38, 0.5);
+  bottom: .5rem;
+  left: .5rem;
+  display: flex;
+  padding: .25rem;
+}
+#social a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  line-height: 0;
+  padding: .5rem;
+  border-radius: .5rem;
+}
+#social a:focus,
+#social a:hover {
+  background-color: rgba(18, 27, 34, 0.8);
+  -webkit-transition: background-color 0.25s ease;
+  transition: background-color 0.25s ease;
+}
+#social img {
+  width: 1.25rem;
+  height: 1.25rem;
+}

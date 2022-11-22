@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>An unofficial map of Decentraland</title>
+    <title>Genesis City Map</title>
+    <meta name="description" content="A top-down view map of Decentraland’s world">
+
     <link rel="shortcut icon" type="image/png" href="/img/favicon.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
 
     <meta property="og:title" content="Genesis City Map" />
-    <meta property="og:description" content="An unofficial map of Decentraland" />
+    <meta property="og:description" content="A top-down view map of Decentraland’s world" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://genesis.city" />
     <meta property="og:image" content="https://genesis.city/img/cover.jpg" />
 
-    <meta name="twitter:title" content="Genesis City Map" />
-    <meta name="twitter:description" content="An unofficial map of Decentraland" />
+    <meta name="twitter:title" content="Genesis City: An unofficial map of Decentraland" />
+    <meta name="twitter:description" content="A top-down view map of Decentraland’s world" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://genesis.city/img/cover.jpg" />
 
@@ -131,67 +133,22 @@
         estatesLayer.setVisible(showEstatesLayer);
       }
     </script>
-    <style type="text/css">
-      #map {
-        min-height: 100%; 
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        left: 0;
-        top: 0;
-        background: #1a1a1a;
-      }
-      html, body {
-        height: 100%;
-        margin: 0;
-      }
-      .overlay {
-        z-index: 1;
-        position: absolute;
-        padding: 0.5em;
-        background: #1a1a1a;
-        color: white;
-        border: 0;
-      }
-
-      #coords {
-        top: 1em;
-        right: 1em;
-      }
-      #updates {
-        bottom: 1em;
-        right: 1em;
-        background: rgba(1,1,1,0.85);
-      }
-
-      #date {
-        margin-top: 1em;
-      }
-
-      #social {
-        bottom: 1em;
-        left: 1em;
-        background: rgba(1,1,1,0);
-      }
-
-      #social a {
-        color: white;
-        text-decoration: none;
-        padding-left: 0.5em;
-      }
-    </style>
-
     <script defer data-domain="genesis.city" src="https://plausible.io/js/plausible.js"></script>
   </head>
+
   <body onload="initialize()">
-    <div id="map">
-    </div>
-    <div class="overlay" id="social">
-      <a href="https://github.com/maraoz/genesis.city/" target="_blank">
-        <img src="./img/github.png" alt="GitHub" height="32" width="32">
+    <div id="map"></div>
+
+    <!-- Social links -->
+    <div class="overlay blur" id="social">
+      <a href="https://github.com/genesis-city/genesis.city" target="_blank">
+        <img src="./img/github.svg" alt="GitHub">
+      </a>
+      <a href="https://twitter.com/GenesisCityMap" target="_blank">
+        <img src="./img/twitter.svg" alt="Twitter">
       </a>
       <a href="https://rarible.com/token/polygon/0x35f8aee672cde8e5fd09c93d2bfe4ff5a9cf0756:79643025524252912328501563119982762407448275703446082421711029927493081497610" target="_blank">
-        <img src="./img/rarible.png" alt="Rarible" height="32" width="32">
+        <img src="./img/rarible.svg" alt="Rarible">
       </a>
     </div>
     <div class="overlay" id="coords"></div>
@@ -202,13 +159,37 @@
         <input onclick="toggleUpdatedLayer()" type="checkbox" id="updated-layer-toggle" name="updated-layer-toggle" value="show-updated">
         <label for="updated-layer-toggle"> Show recently changed content.</label><br>
       </div>
-      <div id="date">
-        Last updated Nov 14th, 2022.
+      <div class="dropdown">
+        <button onclick="toggleMenu()" class="blur menu"></button>
+        <div class="blur menu-content" id="updates">
+          <div class="header">
+            <p>Map layers</p>
+            <a onclick="toggleMenu()"></a>
+          </div>
+          <div class="options">
+            <!-- Layer controls -->
+            <label class="layer-control">
+              <span class="label">Show recent changes</span>
+              <div class="toggle">
+                <input class="toggle-input" onclick="toggleUpdatedLayer()" id="updated-layer-toggle" type="checkbox" name="updated-layer-toggle" value="show-updated">
+                <label class="toggle-label" for="updated-layer-toggle">Toggle</label>
+              </div>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Last update -->
+    <div class="overlay blur date"  id="date">
+      Last updated Nov 14th, 2022
+    </div>
+
+    <!-- Jump in button -->
     <div id="context-menu">
       <div class="item"></div>
     </div>
+
     <script>
       const contextMenu = document.getElementById("context-menu");
       const scope = document.querySelector("body");
@@ -288,64 +269,13 @@
           contextMenu.classList.remove("visible");
         // }
       });
+
+
+      // Layers Menu - Toggle between hiding and showing the dropdown content
+      function toggleMenu() {
+        document.getElementById("updates").classList.toggle("show");
+      }
     </script>
-    <style>
-      #context-menu {
-        position: fixed;
-        z-index: 10000;
-        background: rgb(255, 45, 85);
-        border-radius: 5px;
-        transform: scale(0);
-        transform-origin: top left;
-        justify-content: center;
-        box-shadow: 0px 0px 15px black;
-        flex: none;
-      }
-
-      #context-menu.visible {
-        transform: scale(1);
-        transition: transform 100ms ease-in-out;
-      }
-
-      #context-menu .item {
-        display: flex;
-        align-items: center;
-        text-transform: uppercase;
-        font-size: 15px;
-        color: #eee;
-        cursor: pointer;
-        border-radius: inherit;
-        text-align: center;
-      }
-
-      #context-menu .item a:link, #context-menu .item a:visited {
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        padding: 12px 20px;
-        color: #eee;
-        line-height: 22px;
-        font-size: 15px;
-        font-weight: 500;
-        font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", "sans-serif";
-      }
-
-      .JumpInIcon {
-        background: url(./img/jumpin.svg);
-        background-size: 16px 16px;
-        width: 16px;
-        height: 16px;
-        background-repeat: no-repeat;
-        display: inline-block;
-        margin-left: 6px;
-        line-height: 22px;
-      }
-
-      #context-menu .item:hover {
-        background: rgb(195, 33, 63);
-      }
-    </style>
   </body>
 </html>
 
