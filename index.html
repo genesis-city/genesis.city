@@ -6,7 +6,9 @@
 
     <link rel="shortcut icon" type="image/png" href="/img/favicon.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
-
+    <link rel="stylesheet" href="./css/global.css" type="text/css">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta property="og:title" content="Genesis City Map" />
     <meta property="og:description" content="A top-down view map of Decentraland’s world" />
     <meta property="og:type" content="website" />
@@ -118,7 +120,7 @@
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
           let xf = 1 * Math.floor((x));
           let yf = 1 * Math.floor((y));
-          document.getElementById('coords').innerHTML = `(${xf}, ${yf})`
+          document.getElementById('coords').innerHTML = `<span>(${xf}, ${yf})</span>`
 
         });
       }
@@ -151,13 +153,10 @@
         <img src="./img/rarible.svg" alt="Rarible">
       </a>
     </div>
-    <div class="overlay" id="coords"></div>
-    <div class="overlay" id="updates">
-      <div class="layer-controls">
-        <input onclick="toggleEstatesLayer()" type="checkbox" id="estates-layer-toggle" name="estates-layer-toggle" value="show-estates">
-        <label for="estates-layer-toggle"> Show estates</label><br>
-        <input onclick="toggleUpdatedLayer()" type="checkbox" id="updated-layer-toggle" name="updated-layer-toggle" value="show-updated">
-        <label for="updated-layer-toggle"> Show recently changed content.</label><br>
+
+    <!-- Map information and layers controls -->
+    <div class="overlay info" >
+      <div class="blur coords" id="coords">
       </div>
       <div class="dropdown">
         <button onclick="toggleMenu()" class="blur menu"></button>
@@ -168,6 +167,13 @@
           </div>
           <div class="options">
             <!-- Layer controls -->
+            <label class="layer-control">
+              <span class="label">Show estates</span>
+              <div class="toggle">
+                <input class="toggle-input" onclick="toggleEstatesLayer()" id="estates-layer-toggle" type="checkbox" name="estates-layer-toggle" value="show-estates">
+                <label class="toggle-label" for="estates-layer-toggle">Toggle</label>
+              </div>
+            </label>
             <label class="layer-control">
               <span class="label">Show recent changes</span>
               <div class="toggle">
