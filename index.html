@@ -21,7 +21,6 @@
     <meta name="twitter:image" content="https://genesis.city/img/cover.jpg" />
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
-
     <script type="text/javascript">
       var zoom = 6;
       var side = 200
@@ -30,7 +29,9 @@
       var extent = [0, 0, side*tiles, side*tiles];
       var dclExtent = [-150-n/2, -150-n/2, 150+n/2, 150+n/2];
       var origin = [side*0, side * tiles];
+      const maxCoords = 152
 
+      //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
           url: 'geo.json',
@@ -44,7 +45,7 @@
         },
       });
 
-
+      //Estates layer
       const estatesLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
           url: 'estates.json', 
@@ -58,6 +59,16 @@
         },
       });
 
+      //Points Of Interest layer
+      const poiLayer = new ol.layer.Vector({
+          source: new ol.source.Vector(),
+          style: new ol.style.Style({
+              image: new ol.style.Icon({
+              anchor: [0.5, 1],
+              src: './img/marker.svg',
+              })
+          })
+      });
 
 
       function map_range (value, in_min, in_max, out_min, out_max) {
@@ -67,8 +78,10 @@
       function initialize() {
         showUpdatedLayer = false;
         showEstatesLayer = false;
+        showPoiLayer = false;
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
+        poiLayer.setVisible(showPoiLayer);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
           units: 'pixels',
@@ -123,6 +136,42 @@
           document.getElementById('coords').innerHTML = `<span>(${xf}, ${yf})</span>`
 
         });
+
+        //Add Points Of Interest Layer
+        map.addLayer(poiLayer);
+        //Add Points Of Interest Markers
+        addPoiMarkers();
+
+        var container = document.getElementById('popup');
+        var content = document.getElementById('popup-content');
+        var closer = document.getElementById('popup-closer');
+
+        var overlay = new ol.Overlay({
+            element: container,
+            autoPan: true,
+            autoPanAnimation: {
+                duration: 250
+            }
+        });
+        map.addOverlay(overlay);
+
+        closer.onclick = function() {
+            overlay.setPosition(undefined);
+            closer.blur();
+            return false;
+        };
+
+        map.on('singleclick', function (event) {
+          if (map.hasFeatureAtPixel(event.pixel) === true) {
+              var coordinate = event.coordinate;
+              console.log(coordinate);
+              content.innerHTML = '<b>I am a Point of interest!</b>';
+              overlay.setPosition(coordinate);
+          } else {
+              overlay.setPosition(undefined);
+              closer.blur();
+          }
+        });
       }
 
       function toggleUpdatedLayer() {
@@ -134,12 +183,60 @@
         showEstatesLayer = !showEstatesLayer;
         estatesLayer.setVisible(showEstatesLayer);
       }
+
+      function togglePointsOfInterest() {
+        showPoiLayer = !showPoiLayer;
+        poiLayer.setVisible(showPoiLayer);
+        // showPoiLayer ? map.addLayer(markers) : map.removeLayer(markers);
+      }
+
+      function formatPoiLocations() {
+        const poiRaw = ["-29,55","-108,-30","144,-34","-10,58","-79,-54","111,-23","25,74","26,9","86,-33","-1,-35","-119,133","-48,-110","23,-123","38,103","-83,125","52,83","10,52","19,-120","-67,-114","22,-118","46,-52","-96,110","-108,129","-119,125","96,-30","-103,-97","-14,76","-116,-49","95,-7","-130,90","-140,130","-107,-94","-118,130","-92,-77","99,86","-17,-122","47,-45","-111,144","-87,68","-135,93","-77,71","-129,108","-100,150","-82,71","88,-14","-4,37","83,70","-115,-67","52,90","37,92","96,-4","-48,103","37,-114","88,77","-25,90","145,60","6,64","75,63","27,-118","-76,58","104,78","-75,108","19,53","-62,128","-28,-63","-147,23","14,53","-101,127","72,-24","-80,-57","-130,15","150,65","61,-149","39,-2","2,55","89,84","-101,135","-27,-46","-54,34","-70,33","68,31","48,-4","-31,3","-108,135","2,-39","-69,-139","-38,103","7,-35","-74,53","-85,60","24,-28","137,-2","66,-1","-135,25","-12,-45","4,-111","98,-67","103,150","54,103","-69,35","120,-12","18,-66","-89,-85","-61,119","144,-7","-51,-106","-148,131","-36,146","144,-37","129,49","-75,73","-30,-108","-25,103","16,83","11,95","-71,82","-103,-144","2,16","-99,-7","100,130","-141,71","-29,91","0,0","142,-146","159,125"];
+        
+        const poi = [];
+        
+        poiRaw.forEach(element => {
+            const locationString = element.split(',');
+            const locationNumber = locationString.map(coord => {
+                return parseInt(coord);
+            })
+            poi.push({
+                lon: locationNumber[0],
+                lat: locationNumber[1],
+            })
+        });
+        
+        return poi;
+      }
+
+      function addPoiMarkers() {
+        const poiLocations = formatPoiLocations();
+        poiLocations.forEach(element => {
+          const lat = element.lat;
+          const lon = element.lon;
+          var marker = new ol.Feature(new ol.geom.Point(decentralandToMapCoords(lon, lat)));
+          poiLayer.getSource().addFeature(marker);
+        });
+      }
+
+      function decentralandToMapCoords(decX, decY) {
+        const mapX = (decX + maxCoords) * 40 + 20;
+        const mapY = (decY + maxCoords) * 40 + 20;
+
+        return [mapX, mapY]
+      }
+
+
     </script>
     <script defer data-domain="genesis.city" src="https://plausible.io/js/plausible.js"></script>
   </head>
 
   <body onload="initialize()">
     <div id="map"></div>
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div>
 
     <!-- Social links -->
     <div class="overlay blur" id="social">
@@ -179,6 +276,13 @@
               <div class="toggle">
                 <input class="toggle-input" onclick="toggleUpdatedLayer()" id="updated-layer-toggle" type="checkbox" name="updated-layer-toggle" value="show-updated">
                 <label class="toggle-label" for="updated-layer-toggle">Toggle</label>
+              </div>
+            </label>
+            <label class="layer-control">
+              <span class="label">Show points of interest</span>
+              <div class="toggle">
+                <input class="toggle-input" onclick="togglePointsOfInterest()" id="poi-layer-toggle" type="checkbox" name="poi-layer-toggle" value="show-poi">
+                <label class="toggle-label" for="poi-layer-toggle">Toggle</label>
               </div>
             </label>
           </div>
@@ -249,7 +353,7 @@
         if (coordsString.length < 2) {
           return
         }
-        const maxCoords = 152
+        // const maxCoords = 152
         var x = parseInt(coordsString[0])
         var y = parseInt(coordsString[1])
         if (x < -maxCoords || x > maxCoords || y < -maxCoords || y > maxCoords) {
