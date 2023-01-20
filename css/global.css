@@ -287,15 +287,18 @@ html, body {
 
 /* POI popup */
 .ol-popup {
+  white-space: nowrap;
+  color: white;
   position: absolute;
-  background-color: white;
+  background-color: rgba(20, 26, 31, 0.8);
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   padding: 15px;
+  padding-right: 30px;
   border-radius: 10px;
-  border: 1px solid #cccccc;
+  border: none;
   bottom: 12px;
   left: -50px;
-  min-width: 280px;
+  cursor: default;
 }
 .ol-popup:after, .ol-popup:before {
   top: 100%;
@@ -307,14 +310,14 @@ html, body {
   pointer-events: none;
 }
 .ol-popup:after {
-  border-top-color: white;
+  border-top-color: rgba(20, 26, 31, 0.8);
   border-width: 10px;
   left: 48px;
   margin-left: -10px;
 }
 .ol-popup:before {
-  border-top-color: #cccccc;
-  border-width: 11px;
+  border-top-color: rgb(191, 255, 0);
+  border-width: 0px;
   left: 48px;
   margin-left: -11px;
 }
@@ -325,5 +328,7 @@ html, body {
   right: 8px;
 }
 .ol-popup-closer:after {
-  content: "✖";
+  content: "╳";
+  font-size: 10px;
+  color: #E2E4E9;
 }

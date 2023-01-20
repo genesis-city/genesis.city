@@ -21,6 +21,7 @@
     <meta name="twitter:image" content="https://genesis.city/img/cover.jpg" />
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
+    <script src="./POIsData.js" ></script>
     <script type="text/javascript">
       var zoom = 6;
       var side = 200
@@ -64,7 +65,7 @@
           source: new ol.source.Vector(),
           style: new ol.style.Style({
               image: new ol.style.Icon({
-              anchor: [0.5, 1],
+              anchor: [0.5, 0.5],
               src: './img/marker.svg',
               })
           })
@@ -95,8 +96,7 @@
         for (var i = 1; i <= 9; ++i) {
           viewResolutions.push(side/Math.pow(2, 1+i))
         }
-        //console.log(resolutions);
-        //console.log(viewResolutions);
+
         var map = new ol.Map({
           target: 'map',
           layers: [
@@ -161,11 +161,15 @@
             return false;
         };
 
+        //Lauch POI popup at click
         map.on('singleclick', function (event) {
+          const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
+            return feature;
+          });
+          console.log(feature.values_.name);
           if (map.hasFeatureAtPixel(event.pixel) === true) {
               var coordinate = event.coordinate;
-              console.log(coordinate);
-              content.innerHTML = '<b>I am a Point of interest!</b>';
+              content.innerHTML = `<b>${feature.values_.name}</b>`;
               overlay.setPosition(coordinate);
           } else {
               overlay.setPosition(undefined);
@@ -187,34 +191,18 @@
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
-        // showPoiLayer ? map.addLayer(markers) : map.removeLayer(markers);
-      }
-
-      function formatPoiLocations() {
-        const poiRaw = ["-29,55","-108,-30","144,-34","-10,58","-79,-54","111,-23","25,74","26,9","86,-33","-1,-35","-119,133","-48,-110","23,-123","38,103","-83,125","52,83","10,52","19,-120","-67,-114","22,-118","46,-52","-96,110","-108,129","-119,125","96,-30","-103,-97","-14,76","-116,-49","95,-7","-130,90","-140,130","-107,-94","-118,130","-92,-77","99,86","-17,-122","47,-45","-111,144","-87,68","-135,93","-77,71","-129,108","-100,150","-82,71","88,-14","-4,37","83,70","-115,-67","52,90","37,92","96,-4","-48,103","37,-114","88,77","-25,90","145,60","6,64","75,63","27,-118","-76,58","104,78","-75,108","19,53","-62,128","-28,-63","-147,23","14,53","-101,127","72,-24","-80,-57","-130,15","150,65","61,-149","39,-2","2,55","89,84","-101,135","-27,-46","-54,34","-70,33","68,31","48,-4","-31,3","-108,135","2,-39","-69,-139","-38,103","7,-35","-74,53","-85,60","24,-28","137,-2","66,-1","-135,25","-12,-45","4,-111","98,-67","103,150","54,103","-69,35","120,-12","18,-66","-89,-85","-61,119","144,-7","-51,-106","-148,131","-36,146","144,-37","129,49","-75,73","-30,-108","-25,103","16,83","11,95","-71,82","-103,-144","2,16","-99,-7","100,130","-141,71","-29,91","0,0","142,-146","159,125"];
-        
-        const poi = [];
-        
-        poiRaw.forEach(element => {
-            const locationString = element.split(',');
-            const locationNumber = locationString.map(coord => {
-                return parseInt(coord);
-            })
-            poi.push({
-                lon: locationNumber[0],
-                lat: locationNumber[1],
-            })
-        });
-        
-        return poi;
       }
 
       function addPoiMarkers() {
-        const poiLocations = formatPoiLocations();
-        poiLocations.forEach(element => {
+        // const POIs = formatPoiLocations(rawPoiLocations);
+        const POIs = poiLocationsNames;
+        POIs.forEach(element => {
           const lat = element.lat;
           const lon = element.lon;
-          var marker = new ol.Feature(new ol.geom.Point(decentralandToMapCoords(lon, lat)));
+          var marker = new ol.Feature({
+            geometry: new ol.geom.Point(decentralandToMapCoords(lon, lat)),
+            name: element.name,
+          });
           poiLayer.getSource().addFeature(marker);
         });
       }
@@ -225,7 +213,6 @@
 
         return [mapX, mapY]
       }
-
 
     </script>
     <script defer data-domain="genesis.city" src="https://plausible.io/js/plausible.js"></script>
@@ -388,4 +375,3 @@
     </script>
   </body>
 </html>
-
