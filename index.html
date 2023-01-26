@@ -21,7 +21,7 @@
     <meta name="twitter:image" content="https://genesis.city/img/cover.jpg" />
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
-
+    <script src="./POIsData.js" ></script>
     <script type="text/javascript">
       var zoom = 6;
       var side = 200
@@ -30,7 +30,9 @@
       var extent = [0, 0, side*tiles, side*tiles];
       var dclExtent = [-150-n/2, -150-n/2, 150+n/2, 150+n/2];
       var origin = [side*0, side * tiles];
+      const maxCoords = 152;
 
+      //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
           url: 'geo.json',
@@ -44,7 +46,7 @@
         },
       });
 
-
+      //Estates layer
       const estatesLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
           url: 'estates.json', 
@@ -58,6 +60,16 @@
         },
       });
 
+      //Points Of Interest layer
+      const poiLayer = new ol.layer.Vector({
+          source: new ol.source.Vector(),
+          style: new ol.style.Style({
+              image: new ol.style.Icon({
+              anchor: [0.5, 0.5],
+              src: './img/marker.svg',
+              })
+          })
+      });
 
 
       function map_range (value, in_min, in_max, out_min, out_max) {
@@ -65,10 +77,13 @@
       } 
 
       function initialize() {
+        const scope = document.querySelector("body");
         showUpdatedLayer = false;
         showEstatesLayer = false;
+        showPoiLayer = false;
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
+        poiLayer.setVisible(showPoiLayer);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
           units: 'pixels',
@@ -82,8 +97,7 @@
         for (var i = 1; i <= 9; ++i) {
           viewResolutions.push(side/Math.pow(2, 1+i))
         }
-        //console.log(resolutions);
-        //console.log(viewResolutions);
+
         var map = new ol.Map({
           target: 'map',
           layers: [
@@ -123,6 +137,55 @@
           document.getElementById('coords').innerHTML = `<span>(${xf}, ${yf})</span>`
 
         });
+
+        //Add Points Of Interest Layer
+        map.addLayer(poiLayer);
+        //Add Points Of Interest Markers
+        addPoiMarkers();
+
+        var container = document.getElementById('popup');
+        var content = document.getElementById('popup-content');
+        var closer = document.getElementById('popup-closer');
+
+        var overlay = new ol.Overlay({
+            element: container,
+            autoPan: true,
+            autoPanAnimation: {
+                duration: 250
+            }
+        });
+        map.addOverlay(overlay);
+
+        closer.onclick = function() {
+            overlay.setPosition(undefined);
+            closer.blur();
+            return false;
+        };
+
+        //Lauch POI popup at click
+        map.on('singleclick', function (event) {
+          const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
+            return feature;
+          });
+          if (map.hasFeatureAtPixel(event.pixel) === true) {
+              var coordinate = event.coordinate;
+              content.innerHTML = `<b>${feature.values_.name}</b>`;
+              overlay.setPosition(coordinate);
+          } else {
+              overlay.setPosition(undefined);
+              closer.blur();
+          }
+        });
+        //Cursor pointer on hover at feature
+        map.on('pointermove', function (event) {
+          if (!event.dragging) {
+            map.getTargetElement().style.cursor = map.hasFeatureAtPixel(map.getEventPixel(event.originalEvent)) ? 'pointer' : '';
+          }
+        });
+        //Close POI popup on click outside
+        scope.addEventListener("click", (e) => {
+          overlay.setPosition(undefined);
+        });
       }
 
       function toggleUpdatedLayer() {
@@ -134,12 +197,43 @@
         showEstatesLayer = !showEstatesLayer;
         estatesLayer.setVisible(showEstatesLayer);
       }
+
+      function togglePointsOfInterest() {
+        showPoiLayer = !showPoiLayer;
+        poiLayer.setVisible(showPoiLayer);
+      }
+
+      function addPoiMarkers() {
+        // const POIs = formatPoiLocations(rawPoiLocations);
+        const POIs = poiLocationsNames;
+        POIs.forEach(element => {
+          const lat = element.lat;
+          const lon = element.lon;
+          var marker = new ol.Feature({
+            geometry: new ol.geom.Point(decentralandToMapCoords(lon, lat)),
+            name: element.name,
+          });
+          poiLayer.getSource().addFeature(marker);
+        });
+      }
+
+      function decentralandToMapCoords(decX, decY) {
+        const mapX = (decX + maxCoords) * 40 + 20;
+        const mapY = (decY + maxCoords) * 40 + 20;
+
+        return [mapX, mapY]
+      }
+
     </script>
     <script defer data-domain="genesis.city" src="https://plausible.io/js/plausible.js"></script>
   </head>
 
   <body onload="initialize()">
     <div id="map"></div>
+    <div id="popup" class="ol-popup">
+        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+        <div id="popup-content"></div>
+    </div>
 
     <!-- Social links -->
     <div class="overlay blur" id="social">
@@ -179,6 +273,13 @@
               <div class="toggle">
                 <input class="toggle-input" onclick="toggleUpdatedLayer()" id="updated-layer-toggle" type="checkbox" name="updated-layer-toggle" value="show-updated">
                 <label class="toggle-label" for="updated-layer-toggle">Toggle</label>
+              </div>
+            </label>
+            <label class="layer-control">
+              <span class="label">Show points of interest</span>
+              <div class="toggle">
+                <input class="toggle-input" onclick="togglePointsOfInterest()" id="poi-layer-toggle" type="checkbox" name="poi-layer-toggle" value="show-poi">
+                <label class="toggle-label" for="poi-layer-toggle">Toggle</label>
               </div>
             </label>
           </div>
@@ -249,7 +350,7 @@
         if (coordsString.length < 2) {
           return
         }
-        const maxCoords = 152
+        // const maxCoords = 152
         var x = parseInt(coordsString[0])
         var y = parseInt(coordsString[1])
         if (x < -maxCoords || x > maxCoords || y < -maxCoords || y > maxCoords) {
@@ -284,4 +385,3 @@
     </script>
   </body>
 </html>
-
