@@ -30,7 +30,7 @@
       var extent = [0, 0, side*tiles, side*tiles];
       var dclExtent = [-150-n/2, -150-n/2, 150+n/2, 150+n/2];
       var origin = [side*0, side * tiles];
-      const maxCoords = 152
+      const maxCoords = 152;
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -77,6 +77,7 @@
       } 
 
       function initialize() {
+        const scope = document.querySelector("body");
         showUpdatedLayer = false;
         showEstatesLayer = false;
         showPoiLayer = false;
@@ -166,7 +167,6 @@
           const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
             return feature;
           });
-          console.log(feature.values_.name);
           if (map.hasFeatureAtPixel(event.pixel) === true) {
               var coordinate = event.coordinate;
               content.innerHTML = `<b>${feature.values_.name}</b>`;
@@ -175,6 +175,16 @@
               overlay.setPosition(undefined);
               closer.blur();
           }
+        });
+        //Cursor pointer on hover at feature
+        map.on('pointermove', function (event) {
+          if (!event.dragging) {
+            map.getTargetElement().style.cursor = map.hasFeatureAtPixel(map.getEventPixel(event.originalEvent)) ? 'pointer' : '';
+          }
+        });
+        //Close POI popup on click outside
+        scope.addEventListener("click", (e) => {
+          overlay.setPosition(undefined);
         });
       }
 
