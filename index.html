@@ -163,7 +163,7 @@
         };
 
         //Lauch POI popup at click
-        map.on('singleclick', function (event) {
+        map.on('pointermove', function (event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
             return feature;
           });
@@ -179,7 +179,7 @@
         //Cursor pointer on hover at feature
         map.on('pointermove', function (event) {
           if (!event.dragging) {
-            map.getTargetElement().style.cursor = map.hasFeatureAtPixel(map.getEventPixel(event.originalEvent)) ? 'pointer' : '';
+            map.getTargetElement().style.cursor = map.hasFeatureAtPixel(map.getEventPixel(event.originalEvent)) ? 'default' : '';
           }
         });
         //Close POI popup on click outside
