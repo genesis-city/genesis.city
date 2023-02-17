@@ -164,16 +164,14 @@
 
         //Lauch POI popup at hover
         map.on('pointermove', function (event) {
-          const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
-            return feature;
-          });
+          const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
           if (map.hasFeatureAtPixel(event.pixel) === true) {
-              var coordinate = event.coordinate;
-              content.innerHTML = `<b>${feature.values_.name}</b>`;
-              overlay.setPosition(coordinate);
+            const coordinate = feature.values_.geometry.flatCoordinates;
+            content.innerHTML = `<b>${feature.values_.name}</b>`;
+            overlay.setPosition(coordinate);
           } else {
-              overlay.setPosition(undefined);
-              closer.blur();
+            overlay.setPosition(undefined);
+            closer.blur();
           }
         });
       }
