@@ -162,7 +162,7 @@
             return false;
         };
 
-        //Lauch POI popup at click
+        //Lauch POI popup at hover
         map.on('pointermove', function (event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
             return feature;
@@ -175,16 +175,6 @@
               overlay.setPosition(undefined);
               closer.blur();
           }
-        });
-        //Cursor pointer on hover at feature
-        map.on('pointermove', function (event) {
-          if (!event.dragging) {
-            map.getTargetElement().style.cursor = map.hasFeatureAtPixel(map.getEventPixel(event.originalEvent)) ? 'default' : '';
-          }
-        });
-        //Close POI popup on click outside
-        scope.addEventListener("click", (e) => {
-          overlay.setPosition(undefined);
         });
       }
 
