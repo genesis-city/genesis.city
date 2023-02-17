@@ -299,6 +299,8 @@ html, body {
   bottom: 12px;
   left: -50px;
   cursor: default;
+  margin-bottom: 12px;
+  margin-left: 2px;
 }
 .ol-popup:after, .ol-popup:before {
   top: 100%;
