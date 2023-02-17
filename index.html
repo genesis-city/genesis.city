@@ -145,7 +145,6 @@
 
         var container = document.getElementById('popup');
         var content = document.getElementById('popup-content');
-        var closer = document.getElementById('popup-closer');
 
         var overlay = new ol.Overlay({
             element: container,
@@ -156,12 +155,6 @@
         });
         map.addOverlay(overlay);
 
-        closer.onclick = function() {
-            overlay.setPosition(undefined);
-            closer.blur();
-            return false;
-        };
-
         //Lauch POI popup at hover
         map.on('pointermove', function (event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
@@ -171,7 +164,6 @@
             overlay.setPosition(coordinate);
           } else {
             overlay.setPosition(undefined);
-            closer.blur();
           }
         });
       }
@@ -219,7 +211,6 @@
   <body onload="initialize()">
     <div id="map"></div>
     <div id="popup" class="ol-popup">
-        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
         <div id="popup-content"></div>
     </div>
 
