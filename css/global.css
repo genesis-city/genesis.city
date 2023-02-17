@@ -301,7 +301,38 @@ html, body {
   cursor: default;
   margin-bottom: 12px;
   margin-left: 2px;
+  animation: fadeIn 300ms;
+  -webkit-animation: fadeIn 300ms;
+  -moz-animation: fadeIn 300ms;
+  -o-animation: fadeIn 300ms;
+  -ms-animation: fadeIn 300ms;
 }
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-moz-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-webkit-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-o-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-ms-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 .ol-popup:after, .ol-popup:before {
   top: 100%;
   border: solid transparent;
