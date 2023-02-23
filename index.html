@@ -158,7 +158,7 @@
         //Lauch POI popup at hover
         map.on('pointermove', function (event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-          if (map.hasFeatureAtPixel(event.pixel) === true) {
+          if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
             const coordinate = feature.values_.geometry.flatCoordinates;
             content.innerHTML = `<b>${feature.values_.name}</b>`;
             overlay.setPosition(coordinate);
