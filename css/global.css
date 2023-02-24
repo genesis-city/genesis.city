@@ -293,13 +293,45 @@ html, body {
   background-color: rgba(20, 26, 31, 0.8);
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
   padding: 15px;
-  padding-right: 30px;
   border-radius: 10px;
   border: none;
   bottom: 12px;
   left: -50px;
   cursor: default;
+  margin-bottom: 12px;
+  margin-left: 12px;
+  animation: fadeIn 300ms;
+  -webkit-animation: fadeIn 300ms;
+  -moz-animation: fadeIn 300ms;
+  -o-animation: fadeIn 300ms;
+  -ms-animation: fadeIn 300ms;
 }
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-moz-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-webkit-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-o-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-ms-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 .ol-popup:after, .ol-popup:before {
   top: 100%;
   border: solid transparent;
@@ -312,23 +344,6 @@ html, body {
 .ol-popup:after {
   border-top-color: rgba(20, 26, 31, 0.8);
   border-width: 10px;
-  left: 48px;
+  left: 38px;
   margin-left: -10px;
-}
-.ol-popup:before {
-  border-top-color: rgb(191, 255, 0);
-  border-width: 0px;
-  left: 48px;
-  margin-left: -11px;
-}
-.ol-popup-closer {
-  text-decoration: none;
-  position: absolute;
-  top: 2px;
-  right: 8px;
-}
-.ol-popup-closer:after {
-  content: "╳";
-  font-size: 10px;
-  color: #E2E4E9;
 }

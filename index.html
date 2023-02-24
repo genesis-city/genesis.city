@@ -145,7 +145,6 @@
 
         var container = document.getElementById('popup');
         var content = document.getElementById('popup-content');
-        var closer = document.getElementById('popup-closer');
 
         var overlay = new ol.Overlay({
             element: container,
@@ -156,35 +155,16 @@
         });
         map.addOverlay(overlay);
 
-        closer.onclick = function() {
-            overlay.setPosition(undefined);
-            closer.blur();
-            return false;
-        };
-
-        //Lauch POI popup at click
-        map.on('singleclick', function (event) {
-          const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
-            return feature;
-          });
-          if (map.hasFeatureAtPixel(event.pixel) === true) {
-              var coordinate = event.coordinate;
-              content.innerHTML = `<b>${feature.values_.name}</b>`;
-              overlay.setPosition(coordinate);
-          } else {
-              overlay.setPosition(undefined);
-              closer.blur();
-          }
-        });
-        //Cursor pointer on hover at feature
+        //Lauch POI popup at hover
         map.on('pointermove', function (event) {
-          if (!event.dragging) {
-            map.getTargetElement().style.cursor = map.hasFeatureAtPixel(map.getEventPixel(event.originalEvent)) ? 'pointer' : '';
+          const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+          if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
+            const coordinate = feature.values_.geometry.flatCoordinates;
+            content.innerHTML = `<b>${feature.values_.name}</b>`;
+            overlay.setPosition(coordinate);
+          } else {
+            overlay.setPosition(undefined);
           }
-        });
-        //Close POI popup on click outside
-        scope.addEventListener("click", (e) => {
-          overlay.setPosition(undefined);
         });
       }
 
@@ -231,7 +211,6 @@
   <body onload="initialize()">
     <div id="map"></div>
     <div id="popup" class="ol-popup">
-        <a href="#" id="popup-closer" class="ol-popup-closer"></a>
         <div id="popup-content"></div>
     </div>
 
