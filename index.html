@@ -137,6 +137,16 @@
 
         });
 
+        //Show zoom and coords as hash URL in address bar
+        map.on('moveend', function(event) {
+          const zoom = Math.round(map.getView().getZoom());
+          const OLcenter = map.getView().getCenter();
+          const decentralandCenter = mapToDecentralandCoords(OLcenter);
+          const lon = Math.floor(decentralandCenter[0]);
+          const lat = Math.floor(decentralandCenter[1]);
+          window.location.hash = `${zoom}/${lon}/${lat}`
+        });
+
         //Add Points Of Interest Layer
         map.addLayer(poiLayer);
         //Add Points Of Interest Markers
@@ -198,6 +208,13 @@
           })
         })
         .catch(err => console.log(err));
+      }
+
+      function mapToDecentralandCoords(mapCoords) {
+        const decX = (mapCoords[0] - 20) / 40 - maxCoords;
+        const decY = (mapCoords[1] - 20) / 40 - maxCoords;
+
+        return [decX, decY];
       }
 
       function decentralandToMapCoords(decX, decY) {
