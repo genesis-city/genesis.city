@@ -150,6 +150,21 @@
           window.location.hash = `${lon},${lat},${zoom}z`
         });
 
+        //Show share link of parcel at click
+        map.on('singleclick', function(event) {
+          const zoom = Math.round(map.getView().getZoom());
+          let x = (map_range(event.coordinate[0], extent[0], extent[2], dclExtent[0], dclExtent[2]));
+          let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
+          let xf = 1 * Math.floor((x));
+          let yf = 1 * Math.floor((y));
+          const shareLink = window.location.host.split('#')[0] + '/#' + `${xf},${yf}` + `,7z`;
+          document.getElementById('clicked-coords').innerHTML = `${xf}, ${yf}`;
+          const shareLinkInput = document.getElementById('shareLink');
+          shareLinkInput.value = shareLink;
+          navigator.clipboard.writeText(shareLinkInput.value);
+          showLinkBox();
+        });
+
         //Add Points Of Interest Layer
         map.addLayer(poiLayer);
         //Add Points Of Interest Markers
@@ -331,6 +346,24 @@
       <div class="item"></div>
     </div>
 
+    <!-- Parcel link box -->
+    <div class="overlay blur parcel-link-box hide" id="parcel-link-box">
+      <div class="link-location">
+        <p id="clicked-coords"></p>
+        <a onclick="hideLinkBox()"></a>
+      </div>
+      <label for="shareLink">Link to share:</label>
+      <div class="shareLinkContainer">
+        <input type="text" id="shareLink" name="shareLink">
+        <button onclick="copyLink()">COPY LINK</button>
+      </div>
+    </div>
+
+    <!-- Copied Link popup-->
+    <div class="overlay blur copied-link-popup hide" id="copied-link-popup">
+      <p>Copied to clipboard</p>
+    </div>
+
     <script>
       const contextMenu = document.getElementById("context-menu");
       const scope = document.querySelector("body");
@@ -415,6 +448,32 @@
       // Layers Menu - Toggle between hiding and showing the dropdown content
       function toggleMenu() {
         document.getElementById("updates").classList.toggle("show");
+      }
+
+      // Show Parcel Share Link Box.
+      function showLinkBox() {
+        document.getElementById("parcel-link-box").classList.remove("hide");
+      }
+
+      // Hide Parcel Share Link Box.
+      function hideLinkBox() {
+        document.getElementById("parcel-link-box").classList.add("hide");
+      }
+
+      // Copy Link to clipboard & show confiramtion popup
+      function copyLink() {
+        const shareLinkInput = document.getElementById('shareLink');
+        const popup = document.getElementById("copied-link-popup");
+        shareLinkInput.select();
+        navigator.clipboard.writeText(shareLinkInput.value);
+        popup.classList.remove("hide");
+        popup.classList.add("show");
+        setTimeout(() => {
+          popup.classList.remove("show");
+          setTimeout(() => {
+          popup.classList.add("hide");
+          }, 500);
+        }, 1600);
       }
     </script>
   </body>

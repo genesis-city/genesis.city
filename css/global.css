@@ -285,6 +285,126 @@ html, body {
   height: 1.25rem;
 }
 
+/* Parcel link box */
+.parcel-link-box {
+  width: 260px;
+  height: 85px;
+  background: rgba(36, 35, 38, 0.5);
+  text-align: right;
+  font-size: .75rem;
+  bottom: .5rem;
+  left: 50%;
+  transform: translate(-50%);
+  padding: .5rem;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.parcel-link-box div.link-location {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.parcel-link-box a {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  cursor: pointer;
+  background: url(../img/close.svg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 1.25rem;
+  width: 1.25rem;
+  display: block;
+  opacity: .5;
+  justify-self: flex-end;
+}
+
+.parcel-link-box a:hover {
+  opacity: 1;
+}
+
+.parcel-link-box p {
+  margin: 0;
+  align-self: center;
+}
+
+.parcel-link-box label {
+  margin-bottom: 5px;
+}
+
+.shareLinkContainer {
+  width: 100%;
+  display: flex;
+}
+
+.parcel-link-box input {
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  width: 80%;
+}
+
+.parcel-link-box input:focus {
+  outline: none;
+}
+
+ /* {
+  outline: solid red 1px;
+} */
+
+.parcel-link-box button {
+  background-color: transparent;
+  color: #E2E4E9;
+  border: none;
+  border-radius: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+  width: 20%;
+  /* transition: all 300ms; */
+}
+
+.parcel-link-box button:active {
+  /* box-shadow: 0px 15px 25px -5px white; */
+  transform: scale(0.9);
+}
+
+.copied-link-popup {
+  width: 260px;
+  height: 85px;
+  background: rgba(36, 35, 38, 0.5);
+  text-align: right;
+  font-size: .75rem;
+  bottom: .50rem;
+  left: 50%;
+  transform: translate(-50%);
+  padding: .5rem;
+  cursor: default;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 500ms ease-in-out;
+}
+
+.copied-link-popup p {
+  font-size: 1rem;
+}
+
+.copied-link-popup.show {
+  opacity: 1;
+}
+
+.hide {
+  display: none;
+}
+
 /* POI popup */
 .ol-popup {
   white-space: nowrap;
