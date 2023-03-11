@@ -367,6 +367,7 @@
     <script>
       const contextMenu = document.getElementById("context-menu");
       const scope = document.querySelector("body");
+      const parcelLinkBox = document.getElementById("parcel-link-box");
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -452,12 +453,19 @@
 
       // Show Parcel Share Link Box.
       function showLinkBox() {
-        document.getElementById("parcel-link-box").classList.remove("hide");
+        parcelLinkBox.classList.remove("hide");
+        setTimeout(() => {
+          // parcelLinkBox.classList.add("hide");
+          parcelLinkBox.classList.add("show");
+        }, 1);
       }
 
       // Hide Parcel Share Link Box.
       function hideLinkBox() {
-        document.getElementById("parcel-link-box").classList.add("hide");
+        parcelLinkBox.classList.remove("show");
+        setTimeout(() => {
+          parcelLinkBox.classList.add("hide");
+        }, 500);
       }
 
       // Copy Link to clipboard & show confiramtion popup

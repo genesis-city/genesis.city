@@ -5,6 +5,7 @@ html, body {
   height: 100%;
   margin: 0;
   font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", "sans-serif";
+  overflow: hidden;
 }
 
 .overlay {
@@ -288,19 +289,41 @@ html, body {
 /* Parcel link box */
 .parcel-link-box {
   width: 260px;
-  height: 85px;
+  height: 100px;
   background: rgba(36, 35, 38, 0.5);
-  text-align: right;
   font-size: .75rem;
-  bottom: .5rem;
+  bottom: -7rem;
   left: 50%;
   transform: translate(-50%);
   padding: .5rem;
-  cursor: default;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-start;
+  transition: all 300ms ease-in-out;
+}
+
+.parcel-link-box.show {
+  transform: translate(-50%, -7.5rem);
+  animation: bounce 800ms ease-in-out;
+}
+
+@keyframes bounce {
+  0% {
+    bottom: -7rem;
+  }
+  40% {
+    bottom: -6rem;
+  }
+  60% {
+    bottom: -7.5rem;
+  }
+  70% {
+    bottom: -6.8rem;
+  }
+  100% {
+    bottom: -7rem;
+  }
 }
 
 .parcel-link-box div.link-location {
@@ -333,10 +356,11 @@ html, body {
 .parcel-link-box p {
   margin: 0;
   align-self: center;
+  font-size: 1rem;
 }
 
 .parcel-link-box label {
-  margin-bottom: 5px;
+  font-size: 0.9rem;
 }
 
 .shareLinkContainer {
@@ -377,7 +401,7 @@ html, body {
 
 .copied-link-popup {
   width: 260px;
-  height: 85px;
+  height: 100px;
   background: rgba(36, 35, 38, 0.5);
   text-align: right;
   font-size: .75rem;
