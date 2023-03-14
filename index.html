@@ -90,6 +90,15 @@
         });
         var resolutions = [];
         var viewResolutions = [];
+
+        const defaultView = {
+          projection: projection,
+          center: ol.extent.getCenter(extent),
+          resolutions: viewResolutions,
+          zoom: 3,
+          minZoom: 1,
+        }
+
         for (var i = 0; i <= zoom; ++i) {
           resolutions.push(Math.pow(2, zoom-i));
         }
@@ -120,13 +129,7 @@
             vectorLayer,
             estatesLayer
           ],
-          view: new ol.View({
-              projection: projection,
-              center: ol.extent.getCenter(extent),
-              resolutions: viewResolutions,
-              zoom: 3,
-              minZoom: 1,
-            })
+          view: new ol.View(setView()),
         });
         map.on('pointermove', function(event) {
           let x = (map_range(event.coordinate[0], extent[0], extent[2], dclExtent[0], dclExtent[2]));
@@ -135,6 +138,16 @@
           let yf = 1 * Math.floor((y));
           document.getElementById('coords').innerHTML = `<span>(${xf}, ${yf})</span>`
 
+        });
+
+        //Show zoom and coords as hash URL in address bar
+        map.on('moveend', function(event) {
+          const zoom = Math.round(map.getView().getZoom());
+          const OLcenter = map.getView().getCenter();
+          const decentralandCenter = mapToDecentralandCoords(OLcenter);
+          const lon = Math.round(decentralandCenter[0]);
+          const lat = Math.round(decentralandCenter[1]);
+          window.location.hash = `${lon},${lat},${zoom}z`
         });
 
         //Add Points Of Interest Layer
@@ -165,6 +178,32 @@
             overlay.setPosition(undefined);
           }
         });
+
+        //Set default or current view based on URL Hash
+        function setView() {
+          if (validateUrlHash(window.location.hash)) {
+            let currentViewLon = parseInt(window.location.href.split('#')[1].split('z')[0].split(',')[0]);
+            let currentViewLat = parseInt(window.location.href.split('#')[1].split('z')[0].split(',')[1]);
+            let currentViewZoom = window.location.href.split('#')[1].split('z')[0].split(',')[2];
+            if (currentViewZoom < 3) {
+              currentViewZoom = 3
+            } else if (currentViewZoom > 8) {
+              currentViewZoom = 8
+            }
+            let currentViewPosition = decentralandToMapCoords(currentViewLon, currentViewLat);
+
+            const currentView = {
+              projection: projection,
+              center: currentViewPosition,
+              resolutions: viewResolutions,
+              zoom: currentViewZoom,
+              minZoom: 1,
+            }
+            return currentView
+          } else {
+            return defaultView
+          }
+        }
       }
 
       function toggleUpdatedLayer() {
@@ -200,11 +239,24 @@
         .catch(err => console.log(err));
       }
 
+      function mapToDecentralandCoords(mapCoords) {
+        const decX = (mapCoords[0] - 20) / 40 - maxCoords;
+        const decY = (mapCoords[1] - 20) / 40 - maxCoords;
+
+        return [decX, decY];
+      }
+
       function decentralandToMapCoords(decX, decY) {
         const mapX = (decX + maxCoords) * 40 + 20;
         const mapY = (decY + maxCoords) * 40 + 20;
 
         return [mapX, mapY]
+      }
+
+      function validateUrlHash(hash) {
+        //This regular expression matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'.
+        const regex = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z$/;
+        return regex.test(hash);
       }
 
     </script>
