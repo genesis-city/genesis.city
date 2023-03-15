@@ -368,6 +368,8 @@
       const contextMenu = document.getElementById("context-menu");
       const scope = document.querySelector("body");
       const parcelLinkBox = document.getElementById("parcel-link-box");
+      const socialLinks = document.getElementById('social');
+      const updateDate = document.getElementById('date');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -453,6 +455,10 @@
 
       // Show Parcel Share Link Box.
       function showLinkBox() {
+        if(window.innerWidth < 630) {
+          socialLinks.classList.add('hide');
+          updateDate.classList.add('hide');
+        }
         parcelLinkBox.classList.remove("hide");
         setTimeout(() => {
           // parcelLinkBox.classList.add("hide");
@@ -466,13 +472,15 @@
         setTimeout(() => {
           parcelLinkBox.classList.add("hide");
         }, 500);
+        socialLinks.classList.remove('hide');
+        updateDate.classList.remove('hide');
       }
 
       // Copy Link to clipboard & show confiramtion popup
       function copyLink() {
         const shareLinkInput = document.getElementById('shareLink');
         const popup = document.getElementById("copied-link-popup");
-        shareLinkInput.select();
+        // shareLinkInput.select();
         navigator.clipboard.writeText(shareLinkInput.value)
         .then(() => {
           console.log("successfully copied");
