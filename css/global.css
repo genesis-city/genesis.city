@@ -262,6 +262,9 @@ html, body {
 #date.hide {
   transform: translateY(7.5rem);
 }
+#date.remove {
+  display: none;
+}
 
 /* Social links */
 #social {
@@ -274,6 +277,9 @@ html, body {
 }
 #social.hide {
   transform: translateY(7.5rem);
+}
+#social.remove {
+  display: none;
 }
 #social a {
   color: white;

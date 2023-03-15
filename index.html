@@ -458,6 +458,10 @@
         if(window.innerWidth < 630) {
           socialLinks.classList.add('hide');
           updateDate.classList.add('hide');
+          setTimeout(() => {
+          socialLinks.classList.add('remove');
+          updateDate.classList.add('remove');
+        }, 300);
         }
         parcelLinkBox.classList.remove("hide");
         setTimeout(() => {
@@ -472,8 +476,12 @@
         setTimeout(() => {
           parcelLinkBox.classList.add("hide");
         }, 500);
-        socialLinks.classList.remove('hide');
-        updateDate.classList.remove('hide');
+        socialLinks.classList.remove('remove');
+        updateDate.classList.remove('remove');
+        setTimeout(() => {
+          socialLinks.classList.remove('hide');
+          updateDate.classList.remove('hide');
+        }, 10);
       }
 
       // Copy Link to clipboard & show confiramtion popup
