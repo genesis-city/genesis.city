@@ -147,7 +147,8 @@
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
-          window.location.hash = `${lon},${lat},${zoom}z`
+          window.location.hash = `${lon},${lat},${zoom}z`;
+          hideLinkBox();
         });
 
         //Show share link of parcel at click
