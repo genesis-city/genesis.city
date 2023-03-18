@@ -456,18 +456,29 @@
       // Show Parcel Share Link Box.
       function showLinkBox() {
         // hide social links & last updated date on mobile
-        if(window.innerWidth < 630) {
-          socialLinks.classList.add('hide');
-          updateDate.classList.add('hide');
+        if (!parcelLinkBox.classList.contains('show')) {
+          if(window.innerWidth < 630) {
+            socialLinks.classList.add('hide');
+            updateDate.classList.add('hide');
+            setTimeout(() => {
+            socialLinks.classList.add('remove');
+            updateDate.classList.add('remove');
+          }, 300);
+          }
+          parcelLinkBox.classList.remove("hide");
           setTimeout(() => {
-          socialLinks.classList.add('remove');
-          updateDate.classList.add('remove');
-        }, 300);
+            parcelLinkBox.classList.add("show");
+            parcelLinkBox.classList.add("bounce");
+            setTimeout(() => {
+              parcelLinkBox.classList.remove("bounce");
+            }, 800);
+          }, 1);
+        } else {
+          parcelLinkBox.classList.add("bounce");
+          setTimeout(() => {
+            parcelLinkBox.classList.remove("bounce");
+          }, 800);
         }
-        parcelLinkBox.classList.remove("hide");
-        setTimeout(() => {
-          parcelLinkBox.classList.add("show");
-        }, 1);
       }
 
       // Hide Parcel Share Link Box.

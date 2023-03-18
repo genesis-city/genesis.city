@@ -319,10 +319,13 @@ html, body {
 
 .parcel-link-box.show {
   transform: translate(-50%, -7.5rem);
-  animation: bounce 800ms ease-in-out;
 }
 
-@keyframes bounce {
+.parcel-link-box.bounce {
+  animation: appearBounce 800ms ease-in-out;
+}
+
+@keyframes appearBounce {
   0% {
     bottom: -7rem;
   }
