@@ -158,11 +158,13 @@
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
           let xf = 1 * Math.floor((x));
           let yf = 1 * Math.floor((y));
-          const shareLink = window.location.host.split('#')[0] + '/#' + `${xf},${yf}` + `,7z`;
-          document.getElementById('clicked-coords').innerHTML = `( ${xf}, ${yf} )`;
-          const shareLinkInput = document.getElementById('shareLink');
-          shareLinkInput.value = shareLink;
-          showLinkBox();
+          if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
+            const shareLink = window.location.host.split('#')[0] + '/#' + `${xf},${yf}` + `,7z`;
+            document.getElementById('clicked-coords').innerHTML = `( ${xf}, ${yf} )`;
+            const shareLinkInput = document.getElementById('shareLink');
+            shareLinkInput.value = shareLink;
+            showLinkBox();
+          }
         });
 
         //Add Points Of Interest Layer
