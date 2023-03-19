@@ -173,7 +173,7 @@
             removeLastPointer();
             // Add pointer at clicked parcel
             var parcelPointer = new ol.Feature({
-              geometry: new ol.geom.Point(event.coordinate),
+              geometry: new ol.geom.Point(decentralandToMapCoords(xf, yf)),
             });
             parcelPointerLayer.getSource().addFeature(parcelPointer);
             lastParcelPointer = parcelPointer;
