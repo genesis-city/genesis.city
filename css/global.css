@@ -303,7 +303,7 @@ html, body {
 /* Parcel link box */
 .parcel-link-box {
   width: 260px;
-  height: 100px;
+  height: 90px;
   background: rgba(36, 35, 38, 0.5);
   font-size: .75rem;
   bottom: -7rem;
@@ -376,10 +376,6 @@ html, body {
   font-size: 1rem;
 }
 
-.parcel-link-box label {
-  font-size: 0.9rem;
-}
-
 .shareLinkContainer {
   width: 100%;
   display: flex;
@@ -414,7 +410,7 @@ html, body {
 
 .copied-link-popup {
   width: 260px;
-  height: 100px;
+  height: 90px;
   background: rgba(36, 35, 38, 0.5);
   text-align: right;
   font-size: .75rem;
