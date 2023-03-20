@@ -30,6 +30,7 @@
       var dclExtent = [-150-n/2, -150-n/2, 150+n/2, 150+n/2];
       var origin = [side*0, side * tiles];
       const maxCoords = 152;
+      let lastParcelPointer;
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -70,6 +71,16 @@
           })
       });
 
+      // Parcel pointer layer
+      const parcelPointerLayer = new ol.layer.Vector({
+        source: new ol.source.Vector(),
+        style: new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 1],
+            src: './img/parcelPointer.svg',
+          }),
+        }),
+      });
 
       function map_range (value, in_min, in_max, out_min, out_max) {
         return (value+side/n/2 - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -147,13 +158,42 @@
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
-          window.location.hash = `${lon},${lat},${zoom}z`
+          window.location.hash = `${lon},${lat},${zoom}z`;
+          hideLinkBox();
+        });
+
+        //Show share link of parcel at click
+        map.on('singleclick', function(event) {
+          const zoom = Math.round(map.getView().getZoom());
+          let x = (map_range(event.coordinate[0], extent[0], extent[2], dclExtent[0], dclExtent[2]));
+          let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
+          let xf = 1 * Math.floor((x));
+          let yf = 1 * Math.floor((y));
+          if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
+            removeLastPointer();
+            // Add pointer at clicked parcel
+            var parcelPointer = new ol.Feature({
+              geometry: new ol.geom.Point(decentralandToMapCoords(xf, yf)),
+            });
+            parcelPointerLayer.getSource().addFeature(parcelPointer);
+            lastParcelPointer = parcelPointer;
+
+            // Generate parcel permalink popup
+            const shareLink = window.location.host.split('#')[0] + '/#' + `${xf},${yf}` + `,7z`;
+            document.getElementById('clicked-coords').innerHTML = `( ${xf}, ${yf} )`;
+            const shareLinkInput = document.getElementById('shareLink');
+            shareLinkInput.value = shareLink;
+            showLinkBox();
+          }
         });
 
         //Add Points Of Interest Layer
         map.addLayer(poiLayer);
         //Add Points Of Interest Markers
         addPoiMarkers();
+
+        // Add Parcel Pointer Marker Layer
+        map.addLayer(parcelPointerLayer);
 
         var container = document.getElementById('popup');
         var content = document.getElementById('popup-content');
@@ -254,9 +294,13 @@
       }
 
       function validateUrlHash(hash) {
-        //This regular expression matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'.
+        //This regular expression matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'. E.g. '#14,91,7z'
         const regex = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z$/;
         return regex.test(hash);
+      }
+
+      function removeLastPointer() {
+        parcelPointerLayer.getSource().removeFeature(lastParcelPointer);
       }
 
     </script>
@@ -331,9 +375,29 @@
       <div class="item"></div>
     </div>
 
+    <!-- Parcel link box -->
+    <div class="overlay blur parcel-link-box hide" id="parcel-link-box">
+      <div class="link-location">
+        <p id="clicked-coords"></p>
+        <a onclick="hideLinkBox()"></a>
+      </div>
+      <div class="shareLinkContainer">
+        <input type="text" id="shareLink" name="shareLink" readonly onclick="select()">
+        <button onclick="copyLink()">Copy Link</button>
+      </div>
+    </div>
+
+    <!-- Copied Link popup-->
+    <div class="overlay blur copied-link-popup hide" id="copied-link-popup">
+      <p>Copied to clipboard</p>
+    </div>
+
     <script>
       const contextMenu = document.getElementById("context-menu");
       const scope = document.querySelector("body");
+      const parcelLinkBox = document.getElementById("parcel-link-box");
+      const socialLinks = document.getElementById('social');
+      const updateDate = document.getElementById('date');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -384,7 +448,7 @@
         if (coordsString.length < 2) {
           return
         }
-        // const maxCoords = 152
+
         var x = parseInt(coordsString[0])
         var y = parseInt(coordsString[1])
         if (x < -maxCoords || x > maxCoords || y < -maxCoords || y > maxCoords) {
@@ -415,6 +479,70 @@
       // Layers Menu - Toggle between hiding and showing the dropdown content
       function toggleMenu() {
         document.getElementById("updates").classList.toggle("show");
+      }
+
+      // Show Parcel Share Link Box.
+      function showLinkBox() {
+        // hide social links & last updated date on mobile
+        if (!parcelLinkBox.classList.contains('show')) {
+          if(window.innerWidth < 630) {
+            socialLinks.classList.add('hide');
+            updateDate.classList.add('hide');
+            setTimeout(() => {
+            socialLinks.classList.add('remove');
+            updateDate.classList.add('remove');
+          }, 300);
+          }
+          parcelLinkBox.classList.remove("hide");
+          setTimeout(() => {
+            parcelLinkBox.classList.add("show");
+            parcelLinkBox.classList.add("bounce");
+            setTimeout(() => {
+              parcelLinkBox.classList.remove("bounce");
+            }, 800);
+          }, 1);
+        } else {
+          parcelLinkBox.classList.add("bounce");
+          setTimeout(() => {
+            parcelLinkBox.classList.remove("bounce");
+          }, 800);
+        }
+      }
+
+      // Hide Parcel Share Link Box.
+      function hideLinkBox() {
+        removeLastPointer();
+        parcelLinkBox.classList.remove("show");
+        setTimeout(() => {
+          parcelLinkBox.classList.add("hide");
+        }, 500);
+        socialLinks.classList.remove('remove');
+        updateDate.classList.remove('remove');
+        setTimeout(() => {
+          socialLinks.classList.remove('hide');
+          updateDate.classList.remove('hide');
+        }, 10);
+      }
+
+      // Copy Link to clipboard & show confiramtion popup
+      function copyLink() {
+        const shareLinkInput = document.getElementById('shareLink');
+        const popup = document.getElementById("copied-link-popup");
+        navigator.clipboard.writeText(shareLinkInput.value)
+        .then(() => {
+          console.log("successfully copied");
+          popup.classList.remove("hide");
+          popup.classList.add("show");
+          setTimeout(() => {
+            popup.classList.remove("show");
+            setTimeout(() => {
+            popup.classList.add("hide");
+            }, 500);
+          }, 1600);
+        })
+        .catch(() => {
+          console.log("unable to copy link");
+        });
       }
     </script>
   </body>
