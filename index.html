@@ -180,7 +180,6 @@
               // When click on POI icon
               // Add pointer at clicked parcel
               const coordinates = feature.values_.geometry.flatCoordinates;
-              showParcelPointer(coordinates);
               // Generate parcel permalink popup
               const DCLcoords = mapToDecentralandCoords(coordinates)
               const lon = DCLcoords[0];
