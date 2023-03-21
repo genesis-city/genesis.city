@@ -159,31 +159,41 @@
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
           window.location.hash = `${lon},${lat},${zoom}z`;
-          hideLinkBox();
+          if(window.innerWidth > 630) {
+            hidePermalinkPopup();
+          }
         });
 
         //Show share link of parcel at click
         map.on('singleclick', function(event) {
-          const zoom = Math.round(map.getView().getZoom());
+          // const zoom = Math.round(map.getView().getZoom());
           let x = (map_range(event.coordinate[0], extent[0], extent[2], dclExtent[0], dclExtent[2]));
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
           let xf = 1 * Math.floor((x));
           let yf = 1 * Math.floor((y));
+
+          // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
-            // Add pointer at clicked parcel
-            var parcelPointer = new ol.Feature({
-              geometry: new ol.geom.Point(decentralandToMapCoords(xf, yf)),
-            });
-            parcelPointerLayer.getSource().addFeature(parcelPointer);
-            lastParcelPointer = parcelPointer;
-
-            // Generate parcel permalink popup
-            const shareLink = window.location.host.split('#')[0] + '/#' + `${xf},${yf}` + `,7z`;
-            document.getElementById('clicked-coords').innerHTML = `( ${xf}, ${yf} )`;
-            const shareLinkInput = document.getElementById('shareLink');
-            shareLinkInput.value = shareLink;
-            showLinkBox();
+            const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+            if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
+              // When click on POI icon
+              // Add pointer at clicked parcel
+              const coordinates = feature.values_.geometry.flatCoordinates;
+              showParcelPointer(coordinates);
+              // Generate parcel permalink popup
+              const DCLcoords = mapToDecentralandCoords(coordinates)
+              const lon = DCLcoords[0];
+              const lat = DCLcoords[1];
+              createPermalinkPopup(lon, lat);
+              showPermalinkPopup();
+            } else {
+              // Add pointer at clicked parcel
+              showParcelPointer(decentralandToMapCoords(xf, yf));
+              // Generate parcel permalink popup
+              createPermalinkPopup(xf, yf);
+              showPermalinkPopup();
+            }
           }
         });
 
@@ -196,7 +206,7 @@
         map.addLayer(parcelPointerLayer);
 
         var container = document.getElementById('popup');
-        var content = document.getElementById('popup-content');
+        var toolTipcontent = document.getElementById('popup-content');
 
         var overlay = new ol.Overlay({
             element: container,
@@ -207,17 +217,27 @@
         });
         map.addOverlay(overlay);
 
-        //Lauch POI popup at hover
-        map.on('pointermove', function (event) {
+        if(window.innerWidth > 630) {
+          //Lauch POI tool tip at hover
+          map.on('pointermove', function (event) {
+            showPOItoolTip(event);
+          });
+        } else {
+          map.on('singleclick', function (event) {
+            showPOItoolTip(event);
+          });
+        }
+
+        function showPOItoolTip(event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
           if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
             const coordinate = feature.values_.geometry.flatCoordinates;
-            content.innerHTML = `<b>${feature.values_.name}</b>`;
+            toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
             overlay.setPosition(coordinate);
           } else {
             overlay.setPosition(undefined);
           }
-        });
+        }
 
         //Set default or current view based on URL Hash
         function setView() {
@@ -297,6 +317,14 @@
         //This regular expression matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'. E.g. '#14,91,7z'
         const regex = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z$/;
         return regex.test(hash);
+      }
+
+      function showParcelPointer(coords) {
+        var parcelPointer = new ol.Feature({
+          geometry: new ol.geom.Point(coords),
+        });
+        parcelPointerLayer.getSource().addFeature(parcelPointer);
+        lastParcelPointer = parcelPointer;
       }
 
       function removeLastPointer() {
@@ -379,7 +407,7 @@
     <div class="overlay blur parcel-link-box hide" id="parcel-link-box">
       <div class="link-location">
         <p id="clicked-coords"></p>
-        <a onclick="hideLinkBox()"></a>
+        <a onclick="hidePermalinkPopup()"></a>
       </div>
       <div class="shareLinkContainer">
         <input type="text" id="shareLink" name="shareLink" readonly onclick="select()">
@@ -481,8 +509,16 @@
         document.getElementById("updates").classList.toggle("show");
       }
 
-      // Show Parcel Share Link Box.
-      function showLinkBox() {
+      // Create Parcel Permalink Popup
+      function createPermalinkPopup(lon, lat) {
+        const shareLink = window.location.host.split('#')[0] + '/#' + `${lon},${lat}` + `,7z`;
+        document.getElementById('clicked-coords').innerHTML = `( ${lon}, ${lat} )`;
+        const shareLinkInput = document.getElementById('shareLink');
+        shareLinkInput.value = shareLink;
+      }
+
+      // Show Parcel Permalink Popup
+      function showPermalinkPopup() {
         // hide social links & last updated date on mobile
         if (!parcelLinkBox.classList.contains('show')) {
           if(window.innerWidth < 630) {
@@ -509,8 +545,8 @@
         }
       }
 
-      // Hide Parcel Share Link Box.
-      function hideLinkBox() {
+      // Hide Parcel Permalink Popup
+      function hidePermalinkPopup() {
         removeLastPointer();
         parcelLinkBox.classList.remove("show");
         setTimeout(() => {
