@@ -31,6 +31,7 @@
       var origin = [side*0, side * tiles];
       const maxCoords = 152;
       let lastParcelPointer;
+      var POItoolTipOverlay;
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -204,15 +205,16 @@
         // Add Parcel Pointer Marker Layer
         map.addLayer(parcelPointerLayer);
 
+        // Create POI Tool Tip
         var container = document.getElementById('toolTip');
         var toolTipcontent = document.getElementById('toolTip-content');
 
-        var POItoolTipOverlay = new ol.Overlay({
-            element: container,
-            autoPan: true,
-            autoPanAnimation: {
-                duration: 250
-            }
+        POItoolTipOverlay = new ol.Overlay({
+          element: container,
+          autoPan: true,
+          autoPanAnimation: {
+              duration: 250
+          }
         });
         map.addOverlay(POItoolTipOverlay);
 
@@ -279,6 +281,9 @@
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
+        if (!showPoiLayer) {
+          POItoolTipOverlay.setPosition(undefined);
+        }
       }
 
       function addPoiMarkers() {
