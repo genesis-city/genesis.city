@@ -204,17 +204,17 @@
         // Add Parcel Pointer Marker Layer
         map.addLayer(parcelPointerLayer);
 
-        var container = document.getElementById('popup');
-        var toolTipcontent = document.getElementById('popup-content');
+        var container = document.getElementById('toolTip');
+        var toolTipcontent = document.getElementById('toolTip-content');
 
-        var overlay = new ol.Overlay({
+        var POItoolTipOverlay = new ol.Overlay({
             element: container,
             autoPan: true,
             autoPanAnimation: {
                 duration: 250
             }
         });
-        map.addOverlay(overlay);
+        map.addOverlay(POItoolTipOverlay);
 
         if(window.innerWidth > 630) {
           //Lauch POI tool tip at hover
@@ -222,6 +222,7 @@
             showPOItoolTip(event);
           });
         } else {
+          //Lauch POI tool tip at click
           map.on('singleclick', function (event) {
             showPOItoolTip(event);
           });
@@ -232,9 +233,9 @@
           if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
             const coordinate = feature.values_.geometry.flatCoordinates;
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-            overlay.setPosition(coordinate);
+            POItoolTipOverlay.setPosition(coordinate);
           } else {
-            overlay.setPosition(undefined);
+            POItoolTipOverlay.setPosition(undefined);
           }
         }
 
@@ -336,8 +337,8 @@
 
   <body onload="initialize()">
     <div id="map"></div>
-    <div id="popup" class="ol-popup">
-        <div id="popup-content"></div>
+    <div id="toolTip" class="ol-popup">
+        <div id="toolTip-content"></div>
     </div>
 
     <!-- Social links -->
