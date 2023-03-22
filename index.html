@@ -32,6 +32,7 @@
       const maxCoords = 152;
       let lastParcelPointer;
       var POItoolTipOverlay;
+      let POIpermalinkPopupExists;
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -176,6 +177,7 @@
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
+            POItoolTipOverlay.setPosition(undefined);
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
             if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
               // When click on POI icon
@@ -187,6 +189,10 @@
               const lat = DCLcoords[1];
               createPermalinkPopup(lon, lat);
               showPermalinkPopup();
+              POIpermalinkPopupExists = true;
+              // Maintain POI Tool Tip visible on click
+              toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
+              POItoolTipOverlay.setPosition(coordinates);
             } else {
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
@@ -237,7 +243,7 @@
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
             POItoolTipOverlay.setPosition(coordinate);
           } else {
-            POItoolTipOverlay.setPosition(undefined);
+            !POIpermalinkPopupExists && POItoolTipOverlay.setPosition(undefined);
           }
         }
 
@@ -554,6 +560,8 @@
       // Hide Parcel Permalink Popup
       function hidePermalinkPopup() {
         removeLastPointer();
+        POItoolTipOverlay.setPosition(undefined);
+        POIpermalinkPopupExists = false;
         parcelLinkBox.classList.remove("show");
         setTimeout(() => {
           parcelLinkBox.classList.add("hide");
