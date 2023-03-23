@@ -187,9 +187,7 @@
               const DCLcoords = mapToDecentralandCoords(coordinates)
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
-              createPermalinkPopup(lon, lat);
-              permalinkIcon.classList.add('poi');
-              permalinkIcon.classList.remove('parcel');
+              createPermalinkPopup(lon, lat, 'poi');
               showPermalinkPopup();
               POIpermalinkPopupExists = true;
               // Maintain POI Tool Tip visible on click
@@ -200,7 +198,7 @@
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
               // Generate parcel permalink popup
-              createPermalinkPopup(xf, yf);
+              createPermalinkPopup(xf, yf, 'parcel');
               showPermalinkPopup();
             }
           }
@@ -239,7 +237,7 @@
               const DCLcoords = mapToDecentralandCoords(coordinates)
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
-              createPermalinkPopup(lon, lat);
+              createPermalinkPopup(lon, lat, 'poi');
             } 
           });
         } else {
@@ -345,8 +343,6 @@
       }
 
       function showParcelPointer(coords) {
-        permalinkIcon.classList.remove('poi');
-        permalinkIcon.classList.add('parcel');
         var parcelPointer = new ol.Feature({
           geometry: new ol.geom.Point(coords),
         });
@@ -539,7 +535,15 @@
       }
 
       // Create Parcel Permalink Popup
-      function createPermalinkPopup(lon, lat) {
+      function createPermalinkPopup(lon, lat, type) {
+        if (type === 'parcel') {
+          permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.add('parcel');
+        }
+        if (type === 'poi') {
+          permalinkIcon.classList.remove('parcel');
+          permalinkIcon.classList.add('poi');
+        }
         const shareLink = window.location.host.split('#')[0] + '/#' + `${lon},${lat}` + `,7z`;
         document.getElementById('clicked-coords').innerHTML = `( ${lon}, ${lat} )`;
         const shareLinkInput = document.getElementById('shareLink');
