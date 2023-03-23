@@ -298,7 +298,7 @@
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
-        if (!showPoiLayer) {
+        if (!showPoiLayer && POIpermalinkPopupExists) {
           POItoolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
