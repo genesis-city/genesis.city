@@ -349,6 +349,38 @@ html, body {
   align-items: center;
 }
 
+.parcel-link-box i.parcel {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  margin-right: 0.75rem;
+  cursor: pointer;
+  background: url(../img/parcelPointer.svg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 24px;
+  width: 16.457px;
+  display: block;
+  justify-self: flex-end;
+}
+
+.parcel-link-box i.poi {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  margin-right: 0.75rem;
+  cursor: pointer;
+  background: url(../img/marker.svg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 24px;
+  width: 18px;
+  display: block;
+  justify-self: flex-end;
+}
+
 .parcel-link-box a {
   position: absolute;
   top: 0.3rem;
