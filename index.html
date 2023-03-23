@@ -194,6 +194,7 @@
               toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
               POItoolTipOverlay.setPosition(coordinates);
             } else {
+              POIpermalinkPopupExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
               // Generate parcel permalink popup
@@ -228,6 +229,16 @@
           //Lauch POI tool tip at hover
           map.on('pointermove', function (event) {
             showPOItoolTip(event);
+            // Update permalink popup infomration
+            if (POIpermalinkPopupExists) {
+              const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+              const coordinates = feature.values_.geometry.flatCoordinates;
+              // Generate POI permalink popup
+              const DCLcoords = mapToDecentralandCoords(coordinates)
+              const lon = DCLcoords[0];
+              const lat = DCLcoords[1];
+              createPermalinkPopup(lon, lat);
+            } 
           });
         } else {
           //Lauch POI tool tip at click
