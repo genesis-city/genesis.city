@@ -188,6 +188,8 @@
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
               createPermalinkPopup(lon, lat);
+              permalinkIcon.classList.add('poi');
+              permalinkIcon.classList.remove('parcel');
               showPermalinkPopup();
               POIpermalinkPopupExists = true;
               // Maintain POI Tool Tip visible on click
@@ -343,6 +345,8 @@
       }
 
       function showParcelPointer(coords) {
+        permalinkIcon.classList.remove('poi');
+        permalinkIcon.classList.add('parcel');
         var parcelPointer = new ol.Feature({
           geometry: new ol.geom.Point(coords),
         });
@@ -429,6 +433,7 @@
     <!-- Parcel link box -->
     <div class="overlay blur parcel-link-box hide" id="parcel-link-box">
       <div class="link-location">
+        <i id="permalink-icon"></i>
         <p id="clicked-coords"></p>
         <a onclick="hidePermalinkPopup()"></a>
       </div>
@@ -449,6 +454,7 @@
       const parcelLinkBox = document.getElementById("parcel-link-box");
       const socialLinks = document.getElementById('social');
       const updateDate = document.getElementById('date');
+      const permalinkIcon = document.getElementById('permalink-icon');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
