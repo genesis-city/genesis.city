@@ -547,7 +547,8 @@
         const shareLink = window.location.host.split('#')[0] + '/#' + `${lon},${lat}` + `,7z`;
         document.getElementById('clicked-coords').innerHTML = `( ${lon}, ${lat} )`;
         const shareLinkInput = document.getElementById('shareLink');
-        shareLinkInput.value = shareLink;
+        const protocol = window.location.protocol + '//'
+        shareLinkInput.value = protocol + shareLink;
       }
 
       // Show Parcel Permalink Popup
