@@ -31,6 +31,8 @@
       var origin = [side*0, side * tiles];
       const maxCoords = 152;
       let lastParcelPointer;
+      var POItoolTipOverlay;
+      let POIpermalinkPopupExists;
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -175,6 +177,7 @@
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
+            POItoolTipOverlay.setPosition(undefined);
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
             if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
               // When click on POI icon
@@ -184,13 +187,18 @@
               const DCLcoords = mapToDecentralandCoords(coordinates)
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
-              createPermalinkPopup(lon, lat);
+              createPermalinkPopup(lon, lat, 'poi');
               showPermalinkPopup();
+              POIpermalinkPopupExists = true;
+              // Maintain POI Tool Tip visible on click
+              toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
+              POItoolTipOverlay.setPosition(coordinates);
             } else {
+              POIpermalinkPopupExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
               // Generate parcel permalink popup
-              createPermalinkPopup(xf, yf);
+              createPermalinkPopup(xf, yf, 'parcel');
               showPermalinkPopup();
             }
           }
@@ -204,24 +212,36 @@
         // Add Parcel Pointer Marker Layer
         map.addLayer(parcelPointerLayer);
 
-        var container = document.getElementById('popup');
-        var toolTipcontent = document.getElementById('popup-content');
+        // Create POI Tool Tip
+        var container = document.getElementById('toolTip');
+        var toolTipcontent = document.getElementById('toolTip-content');
 
-        var overlay = new ol.Overlay({
-            element: container,
-            autoPan: true,
-            autoPanAnimation: {
-                duration: 250
-            }
+        POItoolTipOverlay = new ol.Overlay({
+          element: container,
+          autoPan: true,
+          autoPanAnimation: {
+              duration: 250
+          }
         });
-        map.addOverlay(overlay);
+        map.addOverlay(POItoolTipOverlay);
 
         if(window.innerWidth > 630) {
           //Lauch POI tool tip at hover
           map.on('pointermove', function (event) {
             showPOItoolTip(event);
+            // Update permalink popup infomration
+            if (POIpermalinkPopupExists) {
+              const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+              const coordinates = feature.values_.geometry.flatCoordinates;
+              // Generate POI permalink popup
+              const DCLcoords = mapToDecentralandCoords(coordinates)
+              const lon = DCLcoords[0];
+              const lat = DCLcoords[1];
+              createPermalinkPopup(lon, lat, 'poi');
+            } 
           });
         } else {
+          //Lauch POI tool tip at click
           map.on('singleclick', function (event) {
             showPOItoolTip(event);
           });
@@ -232,9 +252,9 @@
           if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
             const coordinate = feature.values_.geometry.flatCoordinates;
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-            overlay.setPosition(coordinate);
+            POItoolTipOverlay.setPosition(coordinate);
           } else {
-            overlay.setPosition(undefined);
+            !POIpermalinkPopupExists && POItoolTipOverlay.setPosition(undefined);
           }
         }
 
@@ -278,6 +298,10 @@
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
+        if (!showPoiLayer && POIpermalinkPopupExists) {
+          POItoolTipOverlay.setPosition(undefined);
+          hidePermalinkPopup();
+        }
       }
 
       function addPoiMarkers() {
@@ -336,8 +360,8 @@
 
   <body onload="initialize()">
     <div id="map"></div>
-    <div id="popup" class="ol-popup">
-        <div id="popup-content"></div>
+    <div id="toolTip" class="ol-popup">
+        <div id="toolTip-content"></div>
     </div>
 
     <!-- Social links -->
@@ -405,6 +429,7 @@
     <!-- Parcel link box -->
     <div class="overlay blur parcel-link-box hide" id="parcel-link-box">
       <div class="link-location">
+        <i id="permalink-icon"></i>
         <p id="clicked-coords"></p>
         <a onclick="hidePermalinkPopup()"></a>
       </div>
@@ -425,6 +450,7 @@
       const parcelLinkBox = document.getElementById("parcel-link-box");
       const socialLinks = document.getElementById('social');
       const updateDate = document.getElementById('date');
+      const permalinkIcon = document.getElementById('permalink-icon');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -509,7 +535,15 @@
       }
 
       // Create Parcel Permalink Popup
-      function createPermalinkPopup(lon, lat) {
+      function createPermalinkPopup(lon, lat, type) {
+        if (type === 'parcel') {
+          permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.add('parcel');
+        }
+        if (type === 'poi') {
+          permalinkIcon.classList.remove('parcel');
+          permalinkIcon.classList.add('poi');
+        }
         const shareLink = window.location.host.split('#')[0] + '/#' + `${lon},${lat}` + `,7z`;
         document.getElementById('clicked-coords').innerHTML = `( ${lon}, ${lat} )`;
         const shareLinkInput = document.getElementById('shareLink');
@@ -547,6 +581,8 @@
       // Hide Parcel Permalink Popup
       function hidePermalinkPopup() {
         removeLastPointer();
+        POItoolTipOverlay.setPosition(undefined);
+        POIpermalinkPopupExists = false;
         parcelLinkBox.classList.remove("show");
         setTimeout(() => {
           parcelLinkBox.classList.add("hide");
