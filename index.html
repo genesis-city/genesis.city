@@ -55,9 +55,19 @@
           format: new ol.format.GeoJSON(),
         }),
         style: function (feature) {
+          let assignedColor;
+          switch (feature.values_.type) {
+            case 'owned': assignedColor = 'rgba(0, 255, 255, 1)';
+              break;
+            case 'plaza': assignedColor = 'rgba(0, 255, 0, 1)';
+              break;
+            case 'road': assignedColor = 'rgba(255, 255, 0, 1)';
+              break;
+            case 'district': assignedColor = 'rgba(50, 55, 205, 1)';
+              break;
+          }
           return new ol.style.Style({
-            fill : new ol.style.Fill({color: 'rgba(0, 255, 255, 0.1)'}),
-            stroke: new ol.style.Stroke({color: 'rgba(0, 255, 255, 1)', width: 1}),
+            stroke: new ol.style.Stroke({color: assignedColor, width: 1})
           })
         },
       });
