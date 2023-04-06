@@ -189,7 +189,7 @@
             removeLastPointer();
             POItoolTipOverlay.setPosition(undefined);
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-            if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
+            if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
               // When click on POI icon
               // Add pointer at clicked parcel
               const coordinates = feature.values_.geometry.flatCoordinates;
@@ -259,7 +259,7 @@
 
         function showPOItoolTip(event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-          if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
+          if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
             const coordinate = feature.values_.geometry.flatCoordinates;
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
             POItoolTipOverlay.setPosition(coordinate);
@@ -325,6 +325,7 @@
             var marker = new ol.Feature({
               geometry: new ol.geom.Point(decentralandToMapCoords(lon, lat)),
               name: element.name,
+              featureType: 'poi',
             });
             poiLayer.getSource().addFeature(marker);
           })
