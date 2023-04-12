@@ -63,7 +63,7 @@
         style: function (feature) {
           const assignedColor = assignColor(feature.values_.type);
           return new ol.style.Style({
-            stroke: new ol.style.Stroke({color: assignedColor, width: 1})
+            stroke: new ol.style.Stroke({color: assignedColor, width: optimumBorderWidth(zoomLevel)})
           })
         },
       });
@@ -378,6 +378,18 @@
         }
         return assignedColor;
       }
+
+      // OPTIMUM BORDER WIDTH
+      function optimumBorderWidth(zoomLevel) {
+      if (zoomLevel <= 1) {
+        return 1;
+      } else if (zoomLevel <= 3) {
+        return (zoomLevel*(1/2))+0.5;
+      } else {
+        return (zoomLevel*(7/5))-2.2;
+      }
+
+    }
       
     </script>
     <script defer data-domain="genesis.city" src="https://plausible.io/js/plausible.js"></script>
