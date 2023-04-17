@@ -33,6 +33,12 @@
       let lastParcelPointer;
       var POItoolTipOverlay;
       let POIpermalinkPopupExists;
+      // Estates colors
+      const ownedColor = 'rgba(0, 255, 255, 1)';
+      const plazaColor = 'rgba(0, 255, 0, 1)';
+      const roadColor = 'rgba(255, 255, 0, 1)';
+      const districtColor = 'rgba(50, 55, 205, 1)';
+      let zoomLevel;
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -55,9 +61,9 @@
           format: new ol.format.GeoJSON(),
         }),
         style: function (feature) {
+          const assignedColor = assignColor(feature.values_.type);
           return new ol.style.Style({
-            fill : new ol.style.Fill({color: 'rgba(0, 255, 255, 0.1)'}),
-            stroke: new ol.style.Stroke({color: 'rgba(0, 255, 255, 1)', width: 1}),
+            stroke: new ol.style.Stroke({color: assignedColor, width: 2})
           })
         },
       });
@@ -153,9 +159,22 @@
 
         });
 
+        // Increase state border width on hover
+        // map.on('pointermove', function(event) {
+        //   if (map.hasFeatureAtPixel(event.pixel)) {
+        //     const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+        //     if (feature?.values_.featureType === 'estate') {
+        //       console.log('feature');
+        //       const newStyle = new ol.style.Style({stroke: new ol.style.Stroke({color: assignColor(feature.values_.type), width: 5})});
+        //       feature.setStyle(newStyle);
+        //     }
+        //   }
+        // })
+
         //Show zoom and coords as hash URL in address bar
         map.on('moveend', function(event) {
-          const zoom = Math.round(map.getView().getZoom());
+          zoomLevel = map.getView().getZoom();
+          const zoom = Math.round(zoomLevel);
           const OLcenter = map.getView().getCenter();
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
@@ -179,7 +198,7 @@
             removeLastPointer();
             POItoolTipOverlay.setPosition(undefined);
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-            if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
+            if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
               // When click on POI icon
               // Add pointer at clicked parcel
               const coordinates = feature.values_.geometry.flatCoordinates;
@@ -231,13 +250,15 @@
             showPOItoolTip(event);
             // Update permalink popup infomration
             if (POIpermalinkPopupExists) {
-              const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-              const coordinates = feature.values_.geometry.flatCoordinates;
-              // Generate POI permalink popup
-              const DCLcoords = mapToDecentralandCoords(coordinates)
-              const lon = DCLcoords[0];
-              const lat = DCLcoords[1];
-              createPermalinkPopup(lon, lat, 'poi');
+              if (map.hasFeatureAtPixel(event.pixel)) {
+                const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+                const coordinates = feature.values_.geometry.flatCoordinates;
+                // Generate POI permalink popup
+                const DCLcoords = mapToDecentralandCoords(coordinates)
+                const lon = DCLcoords[0];
+                const lat = DCLcoords[1];
+                createPermalinkPopup(lon, lat, 'poi');
+              }
             } 
           });
         } else {
@@ -249,7 +270,7 @@
 
         function showPOItoolTip(event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-          if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.name) {
+          if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
             const coordinate = feature.values_.geometry.flatCoordinates;
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
             POItoolTipOverlay.setPosition(coordinate);
@@ -315,6 +336,7 @@
             var marker = new ol.Feature({
               geometry: new ol.geom.Point(decentralandToMapCoords(lon, lat)),
               name: element.name,
+              featureType: 'poi',
             });
             poiLayer.getSource().addFeature(marker);
           })
@@ -354,6 +376,21 @@
         parcelPointerLayer.getSource().removeFeature(lastParcelPointer);
       }
 
+      function assignColor(estateType) {
+        let assignedColor;
+        switch (estateType) {
+          case 'owned': assignedColor = ownedColor;
+            break;
+          case 'plaza': assignedColor = plazaColor;
+            break;
+          case 'road': assignedColor = roadColor;
+            break;
+          case 'district': assignedColor = districtColor;
+            break;
+        }
+        return assignedColor;
+      }
+      
     </script>
     <script defer data-domain="genesis.city" src="https://plausible.io/js/plausible.js"></script>
   </head>
