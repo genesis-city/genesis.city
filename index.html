@@ -63,7 +63,7 @@
         style: function (feature) {
           const assignedColor = assignColor(feature.values_.type);
           return new ol.style.Style({
-            stroke: new ol.style.Stroke({color: assignedColor, width: 1})
+            stroke: new ol.style.Stroke({color: assignedColor, width: 2})
           })
         },
       });
@@ -158,6 +158,18 @@
           document.getElementById('coords').innerHTML = `<span>(${xf}, ${yf})</span>`
 
         });
+
+        // Increase state border width on hover
+        // map.on('pointermove', function(event) {
+        //   if (map.hasFeatureAtPixel(event.pixel)) {
+        //     const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+        //     if (feature?.values_.featureType === 'estate') {
+        //       console.log('feature');
+        //       const newStyle = new ol.style.Style({stroke: new ol.style.Stroke({color: assignColor(feature.values_.type), width: 5})});
+        //       feature.setStyle(newStyle);
+        //     }
+        //   }
+        // })
 
         //Show zoom and coords as hash URL in address bar
         map.on('moveend', function(event) {
