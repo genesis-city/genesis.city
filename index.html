@@ -74,7 +74,8 @@
           if (feature.values_.featureType === 'estateArea') {
             const assignedColor = assignColor(feature.values_.type, true);
             return new ol.style.Style({
-              fill : new ol.style.Fill({color: assignedColor}),
+              fill : new ol.style.Fill({color: 'rgba(255, 255, 255, 0)'}),
+              stroke: new ol.style.Stroke({color: assignedColor, width: 1})
             })
           }
         },
@@ -186,8 +187,8 @@
               const assignedColorArea = assignColor(feature.values_.type, true);
               const assignedColorPerimeter = assignColor(feature.values_.type, false);
               const hoverStyleArea = new ol.style.Style({
-                fill : new ol.style.Fill({color: 'rgba(255, 255, 255, 0)'}),
-                stroke: new ol.style.Stroke({color: assignedColorArea, width: 1}),
+                fill : new ol.style.Fill({color: assignedColorArea}),
+                // stroke: new ol.style.Stroke({color: assignedColorArea, width: 1}),
               });
               const hoverStylePerimeter = new ol.style.Style({
                 stroke: new ol.style.Stroke({color: assignedColorPerimeter, width: 4}),
