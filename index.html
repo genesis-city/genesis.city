@@ -171,23 +171,34 @@
 
         });
 
-        // Fill Estate area on hover
-        let hoverEstate = null;
+        // Fill estate area & increase estate perimeter width on hover
+        let hoverEstateArea = null;
+        let hoverEstatePerimeter = null;
         map.on('pointermove', function(event) {
-          if (hoverEstate !== null) {
-            hoverEstate.setStyle(undefined);
-            hoverEstate = null;
+          if (hoverEstateArea !== null) {
+            hoverEstateArea.setStyle(undefined);
+            hoverEstateArea = null;
+            hoverEstatePerimeter.setStyle(undefined);
+            hoverEstatePerimeter = null;
           }
           if (map.hasFeatureAtPixel(event.pixel)) {
             map.forEachFeatureAtPixel(event.pixel, (feature) => {
-              const assignedColor = assignColor(feature.values_.type, true);
-              const hoverStyle = new ol.style.Style({
-                fill : new ol.style.Fill({color: assignedColor}),
+              const assignedColorArea = assignColor(feature.values_.type, true);
+              const assignedColorPerimeter = assignColor(feature.values_.type, false);
+              const hoverStyleArea = new ol.style.Style({
+                fill : new ol.style.Fill({color: assignedColorArea}),
                 // stroke: new ol.style.Stroke({color: assignedColor, width: 1}),
               });
+              const hoverStylePerimeter = new ol.style.Style({
+                stroke: new ol.style.Stroke({color: assignedColorPerimeter, width: 4}),
+              });
               if (feature.values_.featureType === 'estateArea') {
-                hoverEstate = feature;
-                feature.setStyle(hoverStyle);
+                const estateId = parseInt(feature.values_.estateId);
+                const perimeterFeature = estatesLayer.getSource().getFeatureById(estateId);
+                hoverEstateArea = feature;
+                hoverEstatePerimeter = perimeterFeature;
+                feature.setStyle(hoverStyleArea);
+                perimeterFeature.setStyle(hoverStylePerimeter)
                 return true;
               }
             });
@@ -336,14 +347,12 @@
 
       let estatesIdSeted = false;
       function toggleEstatesLayer() {
-        console.log("ESTATES ACTIVATED");
         showEstatesLayer = !showEstatesLayer;
         estatesLayer.setVisible(showEstatesLayer);
         if (!estatesIdSeted) {
           const estatesSource = estatesLayer.getSource()
           estatesSource.once('change', () => {
             const allFeatures = estatesSource.getFeatures();
-            console.log("ID LOADED");
             allFeatures.forEach(feature => {
               if (feature.values_.featureType === 'estatePerimeter') {
                 feature.setId(parseInt(feature.values_.estateId));
