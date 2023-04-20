@@ -334,9 +334,24 @@
         vectorLayer.setVisible(showUpdatedLayer);
       }
 
+      let estatesIdSeted = false;
       function toggleEstatesLayer() {
+        console.log("ESTATES ACTIVATED");
         showEstatesLayer = !showEstatesLayer;
         estatesLayer.setVisible(showEstatesLayer);
+        if (!estatesIdSeted) {
+          const estatesSource = estatesLayer.getSource()
+          estatesSource.once('change', () => {
+            const allFeatures = estatesSource.getFeatures();
+            console.log("ID LOADED");
+            allFeatures.forEach(feature => {
+              if (feature.values_.featureType === 'estatePerimeter') {
+                feature.setId(parseInt(feature.values_.estateId));
+              }
+            });
+          })
+          estatesIdSeted = true;
+        }
       }
 
       function togglePointsOfInterest() {
