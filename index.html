@@ -38,6 +38,10 @@
       const plazaColor = 'rgba(0, 255, 0, 1)';
       const roadColor = 'rgba(255, 255, 0, 1)';
       const districtColor = 'rgba(50, 55, 205, 1)';
+      const ownedColorTranslucid = 'rgba(0, 255, 255, 0.4)';
+      const plazaColorTranslucid = 'rgba(0, 255, 0, 0.4)';
+      const roadColorTranslucid = 'rgba(255, 255, 0, 0.4)';
+      const districtColorTranslucid = 'rgba(50, 55, 205, 0.4)';
       let zoomLevel;
 
       //Recent changes layer
@@ -61,10 +65,18 @@
           format: new ol.format.GeoJSON(),
         }),
         style: function (feature) {
-          const assignedColor = assignColor(feature.values_.type);
-          return new ol.style.Style({
-            stroke: new ol.style.Stroke({color: assignedColor, width: 2})
-          })
+          if (feature.values_.featureType === 'estatePerimeter') {
+            const assignedColor = assignColor(feature.values_.type, false);
+            return new ol.style.Style({
+              stroke: new ol.style.Stroke({color: assignedColor, width: 2})
+            })
+          }
+          if (feature.values_.featureType === 'estateArea') {
+            const assignedColor = assignColor(feature.values_.type, true);
+            return new ol.style.Style({
+              fill : new ol.style.Fill({color: 'rgba(255, 255, 255, 0)'}),
+            })
+          }
         },
       });
 
@@ -159,17 +171,39 @@
 
         });
 
-        // Increase state border width on hover
-        // map.on('pointermove', function(event) {
-        //   if (map.hasFeatureAtPixel(event.pixel)) {
-        //     const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-        //     if (feature?.values_.featureType === 'estate') {
-        //       console.log('feature');
-        //       const newStyle = new ol.style.Style({stroke: new ol.style.Stroke({color: assignColor(feature.values_.type), width: 5})});
-        //       feature.setStyle(newStyle);
-        //     }
-        //   }
-        // })
+        // Fill estate area & increase estate perimeter width on hover
+        let hoverEstateArea = null;
+        let hoverEstatePerimeter = null;
+        map.on('pointermove', function(event) {
+          if (hoverEstateArea !== null) {
+            hoverEstateArea.setStyle(undefined);
+            hoverEstateArea = null;
+            hoverEstatePerimeter.setStyle(undefined);
+            hoverEstatePerimeter = null;
+          }
+          if (map.hasFeatureAtPixel(event.pixel)) {
+            map.forEachFeatureAtPixel(event.pixel, (feature) => {
+              const assignedColorArea = assignColor(feature.values_.type, true);
+              const assignedColorPerimeter = assignColor(feature.values_.type, false);
+              const hoverStyleArea = new ol.style.Style({
+                fill : new ol.style.Fill({color: assignedColorArea}),
+                // stroke: new ol.style.Stroke({color: assignedColor, width: 1}),
+              });
+              const hoverStylePerimeter = new ol.style.Style({
+                stroke: new ol.style.Stroke({color: assignedColorPerimeter, width: 4}),
+              });
+              if (feature.values_.featureType === 'estateArea') {
+                const estateId = parseInt(feature.values_.estateId);
+                const perimeterFeature = estatesLayer.getSource().getFeatureById(estateId);
+                hoverEstateArea = feature;
+                hoverEstatePerimeter = perimeterFeature;
+                feature.setStyle(hoverStyleArea);
+                perimeterFeature.setStyle(hoverStylePerimeter)
+                return true;
+              }
+            });
+          }
+        })
 
         //Show zoom and coords as hash URL in address bar
         map.on('moveend', function(event) {
@@ -311,9 +345,22 @@
         vectorLayer.setVisible(showUpdatedLayer);
       }
 
+      let estatesIdSeted = false;
       function toggleEstatesLayer() {
         showEstatesLayer = !showEstatesLayer;
         estatesLayer.setVisible(showEstatesLayer);
+        if (!estatesIdSeted) {
+          const estatesSource = estatesLayer.getSource()
+          estatesSource.once('change', () => {
+            const allFeatures = estatesSource.getFeatures();
+            allFeatures.forEach(feature => {
+              if (feature.values_.featureType === 'estatePerimeter') {
+                feature.setId(parseInt(feature.values_.estateId));
+              }
+            });
+          })
+          estatesIdSeted = true;
+        }
       }
 
       function togglePointsOfInterest() {
@@ -376,16 +423,16 @@
         parcelPointerLayer.getSource().removeFeature(lastParcelPointer);
       }
 
-      function assignColor(estateType) {
+      function assignColor(estateType, isTranslucid) {
         let assignedColor;
         switch (estateType) {
-          case 'owned': assignedColor = ownedColor;
+          case 'owned': isTranslucid ? assignedColor = ownedColorTranslucid : assignedColor = ownedColor;
             break;
-          case 'plaza': assignedColor = plazaColor;
+          case 'plaza': isTranslucid ? assignedColor = plazaColorTranslucid : assignedColor = plazaColor;
             break;
-          case 'road': assignedColor = roadColor;
+          case 'road': isTranslucid ? assignedColor = roadColorTranslucid : assignedColor = roadColor;
             break;
-          case 'district': assignedColor = districtColor;
+          case 'district': isTranslucid ? assignedColor = districtColorTranslucid : assignedColor = districtColor;
             break;
         }
         return assignedColor;
