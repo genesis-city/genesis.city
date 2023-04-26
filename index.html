@@ -284,8 +284,8 @@
             showPOItoolTip(event);
             // Update permalink popup infomration
             if (POIpermalinkPopupExists) {
-              if (map.hasFeatureAtPixel(event.pixel)) {
-                const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+              const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+              if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
                 const coordinates = feature.values_.geometry.flatCoordinates;
                 // Generate POI permalink popup
                 const DCLcoords = mapToDecentralandCoords(coordinates)
