@@ -217,6 +217,7 @@
           if(window.innerWidth > 630) {
             hidePermalinkPopup();
           }
+          contextMenu.classList.remove("visible");
         });
 
         //Show share link of parcel at click
@@ -593,6 +594,7 @@
         }
         contextMenu.firstElementChild.innerHTML = `
           <a href="https://play.decentraland.org/?position=${coordsString[0]}%2C${coordsString[1]}" target="_blank">Jump in to (${coordsString[0]}, ${coordsString[1]}) <i class="JumpInIcon"></i></a>
+          <a href="mailto:report@genesis.city?subject=Report%20problem%20at%20(${coordsString[0]}, ${coordsString[1]})&body=Describe problem here. (Optional)" target="_blank">Report (${coordsString[0]}, ${coordsString[1]})</a>
         `;
 
         contextMenu.classList.remove("visible");
