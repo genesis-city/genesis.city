@@ -232,18 +232,32 @@
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
             POItoolTipOverlay.setPosition(undefined);
+            // get Estate name if exists
+            let clickedEstateName;
+            const features = map.getFeaturesAtPixel(event.pixel);
+            features.forEach(feat => {
+              if (feat?.values_.featureType === 'estateArea') {
+                clickedEstateName = feat?.values_.name
+              }
+            })
+            // POI exists at clicked pixel
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-            // console.log(feature?.values_.name);
-            console.log(feature);
             if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
               // When click on POI icon
               // Add pointer at clicked parcel
               const coordinates = feature.values_.geometry.flatCoordinates;
+              // get Estate name if exists
+              const estateFeatures = estatesLayer.getSource().getFeaturesAtCoordinate(coordinates);
+              estateFeatures.forEach(feat => {
+                if (feat?.values_.featureType === 'estateArea') {
+                  clickedEstateName = feat?.values_.name
+                }
+              })
               // Generate parcel permalink popup
               const DCLcoords = mapToDecentralandCoords(coordinates)
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
-              createPermalinkPopup(lon, lat, 'poi');
+              createPermalinkPopup(lon, lat, 'poi', clickedEstateName);
               showPermalinkPopup();
               POIpermalinkPopupExists = true;
               // Maintain POI Tool Tip visible on click
@@ -253,9 +267,6 @@
               POIpermalinkPopupExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
-              // Check is parcel belongs to an estate
-              const clickedEstateName = (feature?.values_.featureType === 'estateArea') && feature?.values_.name
-              // Generate parcel permalink popup
               createPermalinkPopup(xf, yf, 'parcel', clickedEstateName);
               showPermalinkPopup();
             }
@@ -290,13 +301,21 @@
             // Update permalink popup infomration
             if (POIpermalinkPopupExists) {
               const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+              let clickedEstateName;
               if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
                 const coordinates = feature.values_.geometry.flatCoordinates;
+                // get Estate name if exists
+                const estateFeatures = estatesLayer.getSource().getFeaturesAtCoordinate(coordinates);
+                estateFeatures.forEach(feat => {
+                  if (feat?.values_.featureType === 'estateArea') {
+                    clickedEstateName = feat?.values_.name
+                  }
+                })
                 // Generate POI permalink popup
                 const DCLcoords = mapToDecentralandCoords(coordinates)
                 const lon = DCLcoords[0];
                 const lat = DCLcoords[1];
-                createPermalinkPopup(lon, lat, 'poi');
+                createPermalinkPopup(lon, lat, 'poi', clickedEstateName);
               }
             } 
           });
