@@ -309,7 +309,7 @@ html, body {
 /* Parcel link box */
 .parcel-link-box {
   width: 290px;
-  height: 90px;
+  /* height: 90px; */
   background: rgba(36, 35, 38, 0.5);
   font-size: .75rem;
   bottom: -7rem;
@@ -401,6 +401,11 @@ html, body {
   display: block;
   opacity: .5;
   justify-self: flex-end;
+}
+
+.parcel-link-box #estate-name{
+  margin: 8px 0 4px 0;
+  font-size: 0.9rem;
 }
 
 .parcel-link-box a:hover {

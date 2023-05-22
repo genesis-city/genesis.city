@@ -232,16 +232,32 @@
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
             POItoolTipOverlay.setPosition(undefined);
+            // get Estate name if exists
+            let clickedEstateName;
+            const features = map.getFeaturesAtPixel(event.pixel);
+            features.forEach(feat => {
+              if (feat?.values_.featureType === 'estateArea') {
+                clickedEstateName = feat?.values_.name
+              }
+            })
+            // POI exists at clicked pixel
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
             if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
               // When click on POI icon
               // Add pointer at clicked parcel
               const coordinates = feature.values_.geometry.flatCoordinates;
+              // get Estate name if exists
+              const estateFeatures = estatesLayer.getSource().getFeaturesAtCoordinate(coordinates);
+              estateFeatures.forEach(feat => {
+                if (feat?.values_.featureType === 'estateArea') {
+                  clickedEstateName = feat?.values_.name
+                }
+              })
               // Generate parcel permalink popup
               const DCLcoords = mapToDecentralandCoords(coordinates)
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
-              createPermalinkPopup(lon, lat, 'poi');
+              createPermalinkPopup(lon, lat, 'poi', clickedEstateName);
               showPermalinkPopup();
               POIpermalinkPopupExists = true;
               // Maintain POI Tool Tip visible on click
@@ -251,8 +267,7 @@
               POIpermalinkPopupExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
-              // Generate parcel permalink popup
-              createPermalinkPopup(xf, yf, 'parcel');
+              createPermalinkPopup(xf, yf, 'parcel', clickedEstateName);
               showPermalinkPopup();
             }
           }
@@ -286,13 +301,21 @@
             // Update permalink popup infomration
             if (POIpermalinkPopupExists) {
               const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
+              let clickedEstateName;
               if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
                 const coordinates = feature.values_.geometry.flatCoordinates;
+                // get Estate name if exists
+                const estateFeatures = estatesLayer.getSource().getFeaturesAtCoordinate(coordinates);
+                estateFeatures.forEach(feat => {
+                  if (feat?.values_.featureType === 'estateArea') {
+                    clickedEstateName = feat?.values_.name
+                  }
+                })
                 // Generate POI permalink popup
                 const DCLcoords = mapToDecentralandCoords(coordinates)
                 const lon = DCLcoords[0];
                 const lat = DCLcoords[1];
-                createPermalinkPopup(lon, lat, 'poi');
+                createPermalinkPopup(lon, lat, 'poi', clickedEstateName);
               }
             } 
           });
@@ -518,6 +541,9 @@
         <p id="clicked-coords"></p>
         <a onclick="hidePermalinkPopup()"></a>
       </div>
+      <div>
+        <p id="estate-name"></p>
+      </div>
       <div class="shareLinkContainer">
         <input type="text" id="shareLink" name="shareLink" readonly onclick="select()">
         <button onclick="copyLink()">Copy Link</button>
@@ -536,6 +562,7 @@
       const socialLinks = document.getElementById('social');
       const updateDate = document.getElementById('date');
       const permalinkIcon = document.getElementById('permalink-icon');
+      const estateName = document.getElementById('estate-name');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -621,7 +648,8 @@
       }
 
       // Create Parcel Permalink Popup
-      function createPermalinkPopup(lon, lat, type) {
+      function createPermalinkPopup(lon, lat, type, clickedEstateName) {
+        estateName.innerHTML = '';
         if (type === 'parcel') {
           permalinkIcon.classList.remove('poi');
           permalinkIcon.classList.add('parcel');
@@ -629,6 +657,9 @@
         if (type === 'poi') {
           permalinkIcon.classList.remove('parcel');
           permalinkIcon.classList.add('poi');
+        }
+        if (clickedEstateName) {
+          estateName.innerHTML = `Estate: ${clickedEstateName}`
         }
         const shareLink = window.location.host.split('#')[0] + '/#' + `${lon},${lat}` + `,7z`;
         document.getElementById('clicked-coords').innerHTML = `( ${lon}, ${lat} )`;
