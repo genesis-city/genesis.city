@@ -541,9 +541,6 @@
         <p id="modal-title"></p>
         <a onclick="hidePermalinkPopup()"></a>
       </div>
-      <div>
-        <p id="estate-name"></p>
-      </div>
       <div class="shareLinkContainer">
         <input type="text" id="shareLink" name="shareLink" readonly onclick="select()">
         <button onclick="copyLink()">Copy Link</button>
@@ -562,7 +559,6 @@
       const socialLinks = document.getElementById('social');
       const updateDate = document.getElementById('date');
       const permalinkIcon = document.getElementById('permalink-icon');
-      const estateName = document.getElementById('estate-name');
       const modalTitle = document.getElementById('modal-title');
 
       const normalizePosition = (mouseX, mouseY) => {
@@ -650,7 +646,6 @@
 
       // Create Parcel Permalink Popup
       function createPermalinkPopup(lon, lat, type, clickedEstateName) {
-        estateName.innerHTML = '';
         if (type === 'parcel') {
           permalinkIcon.classList.remove('poi');
           permalinkIcon.classList.add('parcel');

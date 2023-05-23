@@ -350,6 +350,7 @@ html, body {
 
 .parcel-link-box div.link-location {
   width: 100%;
+  min-height: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -421,6 +422,7 @@ html, body {
 .shareLinkContainer {
   width: 100%;
   display: flex;
+  margin-top: 8px;
 }
 
 .parcel-link-box input {
