@@ -538,7 +538,7 @@
     <div class="overlay blur parcel-link-box hide" id="parcel-link-box">
       <div class="link-location">
         <i id="permalink-icon"></i>
-        <p id="clicked-coords"></p>
+        <p id="modal-title"></p>
         <a onclick="hidePermalinkPopup()"></a>
       </div>
       <div>
@@ -563,6 +563,7 @@
       const updateDate = document.getElementById('date');
       const permalinkIcon = document.getElementById('permalink-icon');
       const estateName = document.getElementById('estate-name');
+      const modalTitle = document.getElementById('modal-title');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -658,11 +659,11 @@
           permalinkIcon.classList.remove('parcel');
           permalinkIcon.classList.add('poi');
         }
+        modalTitle.innerHTML = `( ${lon}, ${lat} )`;
         if (clickedEstateName) {
-          estateName.innerHTML = `Estate: ${clickedEstateName}`
+          modalTitle.innerHTML = clickedEstateName;
         }
         const shareLink = window.location.host.split('#')[0] + '/#' + `${lon},${lat}` + `,7z`;
-        document.getElementById('clicked-coords').innerHTML = `( ${lon}, ${lat} )`;
         const shareLinkInput = document.getElementById('shareLink');
         const protocol = window.location.protocol + '//'
         shareLinkInput.value = protocol + shareLink;
