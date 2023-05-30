@@ -543,3 +543,11 @@ html, body {
   left: 38px;
   margin-left: -10px;
 }
+
+.swal2-success-circular-line-left, .swal2-success-circular-line-right, .swal2-success-fix{
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.swal2-timer-progress-bar {
+  background-color: rgba(255, 255, 255, 1) !important;
+}

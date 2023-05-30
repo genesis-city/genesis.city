@@ -21,6 +21,7 @@
     <meta name="twitter:image" content="https://genesis.city/img/cover.jpg" />
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
       var zoom = 6;
       var side = 200
@@ -774,6 +775,23 @@
 
         try {
           await addDoc(reportedParcelsRef, reportedParcel);
+          Swal.fire({
+            grow: true,
+            icon: 'success',
+            title: `(${reportedParcel.location})\nSuccessfully reported`,
+            background: 'rgba(18, 27, 34, 0.8)',
+            color: 'white',
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+            width: '300px',
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
           console.log(`Parcel with location: (${reportedParcel.location}) successfully reported`);
         } catch (error) {
           console.error('Error reporting parcel:', error);
