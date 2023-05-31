@@ -772,13 +772,13 @@
 
       async function reportParcel(reportedParcel) {
         const reportedParcelsRef = collection(db, "reportedParcels");
-
+        const reportedParcelCoords = reportedParcel.location.trim();
         try {
           await addDoc(reportedParcelsRef, reportedParcel);
           Swal.fire({
             grow: true,
             icon: 'success',
-            title: `(${reportedParcel.location})\nSuccessfully reported`,
+            title: `(${reportedParcelCoords})\nSuccessfully reported`,
             background: 'rgba(18, 27, 34, 0.8)',
             color: 'white',
             toast: true,
@@ -792,7 +792,7 @@
               toast.addEventListener('mouseleave', Swal.resumeTimer)
             }
           })
-          console.log(`Parcel with location: (${reportedParcel.location}) successfully reported`);
+          console.log(`Parcel with location: (${reportedParcelCoords}) successfully reported`);
         } catch (error) {
           console.error('Error reporting parcel:', error);
         }
