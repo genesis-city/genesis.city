@@ -21,6 +21,7 @@
     <meta name="twitter:image" content="https://genesis.city/img/cover.jpg" />
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
       var zoom = 6;
       var side = 200
@@ -599,6 +600,7 @@
         return { normalizedX, normalizedY };
       };
 
+      //Context Menu
       scope.addEventListener("contextmenu", (event) => {
         event.preventDefault();
 
@@ -616,11 +618,27 @@
         if (x < -maxCoords || x > maxCoords || y < -maxCoords || y > maxCoords) {
           return
         }
+
+        const reportParcelOption = document.createElement("a");
+        reportParcelOption.href = "#";
+        reportParcelOption.textContent = `Report (${coordsString[0]}, ${coordsString[1]})`;
+
+        reportParcelOption.addEventListener("click", (event) => {
+          event.preventDefault();
+
+          const reportedParcel = {
+            location: `${coordsString[0]},${coordsString[1]}`,
+          };
+
+          window.reportParcel(reportedParcel);
+        });
+
+        // Add Jump in to option
         contextMenu.firstElementChild.innerHTML = `
           <a href="https://play.decentraland.org/?position=${coordsString[0]}%2C${coordsString[1]}" target="_blank">Jump in to (${coordsString[0]}, ${coordsString[1]}) <i class="JumpInIcon"></i></a>
-          <a href="mailto:report@genesis.city?subject=Report%20problem%20at%20(${coordsString[0]}, ${coordsString[1]})&body=Describe problem here. (Optional)" target="_blank">Report (${coordsString[0]}, ${coordsString[1]})</a>
         `;
-
+        // Add Report Parcel option
+        contextMenu.firstElementChild.appendChild(reportParcelOption);
         contextMenu.classList.remove("visible");
 
         contextMenu.style.top = `${normalizedY}px`;
@@ -729,6 +747,58 @@
           console.log("unable to copy link");
         });
       }
+    </script>
+
+    <!-- Firestore SDK setup -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+      
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCaj5svpLfMoMP57vE4hf5SoUrLfRAU2MY",
+        authDomain: "genesis-city-40d7e.firebaseapp.com",
+        projectId: "genesis-city-40d7e",
+        storageBucket: "genesis-city-40d7e.appspot.com",
+        messagingSenderId: "640487061617",
+        appId: "1:640487061617:web:1f63008062fe97866b43d0"
+      };
+      
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      async function reportParcel(reportedParcel) {
+        const reportedParcelsRef = collection(db, "reportedParcels");
+
+        try {
+          await addDoc(reportedParcelsRef, reportedParcel);
+          Swal.fire({
+            grow: true,
+            icon: 'success',
+            title: `(${reportedParcel.location})\nSuccessfully reported`,
+            background: 'rgba(18, 27, 34, 0.8)',
+            color: 'white',
+            toast: true,
+            position: 'center',
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+            width: '300px',
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+          console.log(`Parcel with location: (${reportedParcel.location}) successfully reported`);
+        } catch (error) {
+          console.error('Error reporting parcel:', error);
+        }
+      }
+      // Expose the reportParcel function to the global scope
+      window.reportParcel = reportParcel;
     </script>
   </body>
 </html>
