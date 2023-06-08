@@ -34,6 +34,8 @@
       let lastParcelPointer;
       var POItoolTipOverlay;
       let POIpermalinkPopupExists;
+      let mapSource;
+      let mapMode = 'day';
       // Estates colors
       const ownedColor = 'rgba(0, 255, 255, 1)';
       const plazaColor = 'rgba(0, 255, 0, 1)';
@@ -138,26 +140,25 @@
           viewResolutions.push(side/Math.pow(2, 1+i))
         }
 
+        mapSource = new ol.source.TileImage({
+          url: 'map/latest/{z}/{x},{y}.jpg',
+          wrapX: false,
+          tileGrid: new ol.tilegrid.TileGrid({
+            extent: extent,
+            origin: origin,
+            tileSize: [side, side],
+            resolutions: resolutions,
+            minZoom: 1,
+            maxZoom: 10
+          }),
+        })
+
         var map = new ol.Map({
           target: 'map',
           layers: [
             new ol.layer.Tile({
-              source: new ol.source.TileImage({
-                url: 'map/latest/{z}/{x},{y}.jpg',
-                wrapX: false,
-                tileGrid: new ol.tilegrid.TileGrid({
-                  extent: extent,
-                  origin: origin,
-                  tileSize: [side, side],
-                  resolutions: resolutions,
-                  minZoom: 1,
-                  maxZoom: 10
-                }),
-              }),
-            }), 
-            // new ol.layer.Tile({
-            //    source: new ol.source.TileDebug(),
-            // })
+              source: mapSource,
+            }),
             vectorLayer,
             estatesLayer
           ],
@@ -462,6 +463,16 @@
         }
         return assignedColor;
       }
+
+      function toggleNightMode() {
+        if (mapMode === 'day') {
+          mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
+          mapMode = 'night';
+        } else {
+          mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+          mapMode = 'day';
+        }
+      }
       
     </script>
     <script defer data-domain="genesis.city" src="https://plausible.io/js/plausible.js"></script>
@@ -502,7 +513,7 @@
             <label class="layer-control">
               <span class="label">Night mode</span>
               <div class="toggle">
-                <input class="toggle-input" id="night-mode-toggle" type="checkbox" name="night-mode-toggle" value="show-night-mode">
+                <input class="toggle-input" onclick="toggleNightMode()" id="night-mode-toggle" type="checkbox" name="night-mode-toggle" value="show-night-mode">
                 <label class="toggle-label" for="night-mode-toggle">Toggle</label>
               </div>
             </label>
