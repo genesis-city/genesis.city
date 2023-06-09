@@ -155,9 +155,6 @@ html, body {
   color: #E2E4E9;
   font-size: .9em;
 }
-.layer-control .label {
-  margin-right: 1rem;
-}
 .toggle {
   position: relative;
   display: inline-block;
@@ -206,6 +203,19 @@ html, body {
 .toggle-input:checked + .toggle-label::after {
   left: 12px;
   background-color: #fff;
+}
+.new-feat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  font-size: 12px;
+  height: 22px;
+  width: 40px;
+  border: #35d477 2px solid;
+  border-color: #35d477;
+  color: #35d477;
+  border-radius: 500px;
 }
 
 /* Jump In button */
