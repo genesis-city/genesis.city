@@ -21,6 +21,7 @@ for count, input_img_path in enumerate(os.listdir("map/latest/6")):
     if 'DS_Store' in str(input_img_path):
         continue
     x, y = tuple(int(d) for d in input_img_path.split(".")[0].split(","))
+    print(x, y)
     merge_images(result_day, "map/latest/6", input_img_path, x, y)
 
 # Process night images
@@ -29,6 +30,7 @@ for count, input_img_path in enumerate(os.listdir("map-night/latest/6")):
     if 'DS_Store' in str(input_img_path):
         continue
     x, y = tuple(int(d) for d in input_img_path.split(".")[0].split(","))
+    print(x, y)
     merge_images(result_night, "map-night/latest/6", input_img_path, x, y)
 
 result_day.save("full/day.png", "png")
