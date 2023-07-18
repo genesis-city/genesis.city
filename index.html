@@ -45,7 +45,9 @@
       const plazaColorTranslucid = 'rgba(0, 255, 0, 0.4)';
       const roadColorTranslucid = 'rgba(255, 255, 0, 0.4)';
       const districtColorTranslucid = 'rgba(50, 55, 205, 0.4)';
+      // Layers status for address bar
       let zoomLevel;
+      let showNightMode;
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -215,7 +217,8 @@
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
-          window.location.hash = `${lon},${lat},${zoom}z`;
+          const layersStatus = `,n${showNightMode === true ? '1' : '0'}`
+          window.location.hash = `${lon},${lat},${zoom}z${layersStatus}`;
           if(window.innerWidth > 630) {
             hidePermalinkPopup();
           }
@@ -468,9 +471,11 @@
         if (mapMode === 'day') {
           mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
           mapMode = 'night';
+          showNightMode = true;
         } else {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
           mapMode = 'day';
+          showNightMode = false;
         }
       }
       
