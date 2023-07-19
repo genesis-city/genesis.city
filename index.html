@@ -479,11 +479,26 @@
           mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
           mapMode = 'night';
           showNightMode = true;
+          activeLocationHash(true);
         } else {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
           mapMode = 'day';
           showNightMode = false;
+          activeLocationHash(false);
         }
+      }
+
+      function activeLocationHash(boolean) {
+        let oldMode;
+        let newMode;
+        if (boolean) {
+          oldMode = 'n0';
+          newMode = 'n1';
+        } else {
+          oldMode = 'n1';
+          newMode = 'n0';
+        }
+        window.location.hash = `${window.location.hash.split(oldMode)[0]}${newMode}${window.location.hash.split(oldMode)[1]}`
       }
       
     </script>
