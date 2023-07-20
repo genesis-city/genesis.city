@@ -35,7 +35,6 @@
       var POItoolTipOverlay;
       let POIpermalinkPopupExists;
       let mapSource;
-      let mapMode = 'day';
       // Estates colors
       const ownedColor = 'rgba(0, 255, 255, 1)';
       const plazaColor = 'rgba(0, 255, 0, 1)';
@@ -45,9 +44,6 @@
       const plazaColorTranslucid = 'rgba(0, 255, 0, 0.4)';
       const roadColorTranslucid = 'rgba(255, 255, 0, 0.4)';
       const districtColorTranslucid = 'rgba(50, 55, 205, 0.4)';
-      // Layers status for address bar
-      let zoomLevel;
-      let showNightMode;
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -113,9 +109,11 @@
 
       function initialize() {
         const scope = document.querySelector("body");
-        showUpdatedLayer = false;
+        showNightModeLayer = false;
         showEstatesLayer = false;
+        showUpdatedLayer = false;
         showPoiLayer = false;
+        let zoomLevel;
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
         poiLayer.setVisible(showPoiLayer);
@@ -217,7 +215,7 @@
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
-          const layersStatus = `,n${showNightMode === true ? '1' : '0'}`
+          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},r${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'}`
           window.location.hash = `${lon},${lat},${zoom}z${layersStatus}`;
           if(window.innerWidth > 630) {
             hidePermalinkPopup();
@@ -475,15 +473,12 @@
       }
 
       function toggleNightMode() {
-        if (mapMode === 'day') {
+        showNightModeLayer = !showNightModeLayer
+        if (showNightModeLayer) {
           mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
-          mapMode = 'night';
-          showNightMode = true;
           activeLocationHash(true);
         } else {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
-          mapMode = 'day';
-          showNightMode = false;
           activeLocationHash(false);
         }
       }
