@@ -35,7 +35,6 @@
       var POItoolTipOverlay;
       let POIpermalinkPopupExists;
       let mapSource;
-      let mapMode = 'day';
       // Estates colors
       const ownedColor = 'rgba(0, 255, 255, 1)';
       const plazaColor = 'rgba(0, 255, 0, 1)';
@@ -45,7 +44,6 @@
       const plazaColorTranslucid = 'rgba(0, 255, 0, 0.4)';
       const roadColorTranslucid = 'rgba(255, 255, 0, 0.4)';
       const districtColorTranslucid = 'rgba(50, 55, 205, 0.4)';
-      let zoomLevel;
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -111,9 +109,11 @@
 
       function initialize() {
         const scope = document.querySelector("body");
-        showUpdatedLayer = false;
+        showNightModeLayer = false;
         showEstatesLayer = false;
+        showUpdatedLayer = false;
         showPoiLayer = false;
+        let zoomLevel;
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
         poiLayer.setVisible(showPoiLayer);
@@ -215,7 +215,8 @@
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
-          window.location.hash = `${lon},${lat},${zoom}z`;
+          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},r${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'}`
+          window.location.hash = `${lon},${lat},${zoom}z${layersStatus}`;
           if(window.innerWidth > 630) {
             hidePermalinkPopup();
           }
@@ -338,13 +339,36 @@
             !POIpermalinkPopupExists && POItoolTipOverlay.setPosition(undefined);
           }
         }
-
+        
         //Set default or current view based on URL Hash
         function setView() {
-          if (validateUrlHash(window.location.hash)) {
+          if (urlHashFirstValidation(window.location.hash)) {
             let currentViewLon = parseInt(window.location.href.split('#')[1].split('z')[0].split(',')[0]);
             let currentViewLat = parseInt(window.location.href.split('#')[1].split('z')[0].split(',')[1]);
             let currentViewZoom = window.location.href.split('#')[1].split('z')[0].split(',')[2];
+            if (urlHashSecondValidation(window.location.hash)) {
+              let nightModeLayerStatus = window.location.href.split('#')[1].split(',')[3].split('n')[1];
+              let estatesLayerStatus = window.location.href.split('#')[1].split(',')[4].split('e')[1];
+              let recentChangesLayerStatus = window.location.href.split('#')[1].split(',')[5].split('r')[1];
+              let poisLayerStatus = window.location.href.split('#')[1].split(',')[6].split('p')[1];
+              //Apply Layers Status from address bar
+              if (nightModeLayerStatus === '1') {
+                toggleNightMode();
+                activateLayerToggle('nightMode');
+              }
+              if (estatesLayerStatus === '1') {
+                toggleEstatesLayer();
+                activateLayerToggle('estates');
+              }
+              if (recentChangesLayerStatus === '1') {
+                toggleUpdatedLayer();
+                activateLayerToggle('recentChanges');
+              }
+              if (poisLayerStatus === '1') {
+                togglePointsOfInterest();
+                activateLayerToggle('pois');
+              }
+            }
             if (currentViewZoom < 1) {
               currentViewZoom = 1
             } else if (currentViewZoom > 8) {
@@ -359,6 +383,7 @@
               zoom: currentViewZoom,
               minZoom: 1,
             }
+
             return currentView
           } else {
             return defaultView
@@ -369,6 +394,7 @@
       function toggleUpdatedLayer() {
         showUpdatedLayer = !showUpdatedLayer;
         vectorLayer.setVisible(showUpdatedLayer);
+        showUpdatedLayer ? activeLocationHash('recentChanges', true) : activeLocationHash('recentChanges', false);
       }
 
       let estatesIdSeted = false;
@@ -387,6 +413,7 @@
           })
           estatesIdSeted = true;
         }
+        showEstatesLayer ? activeLocationHash('estates', true) : activeLocationHash('estates', false);
       }
 
       function togglePointsOfInterest() {
@@ -396,6 +423,7 @@
           POItoolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
+        showPoiLayer ? activeLocationHash('pois', true) : activeLocationHash('pois', false);
       }
 
       function addPoiMarkers() {
@@ -431,10 +459,16 @@
         return [mapX, mapY]
       }
 
-      function validateUrlHash(hash) {
-        //This regular expression matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'. E.g. '#14,91,7z'
-        const regex = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z$/;
-        return regex.test(hash);
+      function urlHashFirstValidation(hash) {
+        //The regular expression 'regex0' matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'. 'regex0' also matches that the last four sections are a letter followe by a 1 or a 0.
+        // E.g. '#14,91,7z,n0,e0,r1,p1'
+        const regex0 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z$/;
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],r[10],p[10]$/;
+        return regex0.test(hash) || regex1.test(hash);
+      }
+      function urlHashSecondValidation(hash) {
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],r[10],p[10]$/;
+        return regex1.test(hash);
       }
 
       function showParcelPointer(coords) {
@@ -465,13 +499,29 @@
       }
 
       function toggleNightMode() {
-        if (mapMode === 'day') {
+        showNightModeLayer = !showNightModeLayer
+        if (showNightModeLayer) {
           mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
-          mapMode = 'night';
+          activeLocationHash('nightMode', true);
         } else {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
-          mapMode = 'day';
+          activeLocationHash('nightMode', false);
         }
+      }
+
+      // Change layer status shown in address bar when activating/deactivating toggle
+      function activeLocationHash(layer, shouldActivate) {
+        const firstLetter = layer.charAt(0);
+        let oldMode;
+        let newMode;
+        if (shouldActivate) {
+          oldMode = `${firstLetter}0`;
+          newMode = `${firstLetter}1`;
+        } else {
+          oldMode = `${firstLetter}1`;
+          newMode = `${firstLetter}0`;
+        }
+        window.location.hash = `${window.location.hash.split(oldMode)[0]}${newMode}${window.location.hash.split(oldMode)[1]}`
       }
       
     </script>
@@ -580,6 +630,10 @@
       const updateDate = document.getElementById('date');
       const permalinkIcon = document.getElementById('permalink-icon');
       const modalTitle = document.getElementById('modal-title');
+      const nightModeToggle = document.getElementById('night-mode-toggle');
+      const estatesLayerToggle = document.getElementById('estates-layer-toggle');
+      const updatedLayerToggle = document.getElementById('updated-layer-toggle');
+      const poisLayerToggle = document.getElementById('poi-layer-toggle');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -766,6 +820,28 @@
           console.log("unable to copy link");
         });
       }
+
+      // Set layer toggle active
+      function activateLayerToggle(layer) {
+        switch (layer) {
+          case 'nightMode':
+            nightModeToggle.checked = true;
+            break;
+          case 'estates':
+            estatesLayerToggle.checked = true;
+            break;
+          case 'recentChanges':
+            updatedLayerToggle.checked = true;
+            break;
+          case 'pois':
+            poisLayerToggle.checked = true;
+            break;
+          default:
+            console.error('Invalid layer parameter:', layer);
+            break;
+        }
+      }
+
     </script>
 
     <!-- Firestore SDK setup -->
