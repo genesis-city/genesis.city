@@ -392,6 +392,7 @@
       function toggleUpdatedLayer() {
         showUpdatedLayer = !showUpdatedLayer;
         vectorLayer.setVisible(showUpdatedLayer);
+        showUpdatedLayer ? activeLocationHash('recentChanges', true) : activeLocationHash('recentChanges', false);
       }
 
       let estatesIdSeted = false;
@@ -410,6 +411,7 @@
           })
           estatesIdSeted = true;
         }
+        showEstatesLayer ? activeLocationHash('estates', true) : activeLocationHash('estates', false);
       }
 
       function togglePointsOfInterest() {
@@ -419,6 +421,7 @@
           POItoolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
+        showPoiLayer ? activeLocationHash('pois', true) : activeLocationHash('pois', false);
       }
 
       function addPoiMarkers() {
@@ -492,22 +495,24 @@
         showNightModeLayer = !showNightModeLayer
         if (showNightModeLayer) {
           mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
-          activeLocationHash(true);
+          activeLocationHash('nightMode', true);
         } else {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
-          activeLocationHash(false);
+          activeLocationHash('nightMode', false);
         }
       }
 
-      function activeLocationHash(boolean) {
+      // Change layer status shown in address bar when activating/deactivating toggle
+      function activeLocationHash(layer, shouldActivate) {
+        const firstLetter = layer.charAt(0);
         let oldMode;
         let newMode;
-        if (boolean) {
-          oldMode = 'n0';
-          newMode = 'n1';
+        if (shouldActivate) {
+          oldMode = `${firstLetter}0`;
+          newMode = `${firstLetter}1`;
         } else {
-          oldMode = 'n1';
-          newMode = 'n0';
+          oldMode = `${firstLetter}1`;
+          newMode = `${firstLetter}0`;
         }
         window.location.hash = `${window.location.hash.split(oldMode)[0]}${newMode}${window.location.hash.split(oldMode)[1]}`
       }
