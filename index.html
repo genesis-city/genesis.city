@@ -40,10 +40,10 @@
       const plazaColor = 'rgba(0, 255, 0, 1)';
       const roadColor = 'rgba(255, 255, 0, 1)';
       const districtColor = 'rgba(50, 55, 205, 1)';
-      const ownedColorTranslucid = 'rgba(0, 255, 255, 0.4)';
-      const plazaColorTranslucid = 'rgba(0, 255, 0, 0.4)';
-      const roadColorTranslucid = 'rgba(255, 255, 0, 0.4)';
-      const districtColorTranslucid = 'rgba(50, 55, 205, 0.4)';
+      const ownedColorTranslucid = ol.color.asArray('rgb(0, 255, 255)');
+      const plazaColorTranslucid = ol.color.asArray('rgb(0, 255, 0)');
+      const roadColorTranslucid = ol.color.asArray('rgb(255, 255, 0)');
+      const districtColorTranslucid = ol.color.asArray('rgb(50, 55, 205)');
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -176,6 +176,7 @@
         // Fill estate area & increase estate perimeter width on hover
         let hoverEstateArea = null;
         let hoverEstatePerimeter = null;
+        let actualFeatureId;
         map.on('pointermove', function(event) {
           if (hoverEstateArea !== null) {
             hoverEstateArea.setStyle(undefined);
@@ -185,10 +186,11 @@
           }
           if (map.hasFeatureAtPixel(event.pixel)) {
             map.forEachFeatureAtPixel(event.pixel, (feature) => {
-              const assignedColorArea = assignColor(feature.values_.type, true);
+              // const assignedColorArea = assignColor(feature.values_.type, true);
+              // assignedColorArea[3] = Math.min(0 + elapsed/10000, 0.4);;
               const assignedColorPerimeter = assignColor(feature.values_.type, false);
               const hoverStyleArea = new ol.style.Style({
-                fill : new ol.style.Fill({color: assignedColorArea}),
+                fill : new ol.style.Fill(),
                 // stroke: new ol.style.Stroke({color: assignedColor, width: 1}),
               });
               const hoverStylePerimeter = new ol.style.Style({
@@ -199,9 +201,24 @@
                 const perimeterFeature = estatesLayer.getSource().getFeatureById(estateId);
                 hoverEstateArea = feature;
                 hoverEstatePerimeter = perimeterFeature;
-                feature.setStyle(hoverStyleArea);
-                perimeterFeature.setStyle(hoverStylePerimeter)
-                return true;
+                perimeterFeature.setStyle(hoverStylePerimeter);
+                let select = new ol.interaction.Select({
+                  condition: ol.events.condition.pointerMove,
+                  style: function(feature) {
+                    var elapsed = new Date().getTime() - start;
+                    const assignedColorArea = assignColor(feature.values_.type, true);
+                    assignedColorArea[3] = Math.min(0 + elapsed/1500, 0.4);
+                    console.log('assignedColorArea');
+                    hoverStyleArea.getFill().setColor(assignedColorArea);
+                    feature.changed();
+                    return hoverStyleArea;
+                  }
+                });
+                if (actualFeatureId !== estateId) {
+                  select.on('select', function(){ start = new Date().getTime(); });
+                  actualFeatureId = estateId;
+                }
+                map.addInteraction(select);
               }
             });
           }
