@@ -103,6 +103,20 @@
         }),
       });
 
+      //Lands for sale/rent layer
+      const saleRentLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          url: 'saleRentParcels.json',
+          format: new ol.format.GeoJSON(),
+        }),
+        style: function (feature) {
+            return new ol.style.Style({
+              fill : new ol.style.Fill({color: 'rgba(0, 255, 255, 1)'}),
+              stroke: new ol.style.Stroke({color: 'rgba(0, 255, 255, 1)', width: 1}),
+            })
+        },
+      });
+
       function map_range (value, in_min, in_max, out_min, out_max) {
         return (value+side/n/2 - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
       } 
@@ -113,10 +127,12 @@
         showEstatesLayer = false;
         showUpdatedLayer = false;
         showPoiLayer = false;
+        showSaleRentLayer = false;
         let zoomLevel;
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
         poiLayer.setVisible(showPoiLayer);
+        saleRentLayer.setVisible(showPoiLayer);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
           units: 'pixels',
@@ -160,7 +176,8 @@
               source: mapSource,
             }),
             vectorLayer,
-            estatesLayer
+            estatesLayer,
+            saleRentLayer,
           ],
           view: new ol.View(setView()),
         });
@@ -396,6 +413,11 @@
         vectorLayer.setVisible(showUpdatedLayer);
         showUpdatedLayer ? activeLocationHash('recentChanges', true) : activeLocationHash('recentChanges', false);
       }
+      
+      function toggleSaleRentLayer() {
+        showSaleRentLayer = !showSaleRentLayer;
+        saleRentLayer.setVisible(showSaleRentLayer);
+      }
 
       let estatesIdSeted = false;
       function toggleEstatesLayer() {
@@ -592,7 +614,7 @@
             <label class="layer-control">
               <span class="label">Lands for sale/rent</span>
               <div class="toggle">
-                <input class="toggle-input" onclick="" id="rent/sale-layer-toggle" type="checkbox" name="rent/sale-layer-toggle" value="show-rent/sale">
+                <input class="toggle-input" onclick="toggleSaleRentLayer()" id="rent/sale-layer-toggle" type="checkbox" name="rent/sale-layer-toggle" value="show-rent/sale">
                 <label class="toggle-label" for="rent/sale-layer-toggle">Toggle</label>
               </div>
             </label>
