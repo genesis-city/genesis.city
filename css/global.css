@@ -322,7 +322,7 @@ html, body {
   /* height: 90px; */
   background: rgba(36, 35, 38, 0.5);
   font-size: .75rem;
-  bottom: -10rem;
+  bottom: -12rem;
   left: 50%;
   transform: translate(-50%);
   display: flex;
@@ -333,7 +333,7 @@ html, body {
 }
 
 .parcel-link-box.show {
-  transform: translate(-50%, -10.5rem);
+  transform: translate(-50%, -12.5rem);
 }
 
 .parcel-link-box.bounce {
@@ -342,19 +342,19 @@ html, body {
 
 @keyframes appearBounce {
   0% {
-    bottom: -10rem;
+    bottom: -12rem;
   }
   40% {
-    bottom: -8.6rem;
+    bottom: -10.3rem;
   }
   60% {
-    bottom: -10.5rem;
+    bottom: -12.5rem;
   }
   70% {
-    bottom: -9.7rem;
+    bottom: -11.6rem;
   }
   100% {
-    bottom: -10rem;
+    bottom: -12rem;
   }
 }
 
