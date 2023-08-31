@@ -399,7 +399,7 @@ html, body {
   margin: 0;
 }
 
-.parcel-link-box a {
+.parcel-link-box a.close {
   position: absolute;
   top: 0.3rem;
   right: 0.3rem;
@@ -445,6 +445,14 @@ html, body {
   height: 30px;
   align-items: center;
   margin: 0px;
+}
+
+.parcel-link-box .saleRentData i.JumpInIcon {
+  display: block;
+  background-size: cover;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 
 .parcel-link-box .saleRentData p#itemType {
