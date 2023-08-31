@@ -103,6 +103,20 @@
         }),
       });
 
+      //Lands for sale/rent layer
+      const saleRentLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          url: 'saleRent.json',
+          format: new ol.format.GeoJSON(),
+        }),
+        style: function (feature) {
+            return new ol.style.Style({
+              fill : new ol.style.Fill({color: 'rgba(255,255,255,0)'}),
+              stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
+            })
+        },
+      });
+
       function map_range (value, in_min, in_max, out_min, out_max) {
         return (value+side/n/2 - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
       } 
@@ -113,10 +127,12 @@
         showEstatesLayer = false;
         showUpdatedLayer = false;
         showPoiLayer = false;
+        showSaleRentLayer = false;
         let zoomLevel;
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
         poiLayer.setVisible(showPoiLayer);
+        saleRentLayer.setVisible(true);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
           units: 'pixels',
@@ -160,7 +176,8 @@
               source: mapSource,
             }),
             vectorLayer,
-            estatesLayer
+            estatesLayer,
+            saleRentLayer,
           ],
           view: new ol.View(setView()),
         });
@@ -215,7 +232,7 @@
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
-          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},r${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'}`
+          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},r${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'},s${showSaleRentLayer === true ? '1' : '0'}`
           window.location.hash = `${lon},${lat},${zoom}z${layersStatus}`;
           if(window.innerWidth > 630) {
             hidePermalinkPopup();
@@ -224,7 +241,9 @@
         });
 
         //Show share link of parcel at click
+        let saleRentFeatureData;
         map.on('singleclick', function(event) {
+          saleRentFeatureData = undefined;
           // const zoom = Math.round(map.getView().getZoom());
           let x = (map_range(event.coordinate[0], extent[0], extent[2], dclExtent[0], dclExtent[2]));
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
@@ -241,6 +260,19 @@
             features.forEach(feat => {
               if (feat?.values_.featureType === 'estateArea') {
                 clickedEstateName = feat?.values_.name
+              }
+              // get saleRent feature if exists
+              if(feat?.values_.featureType === 'saleRent') {
+                saleRentFeatureData = {
+                  category: feat.values_.category,
+                  name: feat.values_.name,
+                  salePrice: feat.values_.salePrice,
+                  rentPrice: feat.values_.rentPrice,
+                  size: feat.values_.size,
+                  parcels: feat.values_.parcels,
+                  contractAddress: feat.values_.contractAddress,
+                  tokenId: feat.values_.tokenId,
+                }
               }
             })
             // POI exists at clicked pixel
@@ -260,7 +292,8 @@
               const DCLcoords = mapToDecentralandCoords(coordinates)
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
-              createPermalinkPopup(lon, lat, 'poi', clickedEstateName);
+              saleRentFeatureData = undefined;
+              createPermalinkPopup(lon, lat, 'poi', saleRentFeatureData, clickedEstateName);
               showPermalinkPopup();
               POIpermalinkPopupExists = true;
               // Maintain POI Tool Tip visible on click
@@ -270,7 +303,7 @@
               POIpermalinkPopupExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
-              createPermalinkPopup(xf, yf, 'parcel', clickedEstateName);
+              createPermalinkPopup(xf, yf, 'parcel', saleRentFeatureData, clickedEstateName);
               showPermalinkPopup();
             }
           }
@@ -318,7 +351,8 @@
                 const DCLcoords = mapToDecentralandCoords(coordinates)
                 const lon = DCLcoords[0];
                 const lat = DCLcoords[1];
-                createPermalinkPopup(lon, lat, 'poi', clickedEstateName);
+                saleRentFeatureData = undefined;
+                createPermalinkPopup(lon, lat, 'poi', saleRentFeatureData, clickedEstateName);
               }
             } 
           });
@@ -351,6 +385,7 @@
               let estatesLayerStatus = window.location.href.split('#')[1].split(',')[4].split('e')[1];
               let recentChangesLayerStatus = window.location.href.split('#')[1].split(',')[5].split('r')[1];
               let poisLayerStatus = window.location.href.split('#')[1].split(',')[6].split('p')[1];
+              let saleRentLayerStatus = window.location.href.split('#')[1].split(',')[7].split('s')[1];
               //Apply Layers Status from address bar
               if (nightModeLayerStatus === '1') {
                 toggleNightMode();
@@ -367,6 +402,10 @@
               if (poisLayerStatus === '1') {
                 togglePointsOfInterest();
                 activateLayerToggle('pois');
+              }
+              if (saleRentLayerStatus === '1') {
+                toggleSaleRentLayer();
+                activateLayerToggle('saleRent');
               }
             }
             if (currentViewZoom < 1) {
@@ -395,6 +434,20 @@
         showUpdatedLayer = !showUpdatedLayer;
         vectorLayer.setVisible(showUpdatedLayer);
         showUpdatedLayer ? activeLocationHash('recentChanges', true) : activeLocationHash('recentChanges', false);
+      }
+      
+      function toggleSaleRentLayer() {
+        const activatedStyle = new ol.style.Style({
+          fill : new ol.style.Fill({color: '#00d3ff'}),
+          stroke: new ol.style.Stroke({color: '#00d3ff', width: 1}),
+        });
+        const deactivatedStyle = new ol.style.Style({
+          fill : new ol.style.Fill({color: 'rgba(255,255,255,0)'}),
+          stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
+        });
+        !showSaleRentLayer ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
+        showSaleRentLayer = !showSaleRentLayer;
+        showSaleRentLayer ? activeLocationHash('saleRent', true) : activeLocationHash('saleRent', false);
       }
 
       let estatesIdSeted = false;
@@ -460,14 +513,14 @@
       }
 
       function urlHashFirstValidation(hash) {
-        //The regular expression 'regex0' matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'. 'regex0' also matches that the last four sections are a letter followe by a 1 or a 0.
-        // E.g. '#14,91,7z,n0,e0,r1,p1'
+        //The regular expression 'regex0' matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'. 'regex0' also matches that the last five sections are a letter followed by a 1 or a 0.
+        // E.g. '#14,91,7z,n0,e0,r1,p1,s0'
         const regex0 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z$/;
-        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],r[10],p[10]$/;
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],r[10],p[10],s[10]$/;
         return regex0.test(hash) || regex1.test(hash);
       }
       function urlHashSecondValidation(hash) {
-        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],r[10],p[10]$/;
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],r[10],p[10],s[10]$/;
         return regex1.test(hash);
       }
 
@@ -562,7 +615,6 @@
             <!-- Layer controls -->
             <label class="layer-control">
               <span class="label">Night mode</span>
-              <span class="new-feat">New</span>
               <div class="toggle">
                 <input class="toggle-input" onclick="toggleNightMode()" id="night-mode-toggle" type="checkbox" name="night-mode-toggle" value="show-night-mode">
                 <label class="toggle-label" for="night-mode-toggle">Toggle</label>
@@ -589,6 +641,14 @@
                 <label class="toggle-label" for="poi-layer-toggle">Toggle</label>
               </div>
             </label>
+            <label class="layer-control">
+              <span class="label">Lands for sale/rent</span>
+              <span class="new-feat">New</span>
+              <div class="toggle">
+                <input class="toggle-input" onclick="toggleSaleRentLayer()" id="rent/sale-layer-toggle" type="checkbox" name="rent/sale-layer-toggle" value="show-rent/sale">
+                <label class="toggle-label" for="rent/sale-layer-toggle">Toggle</label>
+              </div>
+            </label>
           </div>
         </div>
       </div>
@@ -609,7 +669,14 @@
       <div class="link-location">
         <i id="permalink-icon"></i>
         <p id="modal-title"></p>
-        <a onclick="hidePermalinkPopup()"></a>
+        <a class="close" onclick="hidePermalinkPopup()"></a>
+      </div>
+      <div class="saleRentData">
+        <div>
+          <i class="marketplace-icon"></i>
+          <p id="salePrice"></p>
+        </div>
+        <p id="rentPrice"></p>
       </div>
       <div class="shareLinkContainer">
         <input type="text" id="shareLink" name="shareLink" readonly onclick="select()">
@@ -634,6 +701,7 @@
       const estatesLayerToggle = document.getElementById('estates-layer-toggle');
       const updatedLayerToggle = document.getElementById('updated-layer-toggle');
       const poisLayerToggle = document.getElementById('poi-layer-toggle');
+      const saleRentLayerToggle = document.getElementById('rent/sale-layer-toggle');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -737,7 +805,7 @@
       }
 
       // Create Parcel Permalink Popup
-      function createPermalinkPopup(lon, lat, type, clickedEstateName) {
+      function createPermalinkPopup(lon, lat, type, saleRentFeatureData, clickedEstateName) {
         if (type === 'parcel') {
           permalinkIcon.classList.remove('poi');
           permalinkIcon.classList.add('parcel');
@@ -754,6 +822,18 @@
         const shareLinkInput = document.getElementById('shareLink');
         const protocol = window.location.protocol + '//'
         shareLinkInput.value = protocol + shareLink;
+
+        // Add sale/rent data
+        const salePriceDOM = document.getElementById('salePrice'); 
+        const rentPriceDOM = document.getElementById('rentPrice');
+        const salePrice = (Math.round(saleRentFeatureData?.salePrice)/1000).toFixed(1).replace(/[.,]0$/, "");
+        const rentPrice = Math.round(saleRentFeatureData?.rentPrice);
+        const marketplaceLink = `https://market.decentraland.org/contracts/${saleRentFeatureData?.contractAddress}/tokens/${saleRentFeatureData?.tokenId}`
+        const forSaleMessage = `For sale at:<i class="mana-icon"></i> ${salePrice}K <a href=${marketplaceLink} target="_blank"><i class="JumpInIcon"></i></a>`;
+        const forRentMessage = `For rent at:<i class="mana-icon"></i> ${rentPrice}/day <a href=${marketplaceLink} target="_blank"><i class="JumpInIcon"></i></a>`;
+
+        salePriceDOM.innerHTML = saleRentFeatureData?.salePrice ? forSaleMessage : 'Not for sale';
+        rentPriceDOM.innerHTML = saleRentFeatureData?.rentPrice ? forRentMessage : 'Not for rent';
       }
 
       // Show Parcel Permalink Popup
@@ -836,6 +916,9 @@
             break;
           case 'pois':
             poisLayerToggle.checked = true;
+            break;
+          case 'saleRent':
+            saleRentLayerToggle.checked = true;
             break;
           default:
             console.error('Invalid layer parameter:', layer);
