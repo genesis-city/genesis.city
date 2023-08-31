@@ -111,8 +111,8 @@
         }),
         style: function (feature) {
             return new ol.style.Style({
-              fill : new ol.style.Fill({color: '#00d3ff'}),
-              stroke: new ol.style.Stroke({color: '#00d3ff', width: 1}),
+              fill : new ol.style.Fill({color: 'rgba(255,255,255,0)'}),
+              stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
             })
         },
       });
@@ -132,7 +132,7 @@
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
         poiLayer.setVisible(showPoiLayer);
-        saleRentLayer.setVisible(showPoiLayer);
+        saleRentLayer.setVisible(true);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
           units: 'pixels',
@@ -241,7 +241,9 @@
         });
 
         //Show share link of parcel at click
+        let saleRentFeatureData;
         map.on('singleclick', function(event) {
+          saleRentFeatureData = undefined;
           // const zoom = Math.round(map.getView().getZoom());
           let x = (map_range(event.coordinate[0], extent[0], extent[2], dclExtent[0], dclExtent[2]));
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
@@ -258,6 +260,17 @@
             features.forEach(feat => {
               if (feat?.values_.featureType === 'estateArea') {
                 clickedEstateName = feat?.values_.name
+              }
+              // get saleRent feature if exists
+              if(feat?.values_.featureType === 'saleRent') {
+                saleRentFeatureData = {
+                  category: feat.values_.category,
+                  name: feat.values_.name,
+                  salePrice: feat.values_.salePrice,
+                  rentPrice: feat.values_.rentPrice,
+                  size: feat.values_.size,
+                  parcels: feat.values_.parcels,
+                }
               }
             })
             // POI exists at clicked pixel
@@ -277,7 +290,8 @@
               const DCLcoords = mapToDecentralandCoords(coordinates)
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
-              createPermalinkPopup(lon, lat, 'poi', clickedEstateName);
+              saleRentFeatureData = undefined;
+              createPermalinkPopup(lon, lat, 'poi', saleRentFeatureData, clickedEstateName);
               showPermalinkPopup();
               POIpermalinkPopupExists = true;
               // Maintain POI Tool Tip visible on click
@@ -287,7 +301,7 @@
               POIpermalinkPopupExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
-              createPermalinkPopup(xf, yf, 'parcel', clickedEstateName);
+              createPermalinkPopup(xf, yf, 'parcel', saleRentFeatureData, clickedEstateName);
               showPermalinkPopup();
             }
           }
@@ -335,7 +349,8 @@
                 const DCLcoords = mapToDecentralandCoords(coordinates)
                 const lon = DCLcoords[0];
                 const lat = DCLcoords[1];
-                createPermalinkPopup(lon, lat, 'poi', clickedEstateName);
+                saleRentFeatureData = undefined;
+                createPermalinkPopup(lon, lat, 'poi', saleRentFeatureData, clickedEstateName);
               }
             } 
           });
@@ -415,8 +430,16 @@
       }
       
       function toggleSaleRentLayer() {
+        const activatedStyle = new ol.style.Style({
+          fill : new ol.style.Fill({color: '#00d3ff'}),
+          stroke: new ol.style.Stroke({color: '#00d3ff', width: 1}),
+        });
+        const deactivatedStyle = new ol.style.Style({
+          fill : new ol.style.Fill({color: 'rgba(255,255,255,0)'}),
+          stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
+        });
+        !showSaleRentLayer ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
         showSaleRentLayer = !showSaleRentLayer;
-        saleRentLayer.setVisible(showSaleRentLayer);
       }
 
       let estatesIdSeted = false;
@@ -640,6 +663,13 @@
         <p id="modal-title"></p>
         <a onclick="hidePermalinkPopup()"></a>
       </div>
+      <div class="saleRentData">
+        <div>
+          <i class="marketplace-icon"></i>
+          <p id="salePrice"></p>
+        </div>
+        <p id="rentPrice"></p>
+      </div>
       <div class="shareLinkContainer">
         <input type="text" id="shareLink" name="shareLink" readonly onclick="select()">
         <button onclick="copyLink()">Copy Link</button>
@@ -766,7 +796,7 @@
       }
 
       // Create Parcel Permalink Popup
-      function createPermalinkPopup(lon, lat, type, clickedEstateName) {
+      function createPermalinkPopup(lon, lat, type, saleRentFeatureData, clickedEstateName) {
         if (type === 'parcel') {
           permalinkIcon.classList.remove('poi');
           permalinkIcon.classList.add('parcel');
@@ -783,6 +813,17 @@
         const shareLinkInput = document.getElementById('shareLink');
         const protocol = window.location.protocol + '//'
         shareLinkInput.value = protocol + shareLink;
+
+        // Add sale/rent data
+        const salePriceDOM = document.getElementById('salePrice'); 
+        const rentPriceDOM = document.getElementById('rentPrice');
+        const salePrice = (Math.round(saleRentFeatureData?.salePrice)/1000).toFixed(1).replace(/[.,]0$/, "");
+        const rentPrice = Math.round(saleRentFeatureData?.rentPrice);
+        const forSaleMessage = `For sale at:<i class="mana-icon"></i> ${salePrice}K`
+        const forRentMessage = `For rent at:<i class="mana-icon"></i> ${rentPrice}/day`
+
+        salePriceDOM.innerHTML = saleRentFeatureData?.salePrice ? forSaleMessage : 'Not for sale';
+        rentPriceDOM.innerHTML = saleRentFeatureData?.rentPrice ? forRentMessage : 'Not for rent';
       }
 
       // Show Parcel Permalink Popup
