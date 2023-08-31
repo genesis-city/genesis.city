@@ -370,7 +370,6 @@ html, body {
   position: absolute;
   left: 0.75rem;
   margin-right: 0.75rem;
-  cursor: pointer;
   background: url(../img/parcelPointer.svg);
   background-size: contain;
   background-position: center;
@@ -386,7 +385,6 @@ html, body {
   top: 0.75rem;
   left: 0.75rem;
   margin-right: 0.75rem;
-  cursor: pointer;
   background: url(../img/marker.svg);
   background-size: contain;
   background-position: center;
@@ -395,6 +393,10 @@ html, body {
   width: 18px;
   display: block;
   justify-self: flex-end;
+}
+
+.parcel-link-box p#modal-title {
+  margin: 0;
 }
 
 .parcel-link-box a {
@@ -426,6 +428,62 @@ html, body {
   margin: 0 1rem 0 26.453px;
   align-self: center;
   font-size: 1rem;
+}
+
+.parcel-link-box div.saleRentData {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.parcel-link-box .saleRentData div {
+  display: flex;
+  height: 30px;
+}
+
+.parcel-link-box .saleRentData p {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  margin: 0px;
+}
+
+.parcel-link-box .saleRentData p#itemType {
+  font-size: 1.3rem;
+}
+
+.parcel-link-box .saleRentData div.saleRentType {
+  display: flex;
+  width: 100%;
+  height: 24px;
+  justify-content: left;
+  align-items: center;
+  margin: 5px 0;
+}
+
+.parcel-link-box .saleRentData i.mana-icon {
+  margin: 5px 3px 5px 8px;
+  background: url(../img/manaIcon.svg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.parcel-link-box .saleRentData i.marketplace-icon {
+  margin-right: 8px;
+  background: url(../img/marketplaceIcon.svg);
+  /* background: url(../img/cartIcon.svg); */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 22.241px;
+  /* height: 24px; */
+  width: 24px;
+}
+
+#rentPrice {
+  margin-left: 32px;
 }
 
 .shareLinkContainer {
