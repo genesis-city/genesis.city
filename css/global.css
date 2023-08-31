@@ -364,6 +364,9 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-left: 25px;
+  padding-right:25px;
+  overflow:hidden
 }
 
 .parcel-link-box i.parcel {
@@ -397,6 +400,10 @@ html, body {
 
 .parcel-link-box p#modal-title {
   margin: 0;
+  display: table-cell;
+  vertical-align: middle; 
+  overflow: hidden;
+  word-wrap: break-word;
 }
 
 .parcel-link-box a.close {
