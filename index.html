@@ -829,8 +829,8 @@
         const salePrice = (Math.round(saleRentFeatureData?.salePrice)/1000).toFixed(1).replace(/[.,]0$/, "");
         const rentPrice = Math.round(saleRentFeatureData?.rentPrice);
         const marketplaceLink = `https://market.decentraland.org/contracts/${saleRentFeatureData?.contractAddress}/tokens/${saleRentFeatureData?.tokenId}`
-        const forSaleMessage = `For sale at:<i class="mana-icon"></i> ${salePrice}K <a href=${marketplaceLink} target="_blank"><i class="JumpInIcon"></i></a>`;
-        const forRentMessage = `For rent at:<i class="mana-icon"></i> ${rentPrice}/day <a href=${marketplaceLink} target="_blank"><i class="JumpInIcon"></i></a>`;
+        const forSaleMessage = `For sale at<i class="mana-icon"></i> ${salePrice}K <a href=${marketplaceLink} target="_blank"><i class="JumpInIcon"></i></a>`;
+        const forRentMessage = `For rent at<i class="mana-icon"></i> ${rentPrice}/day <a href=${marketplaceLink} target="_blank"><i class="JumpInIcon"></i></a>`;
 
         salePriceDOM.innerHTML = saleRentFeatureData?.salePrice ? forSaleMessage : 'Not for sale';
         rentPriceDOM.innerHTML = saleRentFeatureData?.rentPrice ? forRentMessage : 'Not for rent';
