@@ -447,11 +447,13 @@ html, body {
   height: 30px;
 }
 
-.parcel-link-box .saleRentData p {
+.parcel-link-box .saleRentData p,  .parcel-link-box .saleRentData p a{
   display: flex;
   height: 30px;
   align-items: center;
   margin: 0px;
+  color: inherit;
+  text-decoration: none;
 }
 
 .parcel-link-box .saleRentData i.JumpInIcon {
