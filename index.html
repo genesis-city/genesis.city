@@ -831,9 +831,16 @@
         const marketplaceLink = `https://market.decentraland.org/contracts/${saleRentFeatureData?.contractAddress}/tokens/${saleRentFeatureData?.tokenId}`
         const forSaleMessage = `<a href=${marketplaceLink} target="_blank">For sale at<i class="mana-icon"></i> ${salePrice}K <i class="JumpInIcon"></i></a>`;
         const forRentMessage = `<a href=${marketplaceLink} target="_blank">For rent at<i class="mana-icon"></i> ${rentPrice}/day <i class="JumpInIcon"></i></a>`;
+        const forRentMessage2 = `<a href=${marketplaceLink} target="_blank">For rent at<i class="mana-icon"></i> ${rentPrice}/day</a>`;
 
         salePriceDOM.innerHTML = saleRentFeatureData?.salePrice ? forSaleMessage : 'Not for sale';
-        rentPriceDOM.innerHTML = saleRentFeatureData?.rentPrice ? forRentMessage : 'Not for rent';
+        if(saleRentFeatureData?.rentPrice && saleRentFeatureData?.salePrice) {
+          rentPriceDOM.innerHTML = forRentMessage2;
+        } else if (saleRentFeatureData?.rentPrice) {
+          rentPriceDOM.innerHTML = forRentMessage;
+        } else {
+          rentPriceDOM.innerHTML = 'Not for rent';
+        }
       }
 
       // Show Parcel Permalink Popup
