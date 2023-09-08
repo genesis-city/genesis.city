@@ -487,20 +487,18 @@ html, body {
 
 .parcel-link-box .saleRentData i.marketplace-icon {
   margin-right: 8px;
-  margin-top: 3.8795px;
-  margin-bottom: 3.8795px;
-  background: url(../img/marketplaceIcon.svg);
-  /* background: url(../img/cartIcon.svg); */
+  margin-top: 5.733px;
+  margin-bottom: 5.733px;
+  background: url(../img/marketplaceIconSmall.svg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 22.241px;
-  /* height: 24px; */
-  width: 24px;
+  width: 20px;
+  height: 18.534px;
 }
 
 #rentPrice {
-  margin-left: 32px;
+  margin-left: 28px;
 }
 
 .shareLinkContainer {
