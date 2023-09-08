@@ -438,7 +438,7 @@ html, body {
 }
 
 .parcel-link-box div.saleRentData {
-  margin-top: 20px;
+  margin-top: 10px;
   width: 100%;
 }
 
@@ -487,6 +487,8 @@ html, body {
 
 .parcel-link-box .saleRentData i.marketplace-icon {
   margin-right: 8px;
+  margin-top: 3.8795px;
+  margin-bottom: 3.8795px;
   background: url(../img/marketplaceIcon.svg);
   /* background: url(../img/cartIcon.svg); */
   background-size: cover;
@@ -536,7 +538,7 @@ html, body {
 
 .copied-link-popup {
   width: 290px;
-  height: 168px;
+  height: 158px;
   background: rgba(36, 35, 38, 0.5);
   text-align: right;
   font-size: .75rem;
