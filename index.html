@@ -60,24 +60,31 @@
       });
 
       //Estates layer
+      /* There are actually two estates layers:
+      'estatesLayer' includes only estates perimeter features. Its only present if estatesLayer toggle is in the activated position. (Improves performance when layer is not activated)
+      'estatesAreaLayer' includes estates area features. Its always active no matter in which position is the estatesLayer toggle. (This allows to retrieve estate name data to show on modal even if estatesLayer toggle is not active)*/
       const estatesLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
-          url: 'estates.json', 
+          url: 'estatesPerimeter.json',
           format: new ol.format.GeoJSON(),
         }),
         style: function (feature) {
-          if (feature.values_.featureType === 'estatePerimeter') {
-            const assignedColor = assignColor(feature.values_.type, false);
-            return new ol.style.Style({
-              stroke: new ol.style.Stroke({color: assignedColor, width: 2})
-            })
-          }
-          if (feature.values_.featureType === 'estateArea') {
-            const assignedColor = assignColor(feature.values_.type, true);
-            return new ol.style.Style({
-              fill : new ol.style.Fill({color: 'rgba(255, 255, 255, 0)'}),
-            })
-          }
+          const assignedColor = assignColor(feature.values_.type, false);
+          return new ol.style.Style({
+            stroke: new ol.style.Stroke({color: assignedColor, width: 2})
+          })
+        },
+      });
+
+      const estatesAreaLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          url: 'estatesArea.json',
+          format: new ol.format.GeoJSON(),
+        }),
+        style: function (feature) {
+          return new ol.style.Style({
+            fill : new ol.style.Fill({color: 'rgba(255, 255, 255, 0)'}),
+          })
         },
       });
 
@@ -131,6 +138,7 @@
         let zoomLevel;
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
+        estatesAreaLayer.setVisible(true);
         poiLayer.setVisible(showPoiLayer);
         saleRentLayer.setVisible(true);
         var projection = new ol.proj.Projection({
@@ -177,6 +185,7 @@
             }),
             vectorLayer,
             estatesLayer,
+            estatesAreaLayer,
             saleRentLayer,
           ],
           view: new ol.View(setView()),
@@ -194,33 +203,35 @@
         let hoverEstateArea = null;
         let hoverEstatePerimeter = null;
         map.on('pointermove', function(event) {
-          if (hoverEstateArea !== null) {
-            hoverEstateArea.setStyle(undefined);
-            hoverEstateArea = null;
-            hoverEstatePerimeter.setStyle(undefined);
-            hoverEstatePerimeter = null;
-          }
-          if (map.hasFeatureAtPixel(event.pixel)) {
-            map.forEachFeatureAtPixel(event.pixel, (feature) => {
-              const assignedColorArea = assignColor(feature.values_.type, true);
-              const assignedColorPerimeter = assignColor(feature.values_.type, false);
-              const hoverStyleArea = new ol.style.Style({
-                fill : new ol.style.Fill({color: assignedColorArea}),
-                // stroke: new ol.style.Stroke({color: assignedColor, width: 1}),
+          if (showEstatesLayer) {
+            if (hoverEstateArea !== null) {
+              hoverEstateArea.setStyle(undefined);
+              hoverEstateArea = null;
+              hoverEstatePerimeter.setStyle(undefined);
+              hoverEstatePerimeter = null;
+            }
+            if (map.hasFeatureAtPixel(event.pixel)) {
+              map.forEachFeatureAtPixel(event.pixel, (feature) => {
+                const assignedColorArea = assignColor(feature.values_.type, true);
+                const assignedColorPerimeter = assignColor(feature.values_.type, false);
+                const hoverStyleArea = new ol.style.Style({
+                  fill : new ol.style.Fill({color: assignedColorArea}),
+                  // stroke: new ol.style.Stroke({color: assignedColor, width: 1}),
+                });
+                const hoverStylePerimeter = new ol.style.Style({
+                  stroke: new ol.style.Stroke({color: assignedColorPerimeter, width: 4}),
+                });
+                if (feature.values_.featureType === 'estateArea') {
+                  const estateId = parseInt(feature.values_.estateId);
+                  const perimeterFeature = estatesLayer.getSource().getFeatureById(estateId);
+                  hoverEstateArea = feature;
+                  hoverEstatePerimeter = perimeterFeature;
+                  feature.setStyle(hoverStyleArea);
+                  perimeterFeature.setStyle(hoverStylePerimeter)
+                  return true;
+                }
               });
-              const hoverStylePerimeter = new ol.style.Style({
-                stroke: new ol.style.Stroke({color: assignedColorPerimeter, width: 4}),
-              });
-              if (feature.values_.featureType === 'estateArea') {
-                const estateId = parseInt(feature.values_.estateId);
-                const perimeterFeature = estatesLayer.getSource().getFeatureById(estateId);
-                hoverEstateArea = feature;
-                hoverEstatePerimeter = perimeterFeature;
-                feature.setStyle(hoverStyleArea);
-                perimeterFeature.setStyle(hoverStylePerimeter)
-                return true;
-              }
-            });
+            }
           }
         })
 
