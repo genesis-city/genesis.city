@@ -233,6 +233,16 @@
               });
             }
           }
+          // Clean styles and features when mouseover an overlay. (Overlays: Layer/zoom controls, social links, last updated date)
+          var mapElemet = document.getElementById("map");
+          mapElemet.addEventListener("mouseout", function() {
+            if (hoverEstateArea) {
+              hoverEstateArea.setStyle(undefined);
+              hoverEstatePerimeter.setStyle(undefined);
+              hoverEstateArea = null;
+              hoverEstatePerimeter = null;
+            }
+          });
         })
 
         //Show zoom and coords as hash URL in address bar
