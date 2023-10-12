@@ -270,7 +270,10 @@
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
           let xf = 1 * Math.floor((x));
           let yf = 1 * Math.floor((y));
-
+          const metaDataBaseURL = 'https://places.decentraland.org/api/places?';
+          const metaDataEndpoint = metaDataBaseURL.concat(`&positions=${xf}%2C${yf}`);
+          console.log(`${xf},${yf}`);
+          fetch(metaDataEndpoint).then(res => res.json()).then(data => console.log(data.data[0].image));
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
