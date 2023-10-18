@@ -263,7 +263,6 @@
 
         //Show share link of parcel at click
         let saleRentFeatureData;
-        // let banner = "https://peer.decentraland.org/content/contents/bafybeibaanjhol6wswhkmxrwtra6vynkfekhivps6k5wl3m2gz3o2p3h2a";
         let banner = "";
         let bannerUrl = 'url("' + banner + '")';
         map.on('singleclick', function(event) {
@@ -276,8 +275,13 @@
           const metaDataBaseURL = 'https://places.decentraland.org/api/places?';
           const metaDataEndpoint = metaDataBaseURL.concat(`&positions=${xf}%2C${yf}`);
           console.log(`${xf},${yf}`);
-          fetch(metaDataEndpoint).then(res => res.json()).then(data => data.data[0]?.image ? bannerUrl = 'url("' + data.data[0].image + '")' : banner = '');
-          bannerContainer.style.backgroundImage = bannerUrl;
+
+          // Fetch and show image for modal thumbnail for clicked parcel
+          fetch(metaDataEndpoint).then(res => res.json()).then(data => {
+              data.data[0]?.image ? bannerUrl = 'url("' + data.data[0].image + '")' : banner = ''
+              bannerContainer.style.backgroundImage = bannerUrl;
+            }
+          );
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
