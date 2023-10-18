@@ -263,6 +263,9 @@
 
         //Show share link of parcel at click
         let saleRentFeatureData;
+        // let banner = "https://peer.decentraland.org/content/contents/bafybeibaanjhol6wswhkmxrwtra6vynkfekhivps6k5wl3m2gz3o2p3h2a";
+        let banner = "";
+        let bannerUrl = 'url("' + banner + '")';
         map.on('singleclick', function(event) {
           saleRentFeatureData = undefined;
           // const zoom = Math.round(map.getView().getZoom());
@@ -273,7 +276,8 @@
           const metaDataBaseURL = 'https://places.decentraland.org/api/places?';
           const metaDataEndpoint = metaDataBaseURL.concat(`&positions=${xf}%2C${yf}`);
           console.log(`${xf},${yf}`);
-          fetch(metaDataEndpoint).then(res => res.json()).then(data => console.log(data.data[0].image));
+          fetch(metaDataEndpoint).then(res => res.json()).then(data => data.data[0]?.image ? bannerUrl = 'url("' + data.data[0].image + '")' : banner = '');
+          bannerContainer.style.backgroundImage = bannerUrl;
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
@@ -690,6 +694,7 @@
 
     <!-- Parcel link box -->
     <div class="overlay blur parcel-link-box hide" id="parcel-link-box">
+      <div id="banner-container" class="dg ImgFixed ImgFixed--wide" style="background-color: transparent; background-size: cover; background-position: center center;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAADUlEQVR4AWNwL/ABYwAKHQIHW//QwwAAAABJRU5ErkJggg==" width="256" height="156"></div>
       <div class="link-location">
         <i id="permalink-icon"></i>
         <p id="modal-title"></p>
@@ -726,6 +731,7 @@
       const updatedLayerToggle = document.getElementById('updated-layer-toggle');
       const poisLayerToggle = document.getElementById('poi-layer-toggle');
       const saleRentLayerToggle = document.getElementById('rent/sale-layer-toggle');
+      const bannerContainer = document.getElementById('banner-container');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
