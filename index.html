@@ -272,7 +272,7 @@
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
           let xf = 1 * Math.floor((x));
           let yf = 1 * Math.floor((y));
-          const metaDataBaseURL = `${window.location.origin}/proxy`
+          const metaDataBaseURL = `${window.location.origin}/proxy/`
           const metaDataEndpoint = metaDataBaseURL.concat(`&positions=${xf}%2C${yf}`);
 
           // Fetch and show image for modal thumbnail for clicked parcel
