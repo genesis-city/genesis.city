@@ -277,7 +277,9 @@
 
           // Fetch and show image for modal thumbnail for clicked parcel
           fetch(metaDataEndpoint).then(res => res.json()).then(data => {
-              data.data[0]?.image ? bannerUrl = 'url("' + data.data[0].image + '")' : banner = ''
+              const defaultImage = 'https://peer.decentraland.org/content/contents/bafkreidj26s7aenyxfthfdibnqonzqm5ptc4iamml744gmcyuokewkr76y';
+              data.data[0]?.image ? bannerUrl = 'url("' + data.data[0].image + '")' : bannerUrl = `url(${defaultImage})`;
+              
               bannerContainer.style.backgroundImage = bannerUrl;
             }
           );
