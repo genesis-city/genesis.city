@@ -330,6 +330,7 @@ html, body {
   justify-content: space-between;
   align-items: flex-start;
   transition: all 300ms ease-in-out;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 6px 4px;
 }
 
 .parcel-link-box.show {
