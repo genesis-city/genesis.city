@@ -399,8 +399,8 @@ html, body {
 }
 
 .parcel-link-box #banner-container {
-  margin: -12px 0 8px -12px;
-  border-radius: 0.5rem 0.5rem 0 0;
+  margin: -10px 0 8px -10px;
+  border-radius: 6px 6px 0 0;
 }
 
 .parcel-link-box p#modal-title {
