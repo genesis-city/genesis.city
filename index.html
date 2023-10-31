@@ -263,6 +263,8 @@
 
         //Show share link of parcel at click
         let saleRentFeatureData;
+        let banner = "";
+        let bannerUrl = 'url("' + banner + '")';
         map.on('singleclick', function(event) {
           saleRentFeatureData = undefined;
           // const zoom = Math.round(map.getView().getZoom());
@@ -270,7 +272,17 @@
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
           let xf = 1 * Math.floor((x));
           let yf = 1 * Math.floor((y));
+          const metaDataBaseURL = `${window.location.origin}/api/`
+          const metaDataEndpoint = metaDataBaseURL.concat(`places?&positions=${xf}%2C${yf}`);
 
+          // Fetch and show image for modal thumbnail for clicked parcel
+          fetch(metaDataEndpoint).then(res => res.json()).then(data => {
+              const defaultImage = 'https://peer.decentraland.org/content/contents/bafkreidj26s7aenyxfthfdibnqonzqm5ptc4iamml744gmcyuokewkr76y';
+              data.data[0]?.image ? bannerUrl = 'url("' + data.data[0].image + '")' : bannerUrl = `url(${defaultImage})`;
+              
+              bannerContainer.style.backgroundImage = bannerUrl;
+            }
+          );
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
@@ -687,10 +699,16 @@
 
     <!-- Parcel link box -->
     <div class="overlay blur parcel-link-box hide" id="parcel-link-box">
+      <div id="banner-container" class="dg ImgFixed ImgFixed--wide" style="background-color: transparent; background-size: cover; background-position: center center;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAADUlEQVR4AWNwL/ABYwAKHQIHW//QwwAAAABJRU5ErkJggg==" width="290"></div>
       <div class="link-location">
         <i id="permalink-icon"></i>
         <p id="modal-title"></p>
-        <a class="close" onclick="hidePermalinkPopup()"></a>
+        <a class="close" onclick="hidePermalinkPopup()">
+          <svg fill="none" height="10" xmlns="http://www.w3.org/2000/svg" viewBox="5 4 10 10">
+            <path d="M6.29871 4.20129C6.15653 4.06881 5.96849 3.99669 5.77419 4.00012C5.57988 4.00355 5.3945 4.08226 5.25709 4.21967C5.11967 4.35708 5.04096 4.54247 5.03753 4.73677C5.0341 4.93107 5.10623 5.11912 5.23871 5.26129L8.95871 8.98129L5.23871 12.7013C5.16502 12.77 5.10592 12.8528 5.06493 12.9448C5.02394 13.0368 5.00189 13.1361 5.00012 13.2368C4.99834 13.3375 5.01686 13.4375 5.05459 13.5309C5.09231 13.6243 5.14845 13.7091 5.21967 13.7803C5.29089 13.8515 5.37572 13.9077 5.46911 13.9454C5.5625 13.9831 5.66253 14.0017 5.76323 13.9999C5.86393 13.9981 5.96325 13.9761 6.05525 13.9351C6.14725 13.8941 6.23005 13.835 6.29871 13.7613L10.0187 10.0413L13.7387 13.7613C13.8074 13.835 13.8902 13.8941 13.9822 13.9351C14.0742 13.9761 14.1735 13.9981 14.2742 13.9999C14.3749 14.0017 14.4749 13.9831 14.5683 13.9454C14.6617 13.9077 14.7465 13.8515 14.8177 13.7803C14.889 13.7091 14.9451 13.6243 14.9828 13.5309C15.0206 13.4375 15.0391 13.3375 15.0373 13.2368C15.0355 13.1361 15.0135 13.0368 14.9725 12.9448C14.9315 12.8528 14.8724 12.77 14.7987 12.7013L11.0787 8.98129L14.7987 5.26129C14.9312 5.11912 15.0033 4.93107 14.9999 4.73677C14.9965 4.54247 14.9177 4.35708 14.7803 4.21967C14.6429 4.08226 14.4575 4.00355 14.2632 4.00012C14.0689 3.99669 13.8809 4.06881 13.7387 4.20129L10.0187 7.92129L6.29871 4.20129Z" fill="white">
+            </path>
+          </svg>
+        </a>
       </div>
       <div class="saleRentData">
         <div>
@@ -723,6 +741,7 @@
       const updatedLayerToggle = document.getElementById('updated-layer-toggle');
       const poisLayerToggle = document.getElementById('poi-layer-toggle');
       const saleRentLayerToggle = document.getElementById('rent/sale-layer-toggle');
+      const bannerContainer = document.getElementById('banner-container');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
