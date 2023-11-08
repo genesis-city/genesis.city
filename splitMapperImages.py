@@ -6,11 +6,17 @@ output_directory = 'testImagesOutput'
 
 def split_image(img_path, output_dir):
     try:
-        # Parse the image name to get the central coordinates
+        # Parse the image name to get the central coordinates (OpenLayers coordinates)
         base_name = os.path.basename(img_path)
         base_name = os.path.splitext(base_name)[0]
-        central_x, central_y = map(int, base_name.split(','))
+        central_OL_x, centra_OL_y = map(int, base_name.split(','))
 
+        # Convert OpenLayers coordinates to Decentraland coordinates
+        n = 5
+        pad = 30
+        central_x = (central_OL_x - pad) * n
+        central_y = (pad - centra_OL_y) * n
+ 
         # Open the image
         img = Image.open(img_path)
         img_width, img_height = img.size
