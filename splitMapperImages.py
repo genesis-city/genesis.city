@@ -1,8 +1,8 @@
 import os
 from PIL import Image
 
-input_directory = 'testImagesInput'
-output_directory = 'testImagesOutput'
+input_directory = 'map/latest/6'
+output_directory = 'api/v1/land'
 
 def split_image(img_path, output_dir):
     try:
