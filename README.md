@@ -7,4 +7,11 @@ Decentraland map
 For the mapper script, see https://github.com/maraoz/unity-renderer/blob/master/unity-renderer/Assets/Scripts/MapperCamera.cs
 
 # API Docs
-Soon.
+
+Retrieve individual parcel images from Genesis City Map.
+Access a specific parcel image by making a GET request to the following URL format:
+
+https://genesis.city/api/v1/land/{x-coordinate},{y-coordinate}.jpg
+
+For example:
+https://genesis.city/api/v1/land/137,-145.jpg
