@@ -423,6 +423,18 @@ html, body {
   border-radius: 0.5rem 0.5rem 0 0;
 }
 
+.parcel-link-box #spinner {
+  height: 30px;
+  position: absolute;
+  left: 130px;
+  top: 60px;
+  z-index: -1;
+}
+
+/* .parcel-link-box #spinner.hide {
+  display: none;
+} */
+
 .parcel-link-box p#modal-title {
   margin: 0;
   display: table-cell;
