@@ -584,6 +584,11 @@ html, body {
   font-size: 1rem;
 }
 
+.copied-link-popup img {
+  margin-right: 8px;
+  opacity: 1;
+}
+
 .copied-link-popup.show {
   opacity: 1;
 }
