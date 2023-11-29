@@ -281,6 +281,27 @@ html, body {
 #date.remove {
   display: none;
 }
+#date p {
+  margin: 0;
+}
+#date div p {
+  margin-right: 6px;
+  margin-top: 1px;
+  font-size: 12px;
+}
+#date img {
+  height: 20px;
+}
+#date div {
+  margin-top: 5px;
+  margin-bottom: 3px;
+  display: flex;
+  cursor: pointer;
+}
+#date a {
+  color: white;
+  text-decoration: none;
+}
 
 /* Social links */
 #social {
