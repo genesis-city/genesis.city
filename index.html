@@ -691,18 +691,15 @@
     </div>
 
     <!-- Last update -->
-    <div class="overlay blur date"  id="date">
-      <p>Last updated  Nov. 26, 2023.</p>
+    <div class="overlay blur date-dao"  id="date">
+      Last updated  Nov. 26, 2023.
+    </div>
+    <div class="overlay blur date-dao"  id="dao">
       <a href="https://dao.decentraland.org/" target=”_blank”>
-        <div class="dcl-dao">
-          <p>Powered by</p>
-          <img src="/img/DAO LOGO OK2023-03.png" alt="DCL-DAO-logo">
-        </div>
+        <p>Powered by</p>
+        <img src="/img/DAO LOGO OK2023-03.png" alt="DCL-DAO-logo">
       </a>
     </div>
-    <!-- <div class="overlay blur date"  id="dao">
-      Last updated  , 2023.
-    </div> -->
 
     <!-- Jump in button -->
     <div id="context-menu">
@@ -746,6 +743,7 @@
       const parcelLinkBox = document.getElementById("parcel-link-box");
       const socialLinks = document.getElementById('social');
       const updateDate = document.getElementById('date');
+      const daoRecognition = document.getElementById('dao');
       const permalinkIcon = document.getElementById('permalink-icon');
       const modalTitle = document.getElementById('modal-title');
       const nightModeToggle = document.getElementById('night-mode-toggle');
@@ -902,9 +900,11 @@
           if(window.innerWidth < 630) {
             socialLinks.classList.add('hide');
             updateDate.classList.add('hide');
+            daoRecognition.classList.add('hide');
             setTimeout(() => {
             socialLinks.classList.add('remove');
             updateDate.classList.add('remove');
+            daoRecognition.classList.add('remove');
           }, 300);
           }
           parcelLinkBox.classList.remove("hide");
@@ -934,9 +934,11 @@
         }, 500);
         socialLinks.classList.remove('remove');
         updateDate.classList.remove('remove');
+        daoRecognition.classList.remove('remove');
         setTimeout(() => {
           socialLinks.classList.remove('hide');
           updateDate.classList.remove('hide');
+          daoRecognition.classList.remove('hide');
         }, 10);
       }
 
