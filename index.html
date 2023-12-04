@@ -623,10 +623,10 @@
     <!-- Social links -->
     <div class="overlay blur" id="social">
       <a href="https://github.com/genesis-city/genesis.city" target="_blank">
-        <img src="./img/github.svg" alt="GitHub">
+        <img src="./img/github.svg" alt="GitHub_icon">
       </a>
-      <a href="https://twitter.com/GenesisCityMap" target="_blank">
-        <img src="./img/twitter.svg" alt="Twitter">
+      <a href="https://x.com/GenesisCityMap" target="_blank">
+        <img src="./img/x.svg" alt="X_icon">
       </a>
       <a href="https://github.com/genesis-city/genesis.city#api-docs" target="_blank">
         <img src="./img/API.svg" alt="API_icon">
@@ -691,9 +691,14 @@
     </div>
 
     <!-- Last update -->
-    <div class="overlay blur date"  id="date">
+    <div class="overlay blur date-dao"  id="date">
       Last updated  Nov. 26, 2023.
     </div>
+    <!-- <div class="overlay blur date-dao"  id="dao">
+      <a href="https://dao.decentraland.org/" target=”_blank”>
+        <p>Powered by <span>Decentraland</span> · DAO</p>
+      </a>
+    </div> -->
 
     <!-- Jump in button -->
     <div id="context-menu">
@@ -703,6 +708,7 @@
     <!-- Parcel link box -->
     <div class="overlay blur parcel-link-box hide" id="parcel-link-box">
       <div id="banner-container" class="dg ImgFixed ImgFixed--wide" style="background-color: transparent; background-size: cover; background-position: center center;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAADUlEQVR4AWNwL/ABYwAKHQIHW//QwwAAAABJRU5ErkJggg==" width="290"></div>
+      <img id="spinner" src="./img/spinner.gif" alt="">
       <div class="link-location">
         <i id="permalink-icon"></i>
         <p id="modal-title"></p>
@@ -728,6 +734,7 @@
 
     <!-- Copied Link popup-->
     <div class="overlay blur copied-link-popup hide" id="copied-link-popup">
+      <img src="/img/greenCheck.svg" alt="">
       <p>Copied to clipboard</p>
     </div>
 
@@ -737,6 +744,7 @@
       const parcelLinkBox = document.getElementById("parcel-link-box");
       const socialLinks = document.getElementById('social');
       const updateDate = document.getElementById('date');
+      // const daoRecognition = document.getElementById('dao');
       const permalinkIcon = document.getElementById('permalink-icon');
       const modalTitle = document.getElementById('modal-title');
       const nightModeToggle = document.getElementById('night-mode-toggle');
@@ -893,9 +901,11 @@
           if(window.innerWidth < 630) {
             socialLinks.classList.add('hide');
             updateDate.classList.add('hide');
+            // daoRecognition.classList.add('hide');
             setTimeout(() => {
             socialLinks.classList.add('remove');
             updateDate.classList.add('remove');
+            // daoRecognition.classList.add('remove');
           }, 300);
           }
           parcelLinkBox.classList.remove("hide");
@@ -925,9 +935,11 @@
         }, 500);
         socialLinks.classList.remove('remove');
         updateDate.classList.remove('remove');
+        // daoRecognition.classList.remove('remove');
         setTimeout(() => {
           socialLinks.classList.remove('hide');
           updateDate.classList.remove('hide');
+          // daoRecognition.classList.remove('hide');
         }, 10);
       }
 
