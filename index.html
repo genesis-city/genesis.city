@@ -272,7 +272,11 @@
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
           let xf = 1 * Math.floor((x));
           let yf = 1 * Math.floor((y));
+
+          // Using Netlify redirects to avoid CORS, check _redirects file
           const metaDataBaseURL = `${window.location.origin}/api/`
+          // For local testing use the following metaDataBaseURL:
+          // const metaDataBaseURL = `https://places.decentraland.org/api/`
           const metaDataEndpoint = metaDataBaseURL.concat(`places?&positions=${xf}%2C${yf}`);
 
           // Fetch and show image for modal thumbnail for clicked parcel
