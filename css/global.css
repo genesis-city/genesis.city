@@ -276,8 +276,7 @@ html, body {
   transition: all 300ms ease-in-out;
 }
 #date {
-  bottom: 0.5rem;
-  /* bottom: 2.4rem; */
+  bottom: 2.4rem;
 }
 .date-dao.hide {
   transform: translateY(7.5rem);
