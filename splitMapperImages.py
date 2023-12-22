@@ -7,7 +7,22 @@ from PIL import Image
 input_directory = '../map'
 output_directory = 'api/v1/land'
 
-def split_image(img_path, output_dir):
+# Load updated coordinates from the coords.txt file
+with open('../coords.txt', 'r') as file:
+    lines = file.readlines()
+    coordinates_to_save = []
+
+    for line in lines:
+        # Split the line by semicolons
+        coordinates_list = line.strip().split(';')
+
+        # Convert each coordinate to a tuple of integers
+        coordinates = [tuple(map(int, coord.split(','))) for coord in coordinates_list]
+
+        # Extend the coordinates_to_save list with the new coordinates
+        coordinates_to_save.extend(coordinates)
+
+def split_image(img_path, output_dir, coordinates_to_save):
     try:
         # Parse the image name to get the central coordinates (OpenLayers coordinates)
         base_name = os.path.basename(img_path)
@@ -39,23 +54,22 @@ def split_image(img_path, output_dir):
                 parcel_x = central_x - 2 + j
                 parcel_y = central_y + 2 - i
 
-                # Save the parcel image with the new name
-                parcel_name = f'{parcel_x},{parcel_y}.jpg'
-                parcel_path = os.path.join(output_dir, parcel_name)
-                parcel_img.save(parcel_path, overwrite=True)
+                # Only save parcel's that are present in the coords.txt file
+                if (parcel_x, parcel_y) in coordinates_to_save:
+                    # Save the parcel image with the new name
+                    parcel_name = f'{parcel_x},{parcel_y}.jpg'
+                    parcel_path = os.path.join(output_dir, parcel_name)
+                    parcel_img.save(parcel_path, overwrite=True)
 
         print(f'Finished processing {img_path}')
 
     except Exception as e:
         print(f'Error processing {img_path}: {e}')
 
-# Main function to process all images in a directory
-def process_images(input_dir, output_dir):
+def process_images(input_dir, output_dir, coordinates_to_save):
     for filename in os.listdir(input_dir):
         if filename.endswith('.png'):
             img_path = os.path.join(input_dir, filename)
-            split_image(img_path, output_dir)
+            split_image(img_path, output_dir, coordinates_to_save)
 
-
-# Run the main function
-process_images(input_directory, output_directory)
+process_images(input_directory, output_directory, coordinates_to_save)
