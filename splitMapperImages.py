@@ -2,13 +2,13 @@ import os
 from PIL import Image
 
 # Input for full run:
-# input_directory = 'raw'
+# input_directory = './raw'
 # Input for update run:
 input_directory = '../map'
 output_directory = 'api/v1/land'
 
-# Load updated coordinates from the coords.txt file
-with open('../coords.txt', 'r') as file:
+# Load updated coordinates from the raw_coords.txt file
+with open('../scouter/output/raw_coords.txt', 'r') as file:
     lines = file.readlines()
     coordinates_to_save = []
 
