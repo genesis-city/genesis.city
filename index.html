@@ -423,7 +423,7 @@
               let estatesLayerStatus = window.location.href.split('#')[1].split(',')[4].split('e')[1];
               let recentChangesLayerStatus = window.location.href.split('#')[1].split(',')[5].split('c')[1];
               let poisLayerStatus = window.location.href.split('#')[1].split(',')[6].split('p')[1];
-              let saleRentLayerStatus = window.location.href.split('#')[1].split(',')[7].split('s')[1];
+              let saleLayerStatus = window.location.href.split('#')[1].split(',')[7].split('s')[1];
               let rentLayerStatus = window.location.href.split('#')[1].split(',')[8].split('r')[1];
               //Apply Layers Status from address bar
               if (nightModeLayerStatus === '1') {
@@ -442,9 +442,9 @@
                 togglePointsOfInterest();
                 activateLayerToggle('pois');
               }
-              if (saleRentLayerStatus === '1') {
-                toggleSaleRentLayer();
-                activateLayerToggle('saleRent');
+              if (saleLayerStatus === '1') {
+                toggleSaleLayer();
+                activateLayerToggle('sale');
               }
               if (rentLayerStatus === '1') {
                 toggleRentLayer();
@@ -479,7 +479,7 @@
         showUpdatedLayer ? activeLocationHash('changes', true) : activeLocationHash('changes', false);
       }
       
-      function toggleSaleRentLayer() {
+      function toggleSaleLayer() {
         if (showRentParcels) {
           toggleRentLayer();
           rentLayerToggle.checked = false;
@@ -500,8 +500,8 @@
 
       function toggleRentLayer() {
         if (showSaleParcels) {
-          toggleSaleRentLayer();
-          saleRentLayerToggle.checked = false;
+          toggleSaleLayer();
+          saleLayerToggle.checked = false;
         }
 
         const activatedStyle = function (feature) {
@@ -722,11 +722,11 @@
               </div>
             </label>
             <label class="layer-control">
-              <span class="label">Lands for sale/rent</span>
+              <span class="label">Lands for sale</span>
               <span class="new-feat">New</span>
               <div class="toggle">
-                <input class="toggle-input" onclick="toggleSaleRentLayer()" id="rent/sale-layer-toggle" type="checkbox" name="rent/sale-layer-toggle" value="show-rent/sale">
-                <label class="toggle-label" for="rent/sale-layer-toggle">Toggle</label>
+                <input class="toggle-input" onclick="toggleSaleLayer()" id="sale-layer-toggle" type="checkbox" name="sale-layer-toggle" value="show-rent/sale">
+                <label class="toggle-label" for="sale-layer-toggle">Toggle</label>
               </div>
             </label>
             <label class="layer-control">
@@ -803,7 +803,7 @@
       const estatesLayerToggle = document.getElementById('estates-layer-toggle');
       const updatedLayerToggle = document.getElementById('updated-layer-toggle');
       const poisLayerToggle = document.getElementById('poi-layer-toggle');
-      const saleRentLayerToggle = document.getElementById('rent/sale-layer-toggle');
+      const saleLayerToggle = document.getElementById('sale-layer-toggle');
       const rentLayerToggle = document.getElementById('rent-layer-toggle');
       const bannerContainer = document.getElementById('banner-container');
 
@@ -1032,8 +1032,8 @@
           case 'pois':
             poisLayerToggle.checked = true;
             break;
-          case 'saleRent':
-            saleRentLayerToggle.checked = true;
+          case 'sale':
+            saleLayerToggle.checked = true;
             break;
           case 'rent':
             rentLayerToggle.checked = true;
