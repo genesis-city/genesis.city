@@ -485,17 +485,27 @@
           rentLayerToggle.checked = false;
         }
 
-        const activatedStyle = new ol.style.Style({
-          fill : new ol.style.Fill({color: '#ffd500'}),
-          stroke: new ol.style.Stroke({color: '#ffd500', width: 1}),
-        });
+        const activatedStyle = function (feature) {
+          const salePrice = feature.values_.salePrice
+          const isForSale = salePrice !== null;
+          
+          const fillColor = isForSale ? '#ffd500' : 'rgba(255,255,255,0)';
+          const strokeColor = isForSale ? '#ffd500' : 'rgba(255,255,255,0)';
+          
+          return new ol.style.Style({
+            fill: new ol.style.Fill({ color: fillColor }),
+            stroke: new ol.style.Stroke({ color: strokeColor, width: 1 }),
+          });
+        };
+        
         const deactivatedStyle = new ol.style.Style({
           fill : new ol.style.Fill({color: 'rgba(255,255,255,0)'}),
           stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
         });
-        !showSaleParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
+
         showSaleParcels = !showSaleParcels;
-        showSaleParcels ? activeLocationHash('saleRent', true) : activeLocationHash('saleRent', false);
+        showSaleParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
+        showSaleParcels ? activeLocationHash('sale', true) : activeLocationHash('sale', false);
       }
 
       function toggleRentLayer() {
