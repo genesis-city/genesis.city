@@ -134,8 +134,8 @@
         showEstatesLayer = false;
         showUpdatedLayer = false;
         showPoiLayer = false;
-        showSaleRentLayer = false;
-        showRentLayer = false;
+        showSaleParcels = false;
+        showRentParcels = false;
         let zoomLevel;
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
@@ -254,7 +254,7 @@
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
-          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},r${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'},s${showSaleRentLayer === true ? '1' : '0'}`
+          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},r${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'},s${showSaleParcels === true ? '1' : '0'}`
           window.location.hash = `${lon},${lat},${zoom}z${layersStatus}`;
           if(window.innerWidth > 630) {
             hidePermalinkPopup();
@@ -475,9 +475,9 @@
       }
       
       function toggleSaleRentLayer() {
-        if (showRentLayer) {
+        if (showRentParcels) {
           rentLayerToggle.checked = false;
-          showRentLayer = !showRentLayer;
+          showRentParcels = !showRentParcels;
         }
 
         const activatedStyle = new ol.style.Style({
@@ -488,15 +488,15 @@
           fill : new ol.style.Fill({color: 'rgba(255,255,255,0)'}),
           stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
         });
-        !showSaleRentLayer ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
-        showSaleRentLayer = !showSaleRentLayer;
-        showSaleRentLayer ? activeLocationHash('saleRent', true) : activeLocationHash('saleRent', false);
+        !showSaleParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
+        showSaleParcels = !showSaleParcels;
+        showSaleParcels ? activeLocationHash('saleRent', true) : activeLocationHash('saleRent', false);
       }
 
       function toggleRentLayer() {
-        if (showSaleRentLayer) {
+        if (showSaleParcels) {
           saleRentLayerToggle.checked = false;
-          showSaleRentLayer = !showSaleRentLayer;
+          showSaleParcels = !showSaleParcels;
         }
 
         const activatedStyle = function (feature) {
@@ -517,10 +517,10 @@
           stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
         });
         
-        showRentLayer = !showRentLayer;
-        showRentLayer ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
+        showRentParcels = !showRentParcels;
+        showRentParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
 
-        // showRentLayer ? activeLocationHash('rent', true) : activeLocationHash('saleRent', false);
+        // showRentParcels ? activeLocationHash('rent', true) : activeLocationHash('saleRent', false);
       }
 
       let estatesIdSeted = false;
