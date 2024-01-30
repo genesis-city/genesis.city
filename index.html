@@ -135,6 +135,7 @@
         showUpdatedLayer = false;
         showPoiLayer = false;
         showSaleRentLayer = false;
+        showRentLayer = false;
         let zoomLevel;
         vectorLayer.setVisible(showUpdatedLayer);
         estatesLayer.setVisible(showEstatesLayer);
@@ -487,6 +488,32 @@
         showSaleRentLayer ? activeLocationHash('saleRent', true) : activeLocationHash('saleRent', false);
       }
 
+      function toggleRentLayer() {
+
+        const activatedStyle = function (feature) {
+          const rentPrice = feature.values_.rentPrice
+          const isForRent = rentPrice !== null;
+          
+          const fillColor = isForRent ? '#00d3ff' : 'rgba(255,255,255,0)';
+          const strokeColor = isForRent ? '#00d3ff' : 'rgba(255,255,255,0)';
+          
+          return new ol.style.Style({
+            fill: new ol.style.Fill({ color: fillColor }),
+            stroke: new ol.style.Stroke({ color: strokeColor, width: 1 }),
+          });
+        };
+
+        const deactivatedStyle = new ol.style.Style({
+          fill : new ol.style.Fill({color: 'rgba(255,255,255,0)'}),
+          stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
+        });
+        
+        showRentLayer = !showRentLayer;
+        showRentLayer ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
+
+        // showRentLayer ? activeLocationHash('rent', true) : activeLocationHash('saleRent', false);
+      }
+
       let estatesIdSeted = false;
       function toggleEstatesLayer() {
         showEstatesLayer = !showEstatesLayer;
@@ -693,7 +720,7 @@
               <span class="label">Lands for rent</span>
               <span class="new-feat">New</span>
               <div class="toggle">
-                <input class="toggle-input" onclick="" id="rent-layer-toggle" type="checkbox" name="rent-layer-toggle" value="show-rent">
+                <input class="toggle-input" onclick="toggleRentLayer()" id="rent-layer-toggle" type="checkbox" name="rent-layer-toggle" value="show-rent">
                 <label class="toggle-label" for="rent-layer-toggle">Toggle</label>
               </div>
             </label>
