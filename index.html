@@ -111,6 +111,8 @@
       });
 
       //Lands for sale/rent layer
+      /* This layer contains areas of parcels that are available for sale and/or rent, along with associated metadata. The saleRentLayer is always present on the map but remains invisible. This design allows for the retrieval of sale/rent metadata to display in a modal, even if the 'Lands for Sale' or 'Lands for Rent' toggle is inactive. When either the 'Lands for Sale' or 'Lands for Rent' toggle is activated, the respective parcels are then visually highlighted to become visible on the map.
+      */
       const saleRentLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
           url: 'saleRent.json',
