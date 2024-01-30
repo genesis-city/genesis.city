@@ -481,8 +481,8 @@
       
       function toggleSaleRentLayer() {
         if (showRentParcels) {
+          toggleRentLayer();
           rentLayerToggle.checked = false;
-          showRentParcels = !showRentParcels;
         }
 
         const activatedStyle = new ol.style.Style({
@@ -500,8 +500,8 @@
 
       function toggleRentLayer() {
         if (showSaleParcels) {
+          toggleSaleRentLayer();
           saleRentLayerToggle.checked = false;
-          showSaleParcels = !showSaleParcels;
         }
 
         const activatedStyle = function (feature) {
