@@ -475,6 +475,11 @@
       }
       
       function toggleSaleRentLayer() {
+        if (showRentLayer) {
+          rentLayerToggle.checked = false;
+          showRentLayer = !showRentLayer;
+        }
+
         const activatedStyle = new ol.style.Style({
           fill : new ol.style.Fill({color: '#ffd500'}),
           stroke: new ol.style.Stroke({color: '#ffd500', width: 1}),
@@ -489,6 +494,10 @@
       }
 
       function toggleRentLayer() {
+        if (showSaleRentLayer) {
+          saleRentLayerToggle.checked = false;
+          showSaleRentLayer = !showSaleRentLayer;
+        }
 
         const activatedStyle = function (feature) {
           const rentPrice = feature.values_.rentPrice
@@ -791,6 +800,7 @@
       const updatedLayerToggle = document.getElementById('updated-layer-toggle');
       const poisLayerToggle = document.getElementById('poi-layer-toggle');
       const saleRentLayerToggle = document.getElementById('rent/sale-layer-toggle');
+      const rentLayerToggle = document.getElementById('rent-layer-toggle');
       const bannerContainer = document.getElementById('banner-container');
 
       const normalizePosition = (mouseX, mouseY) => {
