@@ -1,5 +1,5 @@
 # genesis.city
-Decentraland map
+Decentraland map.
 
 ![image](https://user-images.githubusercontent.com/287189/154358783-952b2693-083a-4afa-a0b4-c1f8cece6bdc.png)
 
