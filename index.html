@@ -541,12 +541,11 @@
           const rentPrice = feature.values_.rentPrice
           const isForRent = rentPrice !== null;
           
-          const fillColor = isForRent ? '#00d3ff' : 'rgba(255,255,255,0)';
-          const strokeColor = isForRent ? '#00d3ff' : 'rgba(255,255,255,0)';
+          const rentPriceColor = isForRent ? setRentPriceColor(rentPrice) : 'rgba(255,255,255,0)';
           
           return new ol.style.Style({
-            fill: new ol.style.Fill({ color: fillColor }),
-            stroke: new ol.style.Stroke({ color: strokeColor, width: 1 }),
+            fill: new ol.style.Fill({ color: rentPriceColor }),
+            stroke: new ol.style.Stroke({ color: rentPriceColor, width: 1 }),
           });
         };
 
@@ -558,6 +557,22 @@
         showRentParcels = !showRentParcels;
         showRentParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
         showRentParcels ? activeLocationHash('rent', true) : activeLocationHash('rent', false);
+      }
+
+      function setRentPriceColor(rentPrice) {
+        const colorRanges = [
+          { min: 0, max: 1.999999, color: low },
+          { min: 2, max: 4.999999, color: lowMid },
+          { min: 5, max: 9.999999, color: mid },
+          { min: 10, max: 49.999999, color: highMid },
+          { min: 50, max: Infinity, color: high },
+        ];
+
+        for (let i = 0; i < colorRanges.length; i++) {
+          if (rentPrice >= colorRanges[i].min && rentPrice < colorRanges[i].max) {
+            return colorRanges[i].color;
+          }
+        }
       }
 
       let estatesIdSeted = false;
