@@ -44,6 +44,12 @@
       const plazaColorTranslucid = 'rgba(0, 255, 0, 0.4)';
       const roadColorTranslucid = 'rgba(255, 255, 0, 0.4)';
       const districtColorTranslucid = 'rgba(50, 55, 205, 0.4)';
+      // Price range color
+      const low = '#00ff00';
+      const lowMid = '#ffff00';
+      const mid = '#ffa500';
+      const highMid = '#ff0000';
+      const high = '#fe00ff';
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -491,12 +497,11 @@
           const salePrice = feature.values_.salePrice
           const isForSale = salePrice !== null;
           
-          const fillColor = isForSale ? '#ffd500' : 'rgba(255,255,255,0)';
-          const strokeColor = isForSale ? '#ffd500' : 'rgba(255,255,255,0)';
-          
+          const salePriceColor = isForSale ? setSalePriceColor(salePrice) : 'rgba(255,255,255,0)';
+
           return new ol.style.Style({
-            fill: new ol.style.Fill({ color: fillColor }),
-            stroke: new ol.style.Stroke({ color: strokeColor, width: 1 }),
+            fill: new ol.style.Fill({ color: salePriceColor }),
+            stroke: new ol.style.Stroke({ color: salePriceColor, width: 1 }),
           });
         };
         
@@ -508,6 +513,22 @@
         showSaleParcels = !showSaleParcels;
         showSaleParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
         showSaleParcels ? activeLocationHash('sale', true) : activeLocationHash('sale', false);
+      }
+
+      function setSalePriceColor(salePrice) {
+        const colorRanges = [
+          { min: 0, max: 5000, color: low },
+          { min: 5000, max: 24999, color: lowMid },
+          { min: 25000, max: 99999, color: mid },
+          { min: 100000, max: 999999, color: highMid },
+          { min: 1000000, max: Infinity, color: high },
+        ];
+
+        for (let i = 0; i < colorRanges.length; i++) {
+          if (salePrice >= colorRanges[i].min && salePrice < colorRanges[i].max) {
+            return colorRanges[i].color;
+          }
+        }
       }
 
       function toggleRentLayer() {
