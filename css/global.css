@@ -683,8 +683,8 @@ i.mana-icon {
 }
 
 /* Sale/Rent color legend */
-
 .sale-rent-legend {
+  font-size: smaller;
   background: rgba(36, 35, 38, 0.5);
   bottom: 3.5rem;
   left: .5rem;
@@ -692,6 +692,7 @@ i.mana-icon {
   flex-direction: column;
   justify-content: space-between;
   padding: .25rem;
+  left: -22rem;
   transition: all 300ms ease-in-out;
 }
 
@@ -722,11 +723,8 @@ i.mana-icon {
 }
 
 .sale-rent-legend .legend-title {
-  /* border: 2px solid red; */
   font-size: 1rem;
   margin: 4px auto 4px 4px;
-  /* margin: 4px auto 4px auto; */
-
 }
 
 .sale-rent-legend .price-color {
