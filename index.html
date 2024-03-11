@@ -45,11 +45,11 @@
       const roadColorTranslucid = 'rgba(255, 255, 0, 0.4)';
       const districtColorTranslucid = 'rgba(50, 55, 205, 0.4)';
       // Price range color
-      const low = '#00ff00';
-      const lowMid = '#ffff00';
-      const mid = '#ffa500';
-      const highMid = '#ff0000';
-      const high = '#fe00ff';
+      const low = '#00dc00';
+      const lowMid = '#dcdc00';
+      const mid = '#ff7f00';
+      const highMid = '#dc0000';
+      const high = '#fd00ff'; 
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -510,6 +510,8 @@
           stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
         });
 
+        toggleSaleLegend();
+
         showSaleParcels = !showSaleParcels;
         showSaleParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
         showSaleParcels ? activeLocationHash('sale', true) : activeLocationHash('sale', false);
@@ -554,6 +556,8 @@
           stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
         });
         
+        toggleRentLegend();
+
         showRentParcels = !showRentParcels;
         showRentParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
         showRentParcels ? activeLocationHash('rent', true) : activeLocationHash('rent', false);
@@ -838,6 +842,66 @@
       <p>Copied to clipboard</p>
     </div>
 
+    <!-- Sale color legend -->
+    <div class="overlay blur sale-rent-legend" id="sale-legend">
+      <p class="legend-title">Sale price</p>
+      <div class="price-range">
+        <div class="price-color low"></div>
+        <i class="mana-icon"></i>
+        <p>0K - 4K</p>
+      </div>
+      <div class="price-range">
+        <div class="price-color lowMid"></div>
+        <i class="mana-icon"></i>
+        <p>5K - 24K</p>
+      </div>
+      <div class="price-range">
+        <div class="price-color mid"></div>
+        <i class="mana-icon"></i>
+        <p>25K - 99K</p>
+      </div>
+      <div class="price-range">
+        <div class="price-color highMid"></div>
+        <i class="mana-icon"></i>
+        <p>100K - 999K</p>
+      </div>
+      <div class="price-range">
+        <div class="price-color high"></div>
+        <i class="mana-icon"></i>
+        <p>1M - ∞</p>
+      </div>
+    </div>
+
+    <!-- Rent color legend -->
+    <div class="overlay blur sale-rent-legend" id="rent-legend">
+      <p class="legend-title">Rent price &nbsp/day</p>
+      <div class="price-range">
+        <div class="price-color low"></div>
+        <i class="mana-icon"></i>
+        <p>0 - 1.9</p>
+      </div>
+      <div class="price-range">
+        <div class="price-color lowMid"></div>
+        <i class="mana-icon"></i>
+        <p>2 - 4.9</p>
+      </div>
+      <div class="price-range">
+        <div class="price-color mid"></div>
+        <i class="mana-icon"></i>
+        <p>5 - 9.9</p>
+      </div>
+      <div class="price-range">
+        <div class="price-color highMid"></div>
+        <i class="mana-icon"></i>
+        <p>10 - 49.9</p>
+      </div>
+      <div class="price-range">
+        <div class="price-color high"></div>
+        <i class="mana-icon"></i>
+        <p>50 - ∞</p>
+      </div>
+    </div>
+
     <script>
       const contextMenu = document.getElementById("context-menu");
       const scope = document.querySelector("body");
@@ -854,6 +918,8 @@
       const saleLayerToggle = document.getElementById('sale-layer-toggle');
       const rentLayerToggle = document.getElementById('rent-layer-toggle');
       const bannerContainer = document.getElementById('banner-container');
+      const saleLegend = document.getElementById('sale-legend');
+      const rentLegend = document.getElementById('rent-legend');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -997,12 +1063,15 @@
 
       // Show Parcel Permalink Popup
       function showPermalinkPopup() {
-        // hide social links & last updated date on mobile
+        // hide social links, last updated date and price legends on mobile
         if (!parcelLinkBox.classList.contains('show')) {
           if(window.innerWidth < 630) {
             socialLinks.classList.add('hide');
             updateDate.classList.add('hide');
             daoRecognition.classList.add('hide');
+            saleLegend.classList.remove("show");
+            rentLegend.classList.remove("show");
+
             setTimeout(() => {
             socialLinks.classList.add('remove');
             updateDate.classList.add('remove');
@@ -1041,7 +1110,45 @@
           socialLinks.classList.remove('hide');
           updateDate.classList.remove('hide');
           daoRecognition.classList.remove('hide');
+          showSaleParcels && saleLegend.classList.add("show");
+          showRentParcels && rentLegend.classList.add("show");
         }, 10);
+      }
+
+      function toggleSaleLegend() {
+        if (!saleLegend.classList.contains('show') && !(parcelLinkBox.classList.contains('show') && window.innerWidth < 630)) {
+          setTimeout(() => {
+            saleLegend.classList.add("show");
+            saleLegend.classList.add("lateral-bounce");
+            setTimeout(() => {
+              saleLegend.classList.remove("lateral-bounce");
+            }, 800);
+          }, 1);
+        } else {
+          saleLegend.classList.add("lateral-bounce");
+          setTimeout(() => {
+            saleLegend.classList.remove("lateral-bounce");
+          }, 800);
+          saleLegend.classList.remove("show");
+        }
+      }
+
+      function toggleRentLegend() {
+        if (!rentLegend.classList.contains('show')&& !(parcelLinkBox.classList.contains('show') && window.innerWidth < 630)) {
+          setTimeout(() => {
+            rentLegend.classList.add("show");
+            rentLegend.classList.add("lateral-bounce");
+            setTimeout(() => {
+              rentLegend.classList.remove("lateral-bounce");
+            }, 800);
+          }, 1);
+        } else {
+          rentLegend.classList.add("lateral-bounce");
+          setTimeout(() => {
+            rentLegend.classList.remove("lateral-bounce");
+          }, 800);
+          rentLegend.classList.remove("show");
+        }
       }
 
       // Copy Link to clipboard & show confiramtion popup

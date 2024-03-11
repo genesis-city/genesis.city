@@ -517,7 +517,7 @@ html, body {
   margin: 5px 0;
 }
 
-.parcel-link-box .saleRentData i.mana-icon {
+i.mana-icon {
   margin: 5px 3px 5px 8px;
   background: url(../img/manaIcon.svg);
   background-size: cover;
@@ -680,4 +680,83 @@ html, body {
 
 .swal2-timer-progress-bar {
   background-color: rgba(255, 255, 255, 1) !important;
+}
+
+/* Sale/Rent color legend */
+.sale-rent-legend {
+  font-size: smaller;
+  background: rgba(36, 35, 38, 0.5);
+  bottom: 3.5rem;
+  left: .5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: .25rem;
+  left: -22rem;
+  transition: all 300ms ease-in-out;
+}
+
+.sale-rent-legend.show {
+  transform: translate(22.5rem);
+}
+
+.sale-rent-legend.lateral-bounce {
+  animation: lateralBounce 800ms ease-in-out;
+}
+
+@keyframes lateralBounce {
+  0% {
+    left: -22rem;
+  }
+  40% {
+    left: -20.3rem;
+  }
+  60% {
+    left: -22.5rem;
+  }
+  70% {
+    left: -21.6rem;
+  }
+  100% {
+    left: -22rem;
+  }
+}
+
+.sale-rent-legend .legend-title {
+  font-size: 1rem;
+  margin: 4px auto 4px 4px;
+}
+
+.sale-rent-legend .price-color {
+  margin-right: 6px;
+}
+.sale-rent-legend .price-range p {
+  margin-left: 1px;
+}
+
+.price-range {
+  display: flex;
+  align-items: center;
+  margin: 0 4px 0 4px;
+}
+
+.price-color {
+  width: 24px;
+  height: 24px;
+  border-radius: 20%;
+}
+.price-color.low {
+  background-color: #00dc00;
+}
+.price-color.lowMid {
+  background-color: #dcdc00;
+}
+.price-color.mid {
+  background-color: #ff7f00;
+}
+.price-color.highMid {
+  background-color: #dc0000;
+}
+.price-color.high {
+  background-color: #dc00dc;
 }
