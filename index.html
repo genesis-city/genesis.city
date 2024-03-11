@@ -1063,12 +1063,15 @@
 
       // Show Parcel Permalink Popup
       function showPermalinkPopup() {
-        // hide social links & last updated date on mobile
+        // hide social links, last updated date and price legends on mobile
         if (!parcelLinkBox.classList.contains('show')) {
           if(window.innerWidth < 630) {
             socialLinks.classList.add('hide');
             updateDate.classList.add('hide');
             daoRecognition.classList.add('hide');
+            saleLegend.classList.remove("show");
+            rentLegend.classList.remove("show");
+
             setTimeout(() => {
             socialLinks.classList.add('remove');
             updateDate.classList.add('remove');
@@ -1107,6 +1110,8 @@
           socialLinks.classList.remove('hide');
           updateDate.classList.remove('hide');
           daoRecognition.classList.remove('hide');
+          showSaleParcels && saleLegend.classList.add("show");
+          showRentParcels && rentLegend.classList.add("show");
         }, 10);
       }
 
