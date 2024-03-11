@@ -707,17 +707,17 @@ i.mana-icon {
   border-radius: 20%;
 }
 .price-color.low {
-  background-color: #00ff00;
+  background-color: #00dc00;
 }
 .price-color.lowMid {
-  background-color: #ffff00;
+  background-color: #dcdc00;
 }
 .price-color.mid {
-  background-color: #ffa500;
+  background-color: #ff7f00;
 }
 .price-color.highMid {
-  background-color: #ff0000;
+  background-color: #dc0000;
 }
 .price-color.high {
-  background-color: #fe00ff;
+  background-color: #dc00dc;
 }
