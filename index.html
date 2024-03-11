@@ -510,6 +510,8 @@
           stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
         });
 
+        toggleSaleLegend();
+
         showSaleParcels = !showSaleParcels;
         showSaleParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
         showSaleParcels ? activeLocationHash('sale', true) : activeLocationHash('sale', false);
@@ -554,6 +556,8 @@
           stroke: new ol.style.Stroke({color: 'rgba(255,255,255,0)', width: 1}),
         });
         
+        toggleRentLegend();
+
         showRentParcels = !showRentParcels;
         showRentParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
         showRentParcels ? activeLocationHash('rent', true) : activeLocationHash('rent', false);
@@ -914,6 +918,8 @@
       const saleLayerToggle = document.getElementById('sale-layer-toggle');
       const rentLayerToggle = document.getElementById('rent-layer-toggle');
       const bannerContainer = document.getElementById('banner-container');
+      const saleLegend = document.getElementById('sale-legend');
+      const rentLegend = document.getElementById('rent-legend');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -1102,6 +1108,42 @@
           updateDate.classList.remove('hide');
           daoRecognition.classList.remove('hide');
         }, 10);
+      }
+
+      function toggleSaleLegend() {
+        if (!saleLegend.classList.contains('show') && !(parcelLinkBox.classList.contains('show') && window.innerWidth < 630)) {
+          setTimeout(() => {
+            saleLegend.classList.add("show");
+            saleLegend.classList.add("lateral-bounce");
+            setTimeout(() => {
+              saleLegend.classList.remove("lateral-bounce");
+            }, 800);
+          }, 1);
+        } else {
+          saleLegend.classList.add("lateral-bounce");
+          setTimeout(() => {
+            saleLegend.classList.remove("lateral-bounce");
+          }, 800);
+          saleLegend.classList.remove("show");
+        }
+      }
+
+      function toggleRentLegend() {
+        if (!rentLegend.classList.contains('show')&& !(parcelLinkBox.classList.contains('show') && window.innerWidth < 630)) {
+          setTimeout(() => {
+            rentLegend.classList.add("show");
+            rentLegend.classList.add("lateral-bounce");
+            setTimeout(() => {
+              rentLegend.classList.remove("lateral-bounce");
+            }, 800);
+          }, 1);
+        } else {
+          rentLegend.classList.add("lateral-bounce");
+          setTimeout(() => {
+            rentLegend.classList.remove("lateral-bounce");
+          }, 800);
+          rentLegend.classList.remove("show");
+        }
       }
 
       // Copy Link to clipboard & show confiramtion popup

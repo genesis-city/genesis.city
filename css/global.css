@@ -695,6 +695,47 @@ i.mana-icon {
   transition: all 300ms ease-in-out;
 }
 
+.sale-rent-legend.show {
+  transform: translate(22.5rem);
+}
+
+.sale-rent-legend.lateral-bounce {
+  animation: lateralBounce 800ms ease-in-out;
+}
+
+@keyframes lateralBounce {
+  0% {
+    left: -22rem;
+  }
+  40% {
+    left: -20.3rem;
+  }
+  60% {
+    left: -22.5rem;
+  }
+  70% {
+    left: -21.6rem;
+  }
+  100% {
+    left: -22rem;
+  }
+}
+
+.sale-rent-legend .legend-title {
+  /* border: 2px solid red; */
+  font-size: 1rem;
+  margin: 4px auto 4px 4px;
+  /* margin: 4px auto 4px auto; */
+
+}
+
+.sale-rent-legend .price-color {
+  margin-right: 6px;
+}
+.sale-rent-legend .price-range p {
+  margin-left: 1px;
+}
+
 .price-range {
   display: flex;
   align-items: center;
