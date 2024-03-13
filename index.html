@@ -35,6 +35,8 @@
       var POItoolTipOverlay;
       let POIpermalinkPopupExists;
       let mapSource;
+      let saleLayerActiveByView;
+      let rentLayerActiveByView;
       // Estates colors
       const ownedColor = 'rgba(0, 255, 255, 1)';
       const plazaColor = 'rgba(0, 255, 0, 1)';
@@ -199,6 +201,21 @@
           ],
           view: new ol.View(setView()),
         });
+
+        // If sale or rent layers are activated by urls hash delay toggle function to give time to load the map and be able to execute applyGrayScale();
+        if (saleLayerActiveByView) {
+          setTimeout(() => {
+            toggleSaleLayer();
+            activateLayerToggle('sale');
+          }, 1);
+        }
+        if (rentLayerActiveByView) {
+          setTimeout(() => {
+            toggleRentLayer();
+            activateLayerToggle('rent');
+          }, 1);
+        }
+
         map.on('pointermove', function(event) {
           let x = (map_range(event.coordinate[0], extent[0], extent[2], dclExtent[0], dclExtent[2]));
           let y = (map_range(event.coordinate[1], extent[1], extent[3], dclExtent[1], dclExtent[3]));
@@ -451,12 +468,10 @@
                 activateLayerToggle('pois');
               }
               if (saleLayerStatus === '1') {
-                toggleSaleLayer();
-                activateLayerToggle('sale');
+                saleLayerActiveByView = true;
               }
               if (rentLayerStatus === '1') {
-                toggleRentLayer();
-                activateLayerToggle('rent');
+                rentLayerActiveByView = true;
               }
             }
             if (currentViewZoom < 1) {
@@ -479,6 +494,35 @@
             return defaultView
           }
         }
+
+        // Apply and remove Gray Scale to maps images for Sale or Rent layers
+        const baseLayer = map.getLayers().getArray()[0];
+        function grayScaleImageLayer(event) {
+          const ctx = event.context;
+          const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+          const data = imageData.data;
+
+          // Iterate through all the pixels of the image and convert them to grayscale.
+          for (let i = 0; i < data.length; i += 4) {
+            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            data[i]     = avg; // red
+            data[i + 1] = avg; // green
+            data[i + 2] = avg; // blue
+          }
+          // Update the image with the new data.
+          ctx.putImageData(imageData, 0, 0);
+        }
+
+        window.applyGrayScale = function() {
+          // const baseLayer = map.getLayers().getArray()[0];
+          baseLayer.on('postrender', grayScaleImageLayer);
+        };
+
+        window.removeGrayScale = function() {
+          // const baseLayer = map.getLayers().getArray()[0];
+          baseLayer.un('postrender', grayScaleImageLayer);
+        };
+
       }
 
       function toggleUpdatedLayer() {
@@ -513,8 +557,16 @@
         toggleSaleLegend();
 
         showSaleParcels = !showSaleParcels;
-        showSaleParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
-        showSaleParcels ? activeLocationHash('sale', true) : activeLocationHash('sale', false);
+        
+        if (showSaleParcels) {
+          saleRentLayer.setStyle(activatedStyle);
+          applyGrayScale();
+          activeLocationHash('sale', true);
+        } else {
+          saleRentLayer.setStyle(deactivatedStyle);
+          removeGrayScale();
+          activeLocationHash('sale', false);
+        }
       }
 
       function setSalePriceColor(salePrice) {
@@ -559,8 +611,16 @@
         toggleRentLegend();
 
         showRentParcels = !showRentParcels;
-        showRentParcels ? saleRentLayer.setStyle(activatedStyle) : saleRentLayer.setStyle(deactivatedStyle);
-        showRentParcels ? activeLocationHash('rent', true) : activeLocationHash('rent', false);
+
+        if (showRentParcels) {
+          saleRentLayer.setStyle(activatedStyle);
+          applyGrayScale();
+          activeLocationHash('rent', true);
+        } else {
+          saleRentLayer.setStyle(deactivatedStyle);
+          removeGrayScale();
+          activeLocationHash('rent', false);
+        }
       }
 
       function setRentPriceColor(rentPrice) {
