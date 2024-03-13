@@ -570,16 +570,17 @@
       }
 
       function setSalePriceColor(salePrice) {
+        const price = Math.round(salePrice);
         const colorRanges = [
           { min: 0, max: 5000, color: low },
-          { min: 5000, max: 24999, color: lowMid },
-          { min: 25000, max: 99999, color: mid },
-          { min: 100000, max: 999999, color: highMid },
+          { min: 5000, max: 25000, color: lowMid },
+          { min: 25000, max: 100000, color: mid },
+          { min: 100000, max: 1000000, color: highMid },
           { min: 1000000, max: Infinity, color: high },
         ];
 
         for (let i = 0; i < colorRanges.length; i++) {
-          if (salePrice >= colorRanges[i].min && salePrice < colorRanges[i].max) {
+          if (price >= colorRanges[i].min && price < colorRanges[i].max) {
             return colorRanges[i].color;
           }
         }
@@ -625,10 +626,10 @@
 
       function setRentPriceColor(rentPrice) {
         const colorRanges = [
-          { min: 0, max: 1.999999, color: low },
-          { min: 2, max: 4.999999, color: lowMid },
-          { min: 5, max: 9.999999, color: mid },
-          { min: 10, max: 49.999999, color: highMid },
+          { min: 0, max: 2, color: low },
+          { min: 2, max: 5, color: lowMid },
+          { min: 5, max: 10, color: mid },
+          { min: 10, max: 50, color: highMid },
           { min: 50, max: Infinity, color: high },
         ];
 
