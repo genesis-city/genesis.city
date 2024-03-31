@@ -32,8 +32,8 @@
       var origin = [side*0, side * tiles];
       const maxCoords = 152;
       let lastParcelPointer;
-      var POItoolTipOverlay;
-      let POIpermalinkPopupExists;
+      var POIorGameToolTipOverlay;
+      let POIorGameModalExists;
       let mapSource;
       let saleLayerActiveByView;
       let rentLayerActiveByView;
@@ -399,25 +399,26 @@
         var container = document.getElementById('toolTip');
         var toolTipcontent = document.getElementById('toolTip-content');
 
-        POItoolTipOverlay = new ol.Overlay({
+        POIorGameToolTipOverlay = new ol.Overlay({
           element: container,
           autoPan: true,
           autoPanAnimation: {
               duration: 250
           }
         });
-        map.addOverlay(POItoolTipOverlay);
+        map.addOverlay(POIorGameToolTipOverlay);
 
         if(window.innerWidth > 630) {
           //Lauch POI tool tip at hover
           map.on('pointermove', function (event) {
-            showPOItoolTip(event);
+            showToolTip(event);
             // Update permalink popup infomration
-            if (POIpermalinkPopupExists) {
+            if (POIorGameModalExists) {
               const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
               let clickedEstateName;
-              if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
+              if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
                 const coordinates = feature.values_.geometry.flatCoordinates;
+                const featureType = feature?.values_.featureType;
                 // get Estate name if exists
                 const estateFeatures = estatesLayer.getSource().getFeaturesAtCoordinate(coordinates);
                 estateFeatures.forEach(feat => {
@@ -430,25 +431,25 @@
                 const lon = DCLcoords[0];
                 const lat = DCLcoords[1];
                 saleRentFeatureData = undefined;
-                createPermalinkPopup(lon, lat, 'poi', saleRentFeatureData, clickedEstateName);
+                createPermalinkPopup(lon, lat, featureType, saleRentFeatureData, clickedEstateName);
               }
             } 
           });
         } else {
-          //Lauch POI tool tip at click
+          //Lauch tool tip at click
           map.on('singleclick', function (event) {
-            showPOItoolTip(event);
+            showToolTip(event);
           });
         }
 
-        function showPOItoolTip(event) {
+        function showToolTip(event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-          if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
+          if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
             const coordinate = feature.values_.geometry.flatCoordinates;
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-            POItoolTipOverlay.setPosition(coordinate);
+            POIorGameToolTipOverlay.setPosition(coordinate);
           } else {
-            !POIpermalinkPopupExists && POItoolTipOverlay.setPosition(undefined);
+            !POIorGameModalExists && POIorGameToolTipOverlay.setPosition(undefined);
           }
         }
         
