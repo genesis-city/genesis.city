@@ -489,6 +489,10 @@
               if (rentLayerStatus === '1') {
                 rentLayerActiveByView = true;
               }
+              if (gamesLayerStatus === '1') {
+                toggleGamesLayer();
+                activateLayerToggle('games');
+              }
             }
             if (currentViewZoom < 1) {
               currentViewZoom = 1
@@ -1306,6 +1310,9 @@
             break;
           case 'rent':
             rentLayerToggle.checked = true;
+            break;
+          case 'games':
+            gamesLayerToggle.checked = true;
             break;
           default:
             console.error('Invalid layer parameter:', layer);
