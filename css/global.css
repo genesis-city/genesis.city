@@ -149,7 +149,7 @@ html, body {
 /* Toggle */
 .layer-control {
   padding: 0.5rem 0.75rem;
-  min-width: 14rem;
+  min-width: 11.5rem;
   display: flex;
   justify-content: space-between;
   color: #E2E4E9;
@@ -411,6 +411,20 @@ html, body {
   left: 0.75rem;
   margin-right: 0.75rem;
   background: url(../img/marker.svg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 24px;
+  width: 18px;
+  display: block;
+  justify-self: flex-end;
+}
+
+.parcel-link-box i.game {
+  position: absolute;
+  left: 0.75rem;
+  margin-right: 0.75rem;
+  background: url(../img/gameIcon.svg);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;

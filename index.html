@@ -32,8 +32,8 @@
       var origin = [side*0, side * tiles];
       const maxCoords = 152;
       let lastParcelPointer;
-      var POItoolTipOverlay;
-      let POIpermalinkPopupExists;
+      var POIorGameToolTipOverlay;
+      let POIorGameModalExists;
       let mapSource;
       let saleLayerActiveByView;
       let rentLayerActiveByView;
@@ -107,6 +107,17 @@
           })
       });
 
+      //Games layer
+      const gamesLayer = new ol.layer.Vector({
+          source: new ol.source.Vector(),
+          style: new ol.style.Style({
+              image: new ol.style.Icon({
+              anchor: [0.5, 0.5],
+              src: './img/gameIcon.svg',
+              })
+          })
+      });
+
       // Parcel pointer layer
       const parcelPointerLayer = new ol.layer.Vector({
         source: new ol.source.Vector(),
@@ -144,6 +155,7 @@
         showEstatesLayer = false;
         showUpdatedLayer = false;
         showPoiLayer = false;
+        showGamesLayer = false;
         showSaleParcels = false;
         showRentParcels = false;
         let zoomLevel;
@@ -151,6 +163,7 @@
         estatesLayer.setVisible(showEstatesLayer);
         estatesAreaLayer.setVisible(true);
         poiLayer.setVisible(showPoiLayer);
+        gamesLayer.setVisible(showGamesLayer);
         saleRentLayer.setVisible(true);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
@@ -279,7 +292,7 @@
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
-          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},c${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'},s${showSaleParcels === true ? '1' : '0'},r${showRentParcels === true ? '1' : '0'}`
+          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},c${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'},s${showSaleParcels === true ? '1' : '0'},r${showRentParcels === true ? '1' : '0'},g${showGamesLayer === true ? '1' : '0'}`
           window.location.hash = `${lon},${lat},${zoom}z${layersStatus}`;
           if(window.innerWidth > 630) {
             hidePermalinkPopup();
@@ -316,7 +329,7 @@
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
-            POItoolTipOverlay.setPosition(undefined);
+            POIorGameToolTipOverlay.setPosition(undefined);
             // get Estate name if exists
             let clickedEstateName;
             const features = map.getFeaturesAtPixel(event.pixel);
@@ -338,12 +351,13 @@
                 }
               }
             })
-            // POI exists at clicked pixel
+            // POI or Game exists at clicked pixel
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-            if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
-              // When click on POI icon
+            if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
+              // When click on POI or Game icon
               // Add pointer at clicked parcel
               const coordinates = feature.values_.geometry.flatCoordinates;
+              const featureType = feature?.values_.featureType;
               // get Estate name if exists
               const estateFeatures = estatesLayer.getSource().getFeaturesAtCoordinate(coordinates);
               estateFeatures.forEach(feat => {
@@ -356,14 +370,16 @@
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
               saleRentFeatureData = undefined;
-              createPermalinkPopup(lon, lat, 'poi', saleRentFeatureData);
+              createPermalinkPopup(lon, lat, featureType, saleRentFeatureData);
+              console.log('FEATURE TYPE');
+              console.log(featureType);
               showPermalinkPopup();
-              POIpermalinkPopupExists = true;
-              // Maintain POI Tool Tip visible on click
+              POIorGameModalExists = true;
+              // Maintain POI/Game Tool Tip visible on click
               toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-              POItoolTipOverlay.setPosition(coordinates);
+              POIorGameToolTipOverlay.setPosition(coordinates);
             } else {
-              POIpermalinkPopupExists = false;
+              POIorGameModalExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
               createPermalinkPopup(xf, yf, 'parcel', saleRentFeatureData, clickedEstateName);
@@ -372,10 +388,12 @@
           }
         });
 
-        //Add Points Of Interest Layer
+        //Add Points Of Interest and Games Layers
         map.addLayer(poiLayer);
-        //Add Points Of Interest Markers
+        map.addLayer(gamesLayer);
+        //Add Points Of Interest and Games Markers
         addPoiMarkers();
+        addGamesMarkers();
 
         // Add Parcel Pointer Marker Layer
         map.addLayer(parcelPointerLayer);
@@ -384,25 +402,26 @@
         var container = document.getElementById('toolTip');
         var toolTipcontent = document.getElementById('toolTip-content');
 
-        POItoolTipOverlay = new ol.Overlay({
+        POIorGameToolTipOverlay = new ol.Overlay({
           element: container,
           autoPan: true,
           autoPanAnimation: {
               duration: 250
           }
         });
-        map.addOverlay(POItoolTipOverlay);
+        map.addOverlay(POIorGameToolTipOverlay);
 
         if(window.innerWidth > 630) {
           //Lauch POI tool tip at hover
           map.on('pointermove', function (event) {
-            showPOItoolTip(event);
+            showToolTip(event);
             // Update permalink popup infomration
-            if (POIpermalinkPopupExists) {
+            if (POIorGameModalExists) {
               const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
               let clickedEstateName;
-              if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
+              if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
                 const coordinates = feature.values_.geometry.flatCoordinates;
+                const featureType = feature?.values_.featureType;
                 // get Estate name if exists
                 const estateFeatures = estatesLayer.getSource().getFeaturesAtCoordinate(coordinates);
                 estateFeatures.forEach(feat => {
@@ -415,25 +434,25 @@
                 const lon = DCLcoords[0];
                 const lat = DCLcoords[1];
                 saleRentFeatureData = undefined;
-                createPermalinkPopup(lon, lat, 'poi', saleRentFeatureData, clickedEstateName);
+                createPermalinkPopup(lon, lat, featureType, saleRentFeatureData, clickedEstateName);
               }
             } 
           });
         } else {
-          //Lauch POI tool tip at click
+          //Lauch tool tip at click
           map.on('singleclick', function (event) {
-            showPOItoolTip(event);
+            showToolTip(event);
           });
         }
 
-        function showPOItoolTip(event) {
+        function showToolTip(event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-          if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
+          if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
             const coordinate = feature.values_.geometry.flatCoordinates;
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-            POItoolTipOverlay.setPosition(coordinate);
+            POIorGameToolTipOverlay.setPosition(coordinate);
           } else {
-            !POIpermalinkPopupExists && POItoolTipOverlay.setPosition(undefined);
+            !POIorGameModalExists && POIorGameToolTipOverlay.setPosition(undefined);
           }
         }
         
@@ -450,6 +469,7 @@
               let poisLayerStatus = window.location.href.split('#')[1].split(',')[6].split('p')[1];
               let saleLayerStatus = window.location.href.split('#')[1].split(',')[7].split('s')[1];
               let rentLayerStatus = window.location.href.split('#')[1].split(',')[8].split('r')[1];
+              let gamesLayerStatus = window.location.href.split('#')[1].split(',')[9].split('g')[1];
               //Apply Layers Status from address bar
               if (nightModeLayerStatus === '1') {
                 toggleNightMode();
@@ -472,6 +492,10 @@
               }
               if (rentLayerStatus === '1') {
                 rentLayerActiveByView = true;
+              }
+              if (gamesLayerStatus === '1') {
+                toggleGamesLayer();
+                activateLayerToggle('games');
               }
             }
             if (currentViewZoom < 1) {
@@ -662,11 +686,21 @@
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
-        if (!showPoiLayer && POIpermalinkPopupExists) {
-          POItoolTipOverlay.setPosition(undefined);
+        if (!showPoiLayer && POIorGameModalExists) {
+          POIorGameToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
         showPoiLayer ? activeLocationHash('pois', true) : activeLocationHash('pois', false);
+      }
+
+      function toggleGamesLayer() {
+        showGamesLayer = !showGamesLayer;
+        gamesLayer.setVisible(showGamesLayer);
+        if (!showGamesLayer && POIorGameModalExists) {
+          POIorGameToolTipOverlay.setPosition(undefined);
+          hidePermalinkPopup();
+        }
+        showGamesLayer ? activeLocationHash('games', true) : activeLocationHash('games', false);
       }
 
       function addPoiMarkers() {
@@ -683,6 +717,25 @@
               featureType: 'poi',
             });
             poiLayer.getSource().addFeature(marker);
+          })
+        })
+        .catch(err => console.log(err));
+      }
+
+      function addGamesMarkers() {
+        fetch('./games.json')
+        .then(res => res.json())
+        .then(data => {
+          const gamesData = data.data;
+          gamesData.forEach(element => {
+            const lat = element.lat;
+            const lon = element.lon;
+            var marker = new ol.Feature({
+              geometry: new ol.geom.Point(decentralandToMapCoords(lon, lat)),
+              name: element.title,
+              featureType: 'game',
+            });
+            gamesLayer.getSource().addFeature(marker);
           })
         })
         .catch(err => console.log(err));
@@ -706,11 +759,11 @@
         //The regular expression 'regex0' matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'. 'regex0' also matches that the last five sections are a letter followed by a 1 or a 0.
         // E.g. '#14,91,7z,n0,e0,r1,p1,s0'
         const regex0 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z$/;
-        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10]$/;
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10]$/;
         return regex0.test(hash) || regex1.test(hash);
       }
       function urlHashSecondValidation(hash) {
-        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10]$/;
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10]$/;
         return regex1.test(hash);
       }
 
@@ -835,8 +888,15 @@
               </div>
             </label>
             <label class="layer-control">
-              <span class="label">Lands for sale</span>
+              <span class="label">Games</span>
               <span class="new-feat">New</span>
+              <div class="toggle">
+                <input class="toggle-input" onclick="toggleGamesLayer()" id="games-layer-toggle" type="checkbox" name="games-layer-toggle" value="show-games">
+                <label class="toggle-label" for="games-layer-toggle">Toggle</label>
+              </div>
+            </label>
+            <label class="layer-control">
+              <span class="label">Lands for sale</span>
               <div class="toggle">
                 <input class="toggle-input" onclick="toggleSaleLayer()" id="sale-layer-toggle" type="checkbox" name="sale-layer-toggle" value="show-rent/sale">
                 <label class="toggle-label" for="sale-layer-toggle">Toggle</label>
@@ -844,7 +904,6 @@
             </label>
             <label class="layer-control">
               <span class="label">Lands for rent</span>
-              <span class="new-feat">New</span>
               <div class="toggle">
                 <input class="toggle-input" onclick="toggleRentLayer()" id="rent-layer-toggle" type="checkbox" name="rent-layer-toggle" value="show-rent">
                 <label class="toggle-label" for="rent-layer-toggle">Toggle</label>
@@ -978,6 +1037,7 @@
       const poisLayerToggle = document.getElementById('poi-layer-toggle');
       const saleLayerToggle = document.getElementById('sale-layer-toggle');
       const rentLayerToggle = document.getElementById('rent-layer-toggle');
+      const gamesLayerToggle = document.getElementById('games-layer-toggle');
       const bannerContainer = document.getElementById('banner-container');
       const saleLegend = document.getElementById('sale-legend');
       const rentLegend = document.getElementById('rent-legend');
@@ -1087,11 +1147,18 @@
       function createPermalinkPopup(lon, lat, type, saleRentFeatureData, clickedEstateName) {
         if (type === 'parcel') {
           permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.remove('game');
           permalinkIcon.classList.add('parcel');
         }
         if (type === 'poi') {
           permalinkIcon.classList.remove('parcel');
+          permalinkIcon.classList.remove('game');
           permalinkIcon.classList.add('poi');
+        }
+        if (type === 'game') {
+          permalinkIcon.classList.remove('parcel');
+          permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.add('game');
         }
         modalTitle.innerHTML = `( ${lon}, ${lat} )`;
         if (clickedEstateName) {
@@ -1158,8 +1225,8 @@
       // Hide Parcel Permalink Popup
       function hidePermalinkPopup() {
         removeLastPointer();
-        POItoolTipOverlay.setPosition(undefined);
-        POIpermalinkPopupExists = false;
+        POIorGameToolTipOverlay.setPosition(undefined);
+        POIorGameModalExists = false;
         parcelLinkBox.classList.remove("show");
         setTimeout(() => {
           parcelLinkBox.classList.add("hide");
@@ -1253,6 +1320,9 @@
             break;
           case 'rent':
             rentLayerToggle.checked = true;
+            break;
+          case 'games':
+            gamesLayerToggle.checked = true;
             break;
           default:
             console.error('Invalid layer parameter:', layer);
