@@ -684,6 +684,16 @@
         showPoiLayer ? activeLocationHash('pois', true) : activeLocationHash('pois', false);
       }
 
+      function toggleGamesLayer() {
+        showGamesLayer = !showGamesLayer;
+        gamesLayer.setVisible(showGamesLayer);
+        if (!showGamesLayer && POIorGameModalExists) {
+          POIorGameToolTipOverlay.setPosition(undefined);
+          hidePermalinkPopup();
+        }
+        showGamesLayer ? activeLocationHash('games', true) : activeLocationHash('games', false);
+      }
+
       function addPoiMarkers() {
         fetch('./pois.json')
         .then(res => res.json())
@@ -1019,6 +1029,7 @@
       const poisLayerToggle = document.getElementById('poi-layer-toggle');
       const saleLayerToggle = document.getElementById('sale-layer-toggle');
       const rentLayerToggle = document.getElementById('rent-layer-toggle');
+      const gamesLayerToggle = document.getElementById('games-layer-toggle');
       const bannerContainer = document.getElementById('banner-container');
       const saleLegend = document.getElementById('sale-legend');
       const rentLegend = document.getElementById('rent-legend');
