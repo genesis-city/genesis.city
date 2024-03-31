@@ -329,7 +329,7 @@
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
-            POItoolTipOverlay.setPosition(undefined);
+            POIorGameToolTipOverlay.setPosition(undefined);
             // get Estate name if exists
             let clickedEstateName;
             const features = map.getFeaturesAtPixel(event.pixel);
@@ -351,12 +351,13 @@
                 }
               }
             })
-            // POI exists at clicked pixel
+            // POI or Game exists at clicked pixel
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-            if (map.hasFeatureAtPixel(event.pixel) && feature?.values_.featureType === 'poi') {
-              // When click on POI icon
+            if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
+              // When click on POI or Game icon
               // Add pointer at clicked parcel
               const coordinates = feature.values_.geometry.flatCoordinates;
+              const featureType = feature?.values_.featureType;
               // get Estate name if exists
               const estateFeatures = estatesLayer.getSource().getFeaturesAtCoordinate(coordinates);
               estateFeatures.forEach(feat => {
@@ -369,14 +370,16 @@
               const lon = DCLcoords[0];
               const lat = DCLcoords[1];
               saleRentFeatureData = undefined;
-              createPermalinkPopup(lon, lat, 'poi', saleRentFeatureData);
+              createPermalinkPopup(lon, lat, featureType, saleRentFeatureData);
+              console.log('FEATURE TYPE');
+              console.log(featureType);
               showPermalinkPopup();
-              POIpermalinkPopupExists = true;
-              // Maintain POI Tool Tip visible on click
+              POIorGameModalExists = true;
+              // Maintain POI/Game Tool Tip visible on click
               toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-              POItoolTipOverlay.setPosition(coordinates);
+              POIorGameToolTipOverlay.setPosition(coordinates);
             } else {
-              POIpermalinkPopupExists = false;
+              POIorGameModalExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
               createPermalinkPopup(xf, yf, 'parcel', saleRentFeatureData, clickedEstateName);
@@ -683,8 +686,8 @@
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
-        if (!showPoiLayer && POIpermalinkPopupExists) {
-          POItoolTipOverlay.setPosition(undefined);
+        if (!showPoiLayer && POIorGameModalExists) {
+          POIorGameToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
         showPoiLayer ? activeLocationHash('pois', true) : activeLocationHash('pois', false);
@@ -1144,11 +1147,18 @@
       function createPermalinkPopup(lon, lat, type, saleRentFeatureData, clickedEstateName) {
         if (type === 'parcel') {
           permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.remove('game');
           permalinkIcon.classList.add('parcel');
         }
         if (type === 'poi') {
           permalinkIcon.classList.remove('parcel');
+          permalinkIcon.classList.remove('game');
           permalinkIcon.classList.add('poi');
+        }
+        if (type === 'game') {
+          permalinkIcon.classList.remove('parcel');
+          permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.add('game');
         }
         modalTitle.innerHTML = `( ${lon}, ${lat} )`;
         if (clickedEstateName) {
@@ -1215,8 +1225,8 @@
       // Hide Parcel Permalink Popup
       function hidePermalinkPopup() {
         removeLastPointer();
-        POItoolTipOverlay.setPosition(undefined);
-        POIpermalinkPopupExists = false;
+        POIorGameToolTipOverlay.setPosition(undefined);
+        POIorGameModalExists = false;
         parcelLinkBox.classList.remove("show");
         setTimeout(() => {
           parcelLinkBox.classList.add("hide");
