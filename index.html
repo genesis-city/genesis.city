@@ -107,6 +107,17 @@
           })
       });
 
+      //Games layer
+      const gamesLayer = new ol.layer.Vector({
+          source: new ol.source.Vector(),
+          style: new ol.style.Style({
+              image: new ol.style.Icon({
+              anchor: [0.5, 0.5],
+              src: './img/gameIcon.svg',
+              })
+          })
+      });
+
       // Parcel pointer layer
       const parcelPointerLayer = new ol.layer.Vector({
         source: new ol.source.Vector(),
@@ -144,6 +155,7 @@
         showEstatesLayer = false;
         showUpdatedLayer = false;
         showPoiLayer = false;
+        showGamesLayer = false;
         showSaleParcels = false;
         showRentParcels = false;
         let zoomLevel;
@@ -151,6 +163,7 @@
         estatesLayer.setVisible(showEstatesLayer);
         estatesAreaLayer.setVisible(true);
         poiLayer.setVisible(showPoiLayer);
+        gamesLayer.setVisible(showGamesLayer);
         saleRentLayer.setVisible(true);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
@@ -372,10 +385,12 @@
           }
         });
 
-        //Add Points Of Interest Layer
+        //Add Points Of Interest and Games Layers
         map.addLayer(poiLayer);
-        //Add Points Of Interest Markers
+        map.addLayer(gamesLayer);
+        //Add Points Of Interest and Games Markers
         addPoiMarkers();
+        addGamesMarkers();
 
         // Add Parcel Pointer Marker Layer
         map.addLayer(parcelPointerLayer);
@@ -683,6 +698,25 @@
               featureType: 'poi',
             });
             poiLayer.getSource().addFeature(marker);
+          })
+        })
+        .catch(err => console.log(err));
+      }
+
+      function addGamesMarkers() {
+        fetch('./games.json')
+        .then(res => res.json())
+        .then(data => {
+          const gamesData = data.data;
+          gamesData.forEach(element => {
+            const lat = element.lat;
+            const lon = element.lon;
+            var marker = new ol.Feature({
+              geometry: new ol.geom.Point(decentralandToMapCoords(lon, lat)),
+              name: element.title,
+              featureType: 'game',
+            });
+            gamesLayer.getSource().addFeature(marker);
           })
         })
         .catch(err => console.log(err));
