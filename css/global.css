@@ -113,6 +113,23 @@ html, body {
   position: relative;
   display: inline-block;
 }
+.separator {
+  display: flex;
+  align-items: center;
+  margin-top: 3px;
+}
+.separator hr {
+  flex: 1;
+  border: none;
+  height: 1px;
+  background-color: #686d71;
+  margin: 0 10px;
+}
+.separator p {
+  font-size: .8rem;
+  color: #686d71;
+  margin: 0;
+}
 .show { display: block }
 .menu-content .header {
   display: flex;
