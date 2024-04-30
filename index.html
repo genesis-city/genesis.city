@@ -241,26 +241,30 @@
         // Fill estate area & increase estate perimeter width on hover
         let hoverEstateArea = null;
         let hoverEstatePerimeter = null;
+        let previousFeature = null;
         map.on('pointermove', function(event) {
           if (showEstatesLayer) {
-            if (hoverEstateArea !== null) {
-              hoverEstateArea.setStyle(undefined);
-              hoverEstateArea = null;
-              hoverEstatePerimeter.setStyle(undefined);
-              hoverEstatePerimeter = null;
-            }
             if (map.hasFeatureAtPixel(event.pixel)) {
               map.forEachFeatureAtPixel(event.pixel, (feature) => {
-                const assignedColorArea = assignColor(feature.values_.type, true);
-                const assignedColorPerimeter = assignColor(feature.values_.type, false);
-                const hoverStyleArea = new ol.style.Style({
-                  fill : new ol.style.Fill({color: assignedColorArea}),
-                  // stroke: new ol.style.Stroke({color: assignedColor, width: 1}),
-                });
-                const hoverStylePerimeter = new ol.style.Style({
-                  stroke: new ol.style.Stroke({color: assignedColorPerimeter, width: 4}),
-                });
-                if (feature.values_.featureType === 'estateArea') {
+                if (feature != previousFeature && feature.values_.featureType === 'estateArea') {
+                  console.log(feature);
+                  console.log('PAINT');
+                  if (hoverEstateArea !== null) {
+                    hoverEstateArea.setStyle(undefined);
+                    hoverEstateArea = null;
+                    hoverEstatePerimeter.setStyle(undefined);
+                    hoverEstatePerimeter = null;
+                  }
+                  previousFeature = feature;
+                  const assignedColorArea = assignColor(feature.values_.type, true);
+                  const assignedColorPerimeter = assignColor(feature.values_.type, false);
+                  const hoverStyleArea = new ol.style.Style({
+                    fill : new ol.style.Fill({color: assignedColorArea}),
+                    // stroke: new ol.style.Stroke({color: assignedColor, width: 1}),
+                  });
+                  const hoverStylePerimeter = new ol.style.Style({
+                    stroke: new ol.style.Stroke({color: assignedColorPerimeter, width: 4}),
+                  });
                   const estateId = parseInt(feature.values_.estateId);
                   const perimeterFeature = estatesLayer.getSource().getFeatureById(estateId);
                   hoverEstateArea = feature;
