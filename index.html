@@ -246,7 +246,7 @@
           if (showEstatesLayer) {
             if (map.hasFeatureAtPixel(event.pixel)) {
               map.forEachFeatureAtPixel(event.pixel, (feature) => {
-                if (feature != previousFeature) {
+                if (feature != previousFeature && feature.values_.featureType === 'estateArea') {
                   console.log(feature);
                   console.log('PAINT');
                   if (hoverEstateArea !== null) {
@@ -265,15 +265,13 @@
                   const hoverStylePerimeter = new ol.style.Style({
                     stroke: new ol.style.Stroke({color: assignedColorPerimeter, width: 4}),
                   });
-                  if (feature.values_.featureType === 'estateArea') {
-                    const estateId = parseInt(feature.values_.estateId);
-                    const perimeterFeature = estatesLayer.getSource().getFeatureById(estateId);
-                    hoverEstateArea = feature;
-                    hoverEstatePerimeter = perimeterFeature;
-                    feature.setStyle(hoverStyleArea);
-                    perimeterFeature.setStyle(hoverStylePerimeter)
-                    return true;
-                  }
+                  const estateId = parseInt(feature.values_.estateId);
+                  const perimeterFeature = estatesLayer.getSource().getFeatureById(estateId);
+                  hoverEstateArea = feature;
+                  hoverEstatePerimeter = perimeterFeature;
+                  feature.setStyle(hoverStyleArea);
+                  perimeterFeature.setStyle(hoverStylePerimeter)
+                  return true;
                 }
               });
             }
