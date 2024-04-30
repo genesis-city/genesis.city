@@ -880,6 +880,11 @@
                 <label class="toggle-label" for="updated-layer-toggle">Toggle</label>
               </div>
             </label>
+            <div class="separator">
+              <hr>
+                <p>Places</p>
+              <hr>
+            </div>
             <label class="layer-control">
               <span class="label">Points of interest</span>
               <div class="toggle">
@@ -895,6 +900,11 @@
                 <label class="toggle-label" for="games-layer-toggle">Toggle</label>
               </div>
             </label>
+            <div class="separator">
+              <hr>
+                <p>Marketplace</p>
+              <hr>
+            </div>
             <label class="layer-control">
               <span class="label">Lands for sale</span>
               <div class="toggle">
@@ -1172,10 +1182,16 @@
         // Add sale/rent data
         const salePriceDOM = document.getElementById('salePrice'); 
         const rentPriceDOM = document.getElementById('rentPrice');
-        const salePrice = (Math.round(saleRentFeatureData?.salePrice)/1000).toFixed(1).replace(/[.,]0$/, "");
+        let salePriceUnits = 'K';
+        let denominator = 1000;
+        if ((saleRentFeatureData?.salePrice)/1000 >= 1000) {
+          salePriceUnits = 'M';
+          denominator = 1000000;
+        }
+        const salePrice = (Math.round(saleRentFeatureData?.salePrice)/denominator).toFixed(1).replace(/[.,]0$/, "");
         const rentPrice = Math.round(saleRentFeatureData?.rentPrice);
         const marketplaceLink = `https://market.decentraland.org/contracts/${saleRentFeatureData?.contractAddress}/tokens/${saleRentFeatureData?.tokenId}`
-        const forSaleMessage = `<a href=${marketplaceLink} target="_blank">For sale at<i class="mana-icon"></i> ${salePrice}K <i class="JumpInIcon"></i></a>`;
+        const forSaleMessage = `<a href=${marketplaceLink} target="_blank">For sale at<i class="mana-icon"></i> ${salePrice}${salePriceUnits} <i class="JumpInIcon"></i></a>`;
         const forRentMessage = `<a href=${marketplaceLink} target="_blank">For rent at<i class="mana-icon"></i> ${rentPrice}/day <i class="JumpInIcon"></i></a>`;
         const forRentMessage2 = `<a href=${marketplaceLink} target="_blank">For rent at<i class="mana-icon"></i> ${rentPrice}/day</a>`;
 
