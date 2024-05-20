@@ -118,6 +118,17 @@
           })
       });
 
+      //Art layer
+      const artLayer = new ol.layer.Vector({
+          source: new ol.source.Vector(),
+          style: new ol.style.Style({
+              image: new ol.style.Icon({
+              anchor: [0.5, 0.5],
+              src: './img/artIcon.svg',
+              })
+          })
+      });
+
       // Parcel pointer layer
       const parcelPointerLayer = new ol.layer.Vector({
         source: new ol.source.Vector(),
@@ -156,6 +167,7 @@
         showUpdatedLayer = false;
         showPoiLayer = false;
         showGamesLayer = false;
+        showArtLayer = false;
         showSaleParcels = false;
         showRentParcels = false;
         let zoomLevel;
@@ -164,6 +176,7 @@
         estatesAreaLayer.setVisible(true);
         poiLayer.setVisible(showPoiLayer);
         gamesLayer.setVisible(showGamesLayer);
+        artLayer.setVisible(showArtLayer);
         saleRentLayer.setVisible(true);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
@@ -392,12 +405,14 @@
           }
         });
 
-        //Add Points Of Interest and Games Layers
+        //Add Points Of Interest, Games and Art Layers
         map.addLayer(poiLayer);
         map.addLayer(gamesLayer);
-        //Add Points Of Interest and Games Markers
+        map.addLayer(artLayer);
+        //Add Points Of Interest, Games and Art Markers
         addPoiMarkers();
         addGamesMarkers();
+        addArtMarkers();
 
         // Add Parcel Pointer Marker Layer
         map.addLayer(parcelPointerLayer);
@@ -740,6 +755,25 @@
               featureType: 'game',
             });
             gamesLayer.getSource().addFeature(marker);
+          })
+        })
+        .catch(err => console.log(err));
+      }
+
+      function addArtMarkers() {
+        fetch('./art.json')
+        .then(res => res.json())
+        .then(data => {
+          const artData = data.data;
+          artData.forEach(element => {
+            const lat = element.lat;
+            const lon = element.lon;
+            var marker = new ol.Feature({
+              geometry: new ol.geom.Point(decentralandToMapCoords(lon, lat)),
+              name: element.title,
+              featureType: 'art',
+            });
+            artLayer.getSource().addFeature(marker);
           })
         })
         .catch(err => console.log(err));
