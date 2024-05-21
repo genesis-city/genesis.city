@@ -812,11 +812,11 @@
         //The regular expression 'regex0' matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'. 'regex0' also matches that the last five sections are a letter followed by a 1 or a 0.
         // E.g. '#14,91,7z,n0,e0,r1,p1,s0'
         const regex0 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z$/;
-        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10]$/;
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10],a[10]$/;
         return regex0.test(hash) || regex1.test(hash);
       }
       function urlHashSecondValidation(hash) {
-        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10]$/;
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10],a[10]$/;
         return regex1.test(hash);
       }
 
