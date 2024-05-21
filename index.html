@@ -517,6 +517,10 @@
                 toggleGamesLayer();
                 activateLayerToggle('games');
               }
+              if (artLayerStatus === '1') {
+                toggleArtLayer();
+                activateLayerToggle('art');
+              }
             }
             if (currentViewZoom < 1) {
               currentViewZoom = 1
@@ -1397,6 +1401,9 @@
             break;
           case 'games':
             gamesLayerToggle.checked = true;
+            break;
+          case 'art':
+            artLayerToggle.checked = true;
             break;
           default:
             console.error('Invalid layer parameter:', layer);
