@@ -32,7 +32,7 @@
       var origin = [side*0, side * tiles];
       const maxCoords = 152;
       let lastParcelPointer;
-      var POIorGameToolTipOverlay;
+      var placeToolTipOverlay;
       let POIorGameModalExists;
       let mapSource;
       let saleLayerActiveByView;
@@ -346,7 +346,7 @@
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
-            POIorGameToolTipOverlay.setPosition(undefined);
+            placeToolTipOverlay.setPosition(undefined);
             // get Estate name if exists
             let clickedEstateName;
             const features = map.getFeaturesAtPixel(event.pixel);
@@ -394,7 +394,7 @@
               POIorGameModalExists = true;
               // Maintain POI/Game Tool Tip visible on click
               toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-              POIorGameToolTipOverlay.setPosition(coordinates);
+              placeToolTipOverlay.setPosition(coordinates);
             } else {
               POIorGameModalExists = false;
               // Add pointer at clicked parcel
@@ -421,14 +421,14 @@
         var container = document.getElementById('toolTip');
         var toolTipcontent = document.getElementById('toolTip-content');
 
-        POIorGameToolTipOverlay = new ol.Overlay({
+        placeToolTipOverlay = new ol.Overlay({
           element: container,
           autoPan: true,
           autoPanAnimation: {
               duration: 250
           }
         });
-        map.addOverlay(POIorGameToolTipOverlay);
+        map.addOverlay(placeToolTipOverlay);
 
         if(window.innerWidth > 630) {
           //Lauch POI tool tip at hover
@@ -469,9 +469,9 @@
           if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
             const coordinate = feature.values_.geometry.flatCoordinates;
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-            POIorGameToolTipOverlay.setPosition(coordinate);
+            placeToolTipOverlay.setPosition(coordinate);
           } else {
-            !POIorGameModalExists && POIorGameToolTipOverlay.setPosition(undefined);
+            !POIorGameModalExists && placeToolTipOverlay.setPosition(undefined);
           }
         }
         
@@ -711,7 +711,7 @@
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
         if (!showPoiLayer && POIorGameModalExists) {
-          POIorGameToolTipOverlay.setPosition(undefined);
+          placeToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
         showPoiLayer ? activeLocationHash('pois', true) : activeLocationHash('pois', false);
@@ -721,7 +721,7 @@
         showGamesLayer = !showGamesLayer;
         gamesLayer.setVisible(showGamesLayer);
         if (!showGamesLayer && POIorGameModalExists) {
-          POIorGameToolTipOverlay.setPosition(undefined);
+          placeToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
         showGamesLayer ? activeLocationHash('games', true) : activeLocationHash('games', false);
@@ -731,7 +731,7 @@
         showArtLayer = !showArtLayer;
         artLayer.setVisible(showArtLayer);
         if (!showArtLayer && POIorGameModalExists) {
-          POIorGameToolTipOverlay.setPosition(undefined);
+          placeToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
         showArtLayer ? activeLocationHash('art', true) : activeLocationHash('art', false);
@@ -1303,7 +1303,7 @@
       // Hide Parcel Permalink Popup
       function hidePermalinkPopup() {
         removeLastPointer();
-        POIorGameToolTipOverlay.setPosition(undefined);
+        placeToolTipOverlay.setPosition(undefined);
         POIorGameModalExists = false;
         parcelLinkBox.classList.remove("show");
         setTimeout(() => {
