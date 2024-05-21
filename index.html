@@ -438,7 +438,7 @@
             if (POIorGameModalExists) {
               const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
               let clickedEstateName;
-              if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
+              if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game' || feature?.values_.featureType === 'art')) {
                 const coordinates = feature.values_.geometry.flatCoordinates;
                 const featureType = feature?.values_.featureType;
                 // get Estate name if exists
@@ -466,7 +466,7 @@
 
         function showToolTip(event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-          if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
+          if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game' || feature?.values_.featureType === 'art')) {
             const coordinate = feature.values_.geometry.flatCoordinates;
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
             placeToolTipOverlay.setPosition(coordinate);
