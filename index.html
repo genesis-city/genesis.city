@@ -368,10 +368,10 @@
                 }
               }
             })
-            // POI or Game exists at clicked pixel
+            // POI, Game or Art exists at clicked pixel
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-            if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
-              // When click on POI or Game icon
+            if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game' || feature?.values_.featureType === 'art')) {
+              // When click on POI, Game or Art icon
               // Add pointer at clicked parcel
               const coordinates = feature.values_.geometry.flatCoordinates;
               const featureType = feature?.values_.featureType;
@@ -392,7 +392,7 @@
               console.log(featureType);
               showPermalinkPopup();
               POIorGameModalExists = true;
-              // Maintain POI/Game Tool Tip visible on click
+              // Maintain POI/Game/Art Tool Tip visible on click
               toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
               placeToolTipOverlay.setPosition(coordinates);
             } else {
@@ -1220,17 +1220,26 @@
         if (type === 'parcel') {
           permalinkIcon.classList.remove('poi');
           permalinkIcon.classList.remove('game');
+          permalinkIcon.classList.remove('art');
           permalinkIcon.classList.add('parcel');
         }
         if (type === 'poi') {
           permalinkIcon.classList.remove('parcel');
           permalinkIcon.classList.remove('game');
+          permalinkIcon.classList.remove('art');
           permalinkIcon.classList.add('poi');
         }
         if (type === 'game') {
           permalinkIcon.classList.remove('parcel');
           permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.remove('art');
           permalinkIcon.classList.add('game');
+        }
+        if (type === 'art') {
+          permalinkIcon.classList.remove('parcel');
+          permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.remove('game');
+          permalinkIcon.classList.add('art');
         }
         modalTitle.innerHTML = `( ${lon}, ${lat} )`;
         if (clickedEstateName) {
