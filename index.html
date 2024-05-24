@@ -33,7 +33,7 @@
       const maxCoords = 152;
       let lastParcelPointer;
       var placeToolTipOverlay;
-      let POIorGameModalExists;
+      let placeModalExists;
       let mapSource;
       let saleLayerActiveByView;
       let rentLayerActiveByView;
@@ -391,12 +391,12 @@
               console.log('FEATURE TYPE');
               console.log(featureType);
               showPermalinkPopup();
-              POIorGameModalExists = true;
+              placeModalExists = true;
               // Maintain POI/Game/Art Tool Tip visible on click
               toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
               placeToolTipOverlay.setPosition(coordinates);
             } else {
-              POIorGameModalExists = false;
+              placeModalExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
               createPermalinkPopup(xf, yf, 'parcel', saleRentFeatureData, clickedEstateName);
@@ -435,7 +435,7 @@
           map.on('pointermove', function (event) {
             showToolTip(event);
             // Update permalink popup infomration
-            if (POIorGameModalExists) {
+            if (placeModalExists) {
               const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
               let clickedEstateName;
               if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game' || feature?.values_.featureType === 'art')) {
@@ -471,7 +471,7 @@
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
             placeToolTipOverlay.setPosition(coordinate);
           } else {
-            !POIorGameModalExists && placeToolTipOverlay.setPosition(undefined);
+            !placeModalExists && placeToolTipOverlay.setPosition(undefined);
           }
         }
         
@@ -710,7 +710,7 @@
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
-        if (!showPoiLayer && POIorGameModalExists) {
+        if (!showPoiLayer && placeModalExists) {
           placeToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
@@ -720,7 +720,7 @@
       function toggleGamesLayer() {
         showGamesLayer = !showGamesLayer;
         gamesLayer.setVisible(showGamesLayer);
-        if (!showGamesLayer && POIorGameModalExists) {
+        if (!showGamesLayer && placeModalExists) {
           placeToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
@@ -730,7 +730,7 @@
       function toggleArtLayer() {
         showArtLayer = !showArtLayer;
         artLayer.setVisible(showArtLayer);
-        if (!showArtLayer && POIorGameModalExists) {
+        if (!showArtLayer && placeModalExists) {
           placeToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
@@ -1313,7 +1313,7 @@
       function hidePermalinkPopup() {
         removeLastPointer();
         placeToolTipOverlay.setPosition(undefined);
-        POIorGameModalExists = false;
+        placeModalExists = false;
         parcelLinkBox.classList.remove("show");
         setTimeout(() => {
           parcelLinkBox.classList.add("hide");
