@@ -32,8 +32,8 @@
       var origin = [side*0, side * tiles];
       const maxCoords = 152;
       let lastParcelPointer;
-      var POIorGameToolTipOverlay;
-      let POIorGameModalExists;
+      var placeToolTipOverlay;
+      let placeModalExists;
       let mapSource;
       let saleLayerActiveByView;
       let rentLayerActiveByView;
@@ -118,6 +118,17 @@
           })
       });
 
+      //Art layer
+      const artLayer = new ol.layer.Vector({
+          source: new ol.source.Vector(),
+          style: new ol.style.Style({
+              image: new ol.style.Icon({
+              anchor: [0.5, 0.5],
+              src: './img/artIcon.svg',
+              })
+          })
+      });
+
       // Parcel pointer layer
       const parcelPointerLayer = new ol.layer.Vector({
         source: new ol.source.Vector(),
@@ -156,6 +167,7 @@
         showUpdatedLayer = false;
         showPoiLayer = false;
         showGamesLayer = false;
+        showArtLayer = false;
         showSaleParcels = false;
         showRentParcels = false;
         let zoomLevel;
@@ -164,6 +176,7 @@
         estatesAreaLayer.setVisible(true);
         poiLayer.setVisible(showPoiLayer);
         gamesLayer.setVisible(showGamesLayer);
+        artLayer.setVisible(showArtLayer);
         saleRentLayer.setVisible(true);
         var projection = new ol.proj.Projection({
           code: 'decentraland-images',
@@ -296,7 +309,7 @@
           const decentralandCenter = mapToDecentralandCoords(OLcenter);
           const lon = Math.round(decentralandCenter[0]);
           const lat = Math.round(decentralandCenter[1]);
-          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},c${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'},s${showSaleParcels === true ? '1' : '0'},r${showRentParcels === true ? '1' : '0'},g${showGamesLayer === true ? '1' : '0'}`
+          const layersStatus = `,n${showNightModeLayer === true ? '1' : '0'},e${showEstatesLayer === true ? '1' : '0'},c${showUpdatedLayer === true ? '1' : '0'},p${showPoiLayer === true ? '1' : '0'},s${showSaleParcels === true ? '1' : '0'},r${showRentParcels === true ? '1' : '0'},g${showGamesLayer === true ? '1' : '0'},a${showArtLayer === true ? '1' : '0'}`
           window.location.hash = `${lon},${lat},${zoom}z${layersStatus}`;
           if(window.innerWidth > 630) {
             hidePermalinkPopup();
@@ -333,7 +346,7 @@
           // Check click within map limits
           if (Math.abs(xf) <= 150 && Math.abs(yf) <= 150) {
             removeLastPointer();
-            POIorGameToolTipOverlay.setPosition(undefined);
+            placeToolTipOverlay.setPosition(undefined);
             // get Estate name if exists
             let clickedEstateName;
             const features = map.getFeaturesAtPixel(event.pixel);
@@ -355,10 +368,10 @@
                 }
               }
             })
-            // POI or Game exists at clicked pixel
+            // POI, Game or Art exists at clicked pixel
             const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-            if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
-              // When click on POI or Game icon
+            if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game' || feature?.values_.featureType === 'art')) {
+              // When click on POI, Game or Art icon
               // Add pointer at clicked parcel
               const coordinates = feature.values_.geometry.flatCoordinates;
               const featureType = feature?.values_.featureType;
@@ -378,12 +391,12 @@
               console.log('FEATURE TYPE');
               console.log(featureType);
               showPermalinkPopup();
-              POIorGameModalExists = true;
-              // Maintain POI/Game Tool Tip visible on click
+              placeModalExists = true;
+              // Maintain POI/Game/Art Tool Tip visible on click
               toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-              POIorGameToolTipOverlay.setPosition(coordinates);
+              placeToolTipOverlay.setPosition(coordinates);
             } else {
-              POIorGameModalExists = false;
+              placeModalExists = false;
               // Add pointer at clicked parcel
               showParcelPointer(decentralandToMapCoords(xf, yf));
               createPermalinkPopup(xf, yf, 'parcel', saleRentFeatureData, clickedEstateName);
@@ -392,12 +405,14 @@
           }
         });
 
-        //Add Points Of Interest and Games Layers
+        //Add Points Of Interest, Games and Art Layers
         map.addLayer(poiLayer);
         map.addLayer(gamesLayer);
-        //Add Points Of Interest and Games Markers
+        map.addLayer(artLayer);
+        //Add Points Of Interest, Games and Art Markers
         addPoiMarkers();
         addGamesMarkers();
+        addArtMarkers();
 
         // Add Parcel Pointer Marker Layer
         map.addLayer(parcelPointerLayer);
@@ -406,24 +421,24 @@
         var container = document.getElementById('toolTip');
         var toolTipcontent = document.getElementById('toolTip-content');
 
-        POIorGameToolTipOverlay = new ol.Overlay({
+        placeToolTipOverlay = new ol.Overlay({
           element: container,
           autoPan: true,
           autoPanAnimation: {
               duration: 250
           }
         });
-        map.addOverlay(POIorGameToolTipOverlay);
+        map.addOverlay(placeToolTipOverlay);
 
         if(window.innerWidth > 630) {
           //Lauch POI tool tip at hover
           map.on('pointermove', function (event) {
             showToolTip(event);
             // Update permalink popup infomration
-            if (POIorGameModalExists) {
+            if (placeModalExists) {
               const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
               let clickedEstateName;
-              if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
+              if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game' || feature?.values_.featureType === 'art')) {
                 const coordinates = feature.values_.geometry.flatCoordinates;
                 const featureType = feature?.values_.featureType;
                 // get Estate name if exists
@@ -451,12 +466,12 @@
 
         function showToolTip(event) {
           const feature = map.forEachFeatureAtPixel(event.pixel, (feature) => feature);
-          if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game')) {
+          if (map.hasFeatureAtPixel(event.pixel) && (feature?.values_.featureType === 'poi' || feature?.values_.featureType === 'game' || feature?.values_.featureType === 'art')) {
             const coordinate = feature.values_.geometry.flatCoordinates;
             toolTipcontent.innerHTML = `<b>${feature.values_.name}</b>`;
-            POIorGameToolTipOverlay.setPosition(coordinate);
+            placeToolTipOverlay.setPosition(coordinate);
           } else {
-            !POIorGameModalExists && POIorGameToolTipOverlay.setPosition(undefined);
+            !placeModalExists && placeToolTipOverlay.setPosition(undefined);
           }
         }
         
@@ -474,6 +489,7 @@
               let saleLayerStatus = window.location.href.split('#')[1].split(',')[7].split('s')[1];
               let rentLayerStatus = window.location.href.split('#')[1].split(',')[8].split('r')[1];
               let gamesLayerStatus = window.location.href.split('#')[1].split(',')[9].split('g')[1];
+              let artLayerStatus = window.location.href.split('#')[1].split(',')[10].split('a')[1];
               //Apply Layers Status from address bar
               if (nightModeLayerStatus === '1') {
                 toggleNightMode();
@@ -500,6 +516,10 @@
               if (gamesLayerStatus === '1') {
                 toggleGamesLayer();
                 activateLayerToggle('games');
+              }
+              if (artLayerStatus === '1') {
+                toggleArtLayer();
+                activateLayerToggle('art');
               }
             }
             if (currentViewZoom < 1) {
@@ -690,8 +710,8 @@
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
-        if (!showPoiLayer && POIorGameModalExists) {
-          POIorGameToolTipOverlay.setPosition(undefined);
+        if (!showPoiLayer && placeModalExists) {
+          placeToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
         showPoiLayer ? activeLocationHash('pois', true) : activeLocationHash('pois', false);
@@ -700,11 +720,21 @@
       function toggleGamesLayer() {
         showGamesLayer = !showGamesLayer;
         gamesLayer.setVisible(showGamesLayer);
-        if (!showGamesLayer && POIorGameModalExists) {
-          POIorGameToolTipOverlay.setPosition(undefined);
+        if (!showGamesLayer && placeModalExists) {
+          placeToolTipOverlay.setPosition(undefined);
           hidePermalinkPopup();
         }
         showGamesLayer ? activeLocationHash('games', true) : activeLocationHash('games', false);
+      }
+
+      function toggleArtLayer() {
+        showArtLayer = !showArtLayer;
+        artLayer.setVisible(showArtLayer);
+        if (!showArtLayer && placeModalExists) {
+          placeToolTipOverlay.setPosition(undefined);
+          hidePermalinkPopup();
+        }
+        showArtLayer ? activeLocationHash('art', true) : activeLocationHash('art', false);
       }
 
       function addPoiMarkers() {
@@ -745,6 +775,25 @@
         .catch(err => console.log(err));
       }
 
+      function addArtMarkers() {
+        fetch('./art.json')
+        .then(res => res.json())
+        .then(data => {
+          const artData = data.data;
+          artData.forEach(element => {
+            const lat = element.lat;
+            const lon = element.lon;
+            var marker = new ol.Feature({
+              geometry: new ol.geom.Point(decentralandToMapCoords(lon, lat)),
+              name: element.title,
+              featureType: 'art',
+            });
+            artLayer.getSource().addFeature(marker);
+          })
+        })
+        .catch(err => console.log(err));
+      }
+
       function mapToDecentralandCoords(mapCoords) {
         const decX = (mapCoords[0] - 20) / 40 - maxCoords;
         const decY = (mapCoords[1] - 20) / 40 - maxCoords;
@@ -763,11 +812,11 @@
         //The regular expression 'regex0' matches a string that starts with a hash character '#', followed by two comma-separated sections of numbers that can be any number between -150 and 150. The third section must be ant number followed with the letter 'z'. 'regex0' also matches that the last five sections are a letter followed by a 1 or a 0.
         // E.g. '#14,91,7z,n0,e0,r1,p1,s0'
         const regex0 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z$/;
-        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10]$/;
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10],a[10]$/;
         return regex0.test(hash) || regex1.test(hash);
       }
       function urlHashSecondValidation(hash) {
-        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10]$/;
+        const regex1 = /^#-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?(?:1[0-4][0-9]|[0-9]{1,2}|150)\,-?\d+z,n[10],e[10],c[10],p[10],s[10],r[10],g[10],a[10]$/;
         return regex1.test(hash);
       }
 
@@ -898,10 +947,17 @@
             </label>
             <label class="layer-control">
               <span class="label">Games</span>
-              <span class="new-feat">New</span>
               <div class="toggle">
                 <input class="toggle-input" onclick="toggleGamesLayer()" id="games-layer-toggle" type="checkbox" name="games-layer-toggle" value="show-games">
                 <label class="toggle-label" for="games-layer-toggle">Toggle</label>
+              </div>
+            </label>
+            <label class="layer-control">
+              <span class="label">Art</span>
+              <span class="new-feat">New</span>
+              <div class="toggle">
+                <input class="toggle-input" onclick="toggleArtLayer()" id="art-layer-toggle" type="checkbox" name="art-layer-toggle" value="show-art">
+                <label class="toggle-label" for="art-layer-toggle">Toggle</label>
               </div>
             </label>
             <div class="separator">
@@ -1052,6 +1108,7 @@
       const saleLayerToggle = document.getElementById('sale-layer-toggle');
       const rentLayerToggle = document.getElementById('rent-layer-toggle');
       const gamesLayerToggle = document.getElementById('games-layer-toggle');
+      const artLayerToggle = document.getElementById('art-layer-toggle');
       const bannerContainer = document.getElementById('banner-container');
       const saleLegend = document.getElementById('sale-legend');
       const rentLegend = document.getElementById('rent-legend');
@@ -1162,17 +1219,26 @@
         if (type === 'parcel') {
           permalinkIcon.classList.remove('poi');
           permalinkIcon.classList.remove('game');
+          permalinkIcon.classList.remove('art');
           permalinkIcon.classList.add('parcel');
         }
         if (type === 'poi') {
           permalinkIcon.classList.remove('parcel');
           permalinkIcon.classList.remove('game');
+          permalinkIcon.classList.remove('art');
           permalinkIcon.classList.add('poi');
         }
         if (type === 'game') {
           permalinkIcon.classList.remove('parcel');
           permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.remove('art');
           permalinkIcon.classList.add('game');
+        }
+        if (type === 'art') {
+          permalinkIcon.classList.remove('parcel');
+          permalinkIcon.classList.remove('poi');
+          permalinkIcon.classList.remove('game');
+          permalinkIcon.classList.add('art');
         }
         modalTitle.innerHTML = `( ${lon}, ${lat} )`;
         if (clickedEstateName) {
@@ -1245,8 +1311,8 @@
       // Hide Parcel Permalink Popup
       function hidePermalinkPopup() {
         removeLastPointer();
-        POIorGameToolTipOverlay.setPosition(undefined);
-        POIorGameModalExists = false;
+        placeToolTipOverlay.setPosition(undefined);
+        placeModalExists = false;
         parcelLinkBox.classList.remove("show");
         setTimeout(() => {
           parcelLinkBox.classList.add("hide");
@@ -1343,6 +1409,9 @@
             break;
           case 'games':
             gamesLayerToggle.checked = true;
+            break;
+          case 'art':
+            artLayerToggle.checked = true;
             break;
           default:
             console.error('Invalid layer parameter:', layer);

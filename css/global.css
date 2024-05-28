@@ -451,6 +451,20 @@ html, body {
   justify-self: flex-end;
 }
 
+.parcel-link-box i.art {
+  position: absolute;
+  left: 0.75rem;
+  margin-right: 0.75rem;
+  background: url(../img/artIcon.svg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 24px;
+  width: 18px;
+  display: block;
+  justify-self: flex-end;
+}
+
 .parcel-link-box #banner-container {
   margin: -12px 0 8px -12px;
   border-radius: 0.5rem 0.5rem 0 0;
