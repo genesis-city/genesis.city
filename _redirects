@@ -1,1 +1,2 @@
 /api/* https://places.decentraland.org/api/:splat 200
+/images/*  /.netlify/functions/serveParcelImage  200
