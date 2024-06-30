@@ -5,7 +5,7 @@ exports.handler = async function(event, context) {
   const imageName = path.split('/').pop();
   
   // Construct the GitHub raw content URL for the 'parcels' repository
-  const imageUrl = `https://media.githubusercontent.com/media/genesis-city/parcels/master/images/${imageName}`;
+  const imageUrl = `https://media.githubusercontent.com/media/genesis-city/parcels/master/api/v1/land/${imageName}`;
 
   try {
     // Fetch the image from GitHub
