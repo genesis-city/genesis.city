@@ -5,7 +5,7 @@ from PIL import Image
 # input_directory = './raw'
 # Input for update run:
 input_directory = '../map'
-output_directory = 'api/v1/land'
+output_directory = '../parcels/api/v1/land'
 
 # Load updated coordinates from the raw_coords.txt file
 with open('../scouter/output/raw_coords.txt', 'r') as file:
