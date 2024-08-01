@@ -163,6 +163,7 @@
       function initialize() {
         const scope = document.querySelector("body");
         showNightModeLayer = false;
+        prevWeek = false;
         showEstatesLayer = false;
         showUpdatedLayer = false;
         showPoiLayer = false;
@@ -855,6 +856,15 @@
         } else {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
           activeLocationHash('nightMode', false);
+        }
+      }
+
+      function togglePrevWeekMode() {
+        prevWeek = !prevWeek
+        if (prevWeek) {
+          mapSource.setUrl('map/prevWeek/{z}/{x},{y}.jpg');
+        } else {
+          mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
         }
       }
 
