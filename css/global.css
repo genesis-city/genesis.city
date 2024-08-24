@@ -166,7 +166,7 @@ html, body {
 /* Toggle */
 .layer-control {
   padding: 0.5rem 0.75rem;
-  min-width: 11.5rem;
+  min-width: 14rem;
   display: flex;
   justify-content: space-between;
   color: #E2E4E9;
