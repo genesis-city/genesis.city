@@ -805,3 +805,23 @@ i.mana-icon {
 .price-color.high {
   background-color: #dc00dc;
 }
+
+#timeline-container {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  padding: 10px;
+  text-align: center;
+}
+
+#timeline-slider {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#timeline-date {
+  font-size: 14px;
+  color: white;
+}
