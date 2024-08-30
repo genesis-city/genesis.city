@@ -163,9 +163,9 @@
       function initialize() {
         const scope = document.querySelector("body");
         showNightModeLayer = false;
-        prevWeek = false;
         showEstatesLayer = false;
         showUpdatedLayer = false;
+        showTimeMachine = false;
         showPoiLayer = false;
         showGamesLayer = false;
         showArtLayer = false;
@@ -708,6 +708,12 @@
         showEstatesLayer ? activeLocationHash('estates', true) : activeLocationHash('estates', false);
       }
 
+      function toggleTimeMachine() {
+        showTimeMachine = !showTimeMachine
+        toggleTimelineContainer();
+        !showTimeMachine && mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+      }
+
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
@@ -859,15 +865,6 @@
         }
       }
 
-      function togglePrevWeekMode() {
-        prevWeek = !prevWeek
-        if (prevWeek) {
-          mapSource.setUrl('map/prevWeek/{z}/{x},{y}.jpg');
-        } else {
-          mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
-        }
-      }
-
       // Change layer status shown in address bar when activating/deactivating toggle
       function activeLocationHash(layer, shouldActivate) {
         const firstLetter = layer.charAt(0);
@@ -889,6 +886,14 @@
 
   <body onload="initialize()">
     <div id="map"></div>
+    <div id="timeline-container" class="overlay blur">
+      <input type="range" id="timeline-slider" min="0" max="2" step="1" value="2">
+      <div id="timeline-labels">
+        <span class="timeline-label" data-value="2">June 11, 2023</span>
+        <span class="timeline-label" data-value="1">Aug. 20, 2024</span>
+        <span class="timeline-label" data-value="0">Aug. 27, 2024</span>
+      </div>
+    </div>
     <div id="toolTip" class="ol-popup">
         <div id="toolTip-content"></div>
     </div>
@@ -944,11 +949,11 @@
               </div>
             </label>
             <label class="layer-control">
-              <span class="label">Prev. week view</span>
+              <span class="label">Time Machine</span>
               <span class="new-feat">New</span>
               <div class="toggle">
-                <input class="toggle-input" onclick="togglePrevWeekMode()" id="prev-week-toggle" type="checkbox" name="prev-week-toggle" value="show-prev-week">
-                <label class="toggle-label" for="prev-week-toggle">Toggle</label>
+                <input class="toggle-input" onclick="toggleTimeMachine()" id="time-machine-toggle" type="checkbox" name="time-machine-toggle" value="show-time-machine">
+                <label class="toggle-label" for="time-machine-toggle">Toggle</label>
               </div>
             </label>
             <div class="separator">
@@ -1129,6 +1134,9 @@
       const bannerContainer = document.getElementById('banner-container');
       const saleLegend = document.getElementById('sale-legend');
       const rentLegend = document.getElementById('rent-legend');
+      const timelineContainer = document.getElementById('timeline-container');
+      const timelineSlider = document.getElementById('timeline-slider');
+      const timelineLabels = document.getElementById('timeline-labels');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -1346,6 +1354,43 @@
         }, 10);
       }
 
+      // Time Machine
+      function toggleTimelineContainer() {
+        if (!timelineContainer.classList.contains('show')) {
+          timelineContainer.classList.add("show");
+          timelineContainer.classList.add("bounce");
+          setTimeout(() => {
+            timelineContainer.classList.remove("bounce");
+          }, 800);
+        } else {
+          timelineContainer.classList.remove("show");
+          //set default value (newest date)
+          timelineSlider.value = 2;
+        }
+      }
+
+      function selectDate() {
+        const index = parseInt(timelineSlider.value);
+
+        switch (index) {
+          case 0:
+            mapSource.setUrl('map/0/{z}/{x},{y}.jpg');
+            break;
+          case 1:
+            mapSource.setUrl('map/prevWeek/{z}/{x},{y}.jpg');
+            break;
+          case 2:
+            mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+            break
+          default:
+            mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+            break;
+        }
+        
+      }
+      timelineSlider.addEventListener('input', selectDate);
+
+      
       function toggleSaleLegend() {
         if (!saleLegend.classList.contains('show') && !(parcelLinkBox.classList.contains('show') && window.innerWidth < 630)) {
           setTimeout(() => {
