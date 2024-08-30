@@ -166,6 +166,7 @@
         prevWeek = false;
         showEstatesLayer = false;
         showUpdatedLayer = false;
+        showTimeMachine = false;
         showPoiLayer = false;
         showGamesLayer = false;
         showArtLayer = false;
@@ -708,6 +709,11 @@
         showEstatesLayer ? activeLocationHash('estates', true) : activeLocationHash('estates', false);
       }
 
+      function toggleTimeMachine() {
+        showTimeMachine = !showTimeMachine
+        toggleTimelineContainer();
+      }
+
       function togglePointsOfInterest() {
         showPoiLayer = !showPoiLayer;
         poiLayer.setVisible(showPoiLayer);
@@ -1145,6 +1151,7 @@
       const bannerContainer = document.getElementById('banner-container');
       const saleLegend = document.getElementById('sale-legend');
       const rentLegend = document.getElementById('rent-legend');
+      const timelineContainer = document.getElementById('timeline-container');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -1360,6 +1367,18 @@
           showSaleParcels && saleLegend.classList.add("show");
           showRentParcels && rentLegend.classList.add("show");
         }, 10);
+      }
+
+      function toggleTimelineContainer() {
+        if (!timelineContainer.classList.contains('show')) {
+          timelineContainer.classList.add("show");
+          timelineContainer.classList.add("bounce");
+          setTimeout(() => {
+            timelineContainer.classList.remove("bounce");
+          }, 800);
+        } else {
+          timelineContainer.classList.remove("show");
+        }
       }
 
       function toggleSaleLegend() {
