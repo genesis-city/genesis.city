@@ -808,12 +808,39 @@ i.mana-icon {
 
 #timeline-container {
   position: absolute;
-  top: 20px;
+  top: -6rem;
   left: 50%;
   transform: translateX(-50%);
   width: 300px;
   padding: 10px;
   text-align: center;
+  transition: all 300ms ease-in-out;
+}
+
+#timeline-container.show {
+  transform: translate(-50%, 6.5rem);
+}
+
+#timeline-container.bounce {
+  animation: timelineBounce 800ms ease-in-out;
+}
+
+@keyframes timelineBounce {
+  0% {
+    top: -6rem;
+  }
+  40% {
+    top: -4.6rem;
+  }
+  60% {
+    top: -6.3rem;
+  }
+  70% {
+    top: -5.8rem;
+  }
+  100% {
+    top: -6rem;
+  }
 }
 
 #timeline-slider {
