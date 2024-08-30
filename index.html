@@ -712,6 +712,7 @@
       function toggleTimeMachine() {
         showTimeMachine = !showTimeMachine
         toggleTimelineContainer();
+        !showTimeMachine && mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
       }
 
       function togglePointsOfInterest() {
@@ -1152,6 +1153,8 @@
       const saleLegend = document.getElementById('sale-legend');
       const rentLegend = document.getElementById('rent-legend');
       const timelineContainer = document.getElementById('timeline-container');
+      const timelineSlider = document.getElementById('timeline-slider');
+      const timelineLabels = document.getElementById('timeline-labels');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
@@ -1369,6 +1372,7 @@
         }, 10);
       }
 
+      // Time Machine
       function toggleTimelineContainer() {
         if (!timelineContainer.classList.contains('show')) {
           timelineContainer.classList.add("show");
@@ -1378,9 +1382,33 @@
           }, 800);
         } else {
           timelineContainer.classList.remove("show");
+          //set default value (newest date)
+          timelineSlider.value = 2;
         }
       }
 
+      function selectDate() {
+        const index = parseInt(timelineSlider.value);
+
+        switch (index) {
+          case 0:
+            mapSource.setUrl('map/0/{z}/{x},{y}.jpg');
+            break;
+          case 1:
+            mapSource.setUrl('map/prevWeek/{z}/{x},{y}.jpg');
+            break;
+          case 2:
+            mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+            break
+          default:
+            mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+            break;
+        }
+        
+      }
+      timelineSlider.addEventListener('input', selectDate);
+
+      
       function toggleSaleLegend() {
         if (!saleLegend.classList.contains('show') && !(parcelLinkBox.classList.contains('show') && window.innerWidth < 630)) {
           setTimeout(() => {
