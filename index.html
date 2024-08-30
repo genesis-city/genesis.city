@@ -163,7 +163,6 @@
       function initialize() {
         const scope = document.querySelector("body");
         showNightModeLayer = false;
-        prevWeek = false;
         showEstatesLayer = false;
         showUpdatedLayer = false;
         showTimeMachine = false;
@@ -866,15 +865,6 @@
         }
       }
 
-      function togglePrevWeekMode() {
-        prevWeek = !prevWeek
-        if (prevWeek) {
-          mapSource.setUrl('map/prevWeek/{z}/{x},{y}.jpg');
-        } else {
-          mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
-        }
-      }
-
       // Change layer status shown in address bar when activating/deactivating toggle
       function activeLocationHash(layer, shouldActivate) {
         const firstLetter = layer.charAt(0);
@@ -956,14 +946,6 @@
               <div class="toggle">
                 <input class="toggle-input" onclick="toggleUpdatedLayer()" id="updated-layer-toggle" type="checkbox" name="updated-layer-toggle" value="show-updated">
                 <label class="toggle-label" for="updated-layer-toggle">Toggle</label>
-              </div>
-            </label>
-            <label class="layer-control">
-              <span class="label">Prev. week view</span>
-              <span class="new-feat">New</span>
-              <div class="toggle">
-                <input class="toggle-input" onclick="togglePrevWeekMode()" id="prev-week-toggle" type="checkbox" name="prev-week-toggle" value="show-prev-week">
-                <label class="toggle-label" for="prev-week-toggle">Toggle</label>
               </div>
             </label>
             <label class="layer-control">
