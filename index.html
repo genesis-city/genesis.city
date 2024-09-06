@@ -709,11 +709,16 @@
       }
 
       function toggleTimeMachine() {
-        showTimeMachine = !showTimeMachine
         toggleTimelineContainer();
-        if (!showTimeMachine && !showNightModeLayer) {
+        if (showTimeMachine && !showNightModeLayer) {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
         }
+
+        if (showNightModeLayer) {
+          nightModeToggle.checked = false;
+          toggleNightMode();
+        }
+        showTimeMachine = !showTimeMachine
       }
 
       function togglePointsOfInterest() {
@@ -857,18 +862,20 @@
       }
 
       function toggleNightMode() {
-        showNightModeLayer = !showNightModeLayer
-        if (showNightModeLayer) {
+        if (!showNightModeLayer && showTimeMachine) {
+          timeMachineToggle.checked = false;
+          toggleTimelineContainer();
+          showTimeMachine = !showTimeMachine
+          mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
+          activeLocationHash('nightMode', true);
+        } else if (!showNightModeLayer) {
           mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
           activeLocationHash('nightMode', true);
         } else {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
           activeLocationHash('nightMode', false);
         }
-        if (showTimeMachine) {
-          toggleTimeMachine();
-          timeMachineToggle.checked = false;
-        }
+        showNightModeLayer = !showNightModeLayer
       }
 
       // Change layer status shown in address bar when activating/deactivating toggle
