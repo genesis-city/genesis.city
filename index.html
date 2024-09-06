@@ -709,9 +709,16 @@
       }
 
       function toggleTimeMachine() {
-        showTimeMachine = !showTimeMachine
         toggleTimelineContainer();
-        !showTimeMachine && mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+        if (showTimeMachine && !showNightModeLayer) {
+          mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+        }
+
+        if (showNightModeLayer) {
+          nightModeToggle.checked = false;
+          toggleNightMode();
+        }
+        showTimeMachine = !showTimeMachine
       }
 
       function togglePointsOfInterest() {
@@ -855,14 +862,20 @@
       }
 
       function toggleNightMode() {
-        showNightModeLayer = !showNightModeLayer
-        if (showNightModeLayer) {
+        if (!showNightModeLayer && showTimeMachine) {
+          timeMachineToggle.checked = false;
+          toggleTimelineContainer();
+          showTimeMachine = !showTimeMachine
+          mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
+          activeLocationHash('nightMode', true);
+        } else if (!showNightModeLayer) {
           mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
           activeLocationHash('nightMode', true);
         } else {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
           activeLocationHash('nightMode', false);
         }
+        showNightModeLayer = !showNightModeLayer
       }
 
       // Change layer status shown in address bar when activating/deactivating toggle
@@ -1137,6 +1150,7 @@
       const timelineContainer = document.getElementById('timeline-container');
       const timelineSlider = document.getElementById('timeline-slider');
       const timelineLabels = document.getElementById('timeline-labels');
+      const timeMachineToggle = document.getElementById('time-machine-toggle');
 
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
