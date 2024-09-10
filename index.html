@@ -1370,6 +1370,15 @@
 
       // Time Machine
       function toggleTimelineContainer() {
+        
+        //Mobile
+        if(window.innerWidth < 630) {
+          socialLinks.classList.add('hide');
+          updateDate.classList.add('hide');
+          daoRecognition.classList.add('hide');
+          timelineContainer.classList.add("mobile");
+        }
+      
         if (!timelineContainer.classList.contains('show')) {
           timelineContainer.classList.add("show");
           timelineContainer.classList.add("bounce");
