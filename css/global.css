@@ -357,6 +357,7 @@ html, body {
 
 /* Parcel link box */
 .parcel-link-box {
+
   width: 290px;
   /* height: 90px; */
   background: rgba(36, 35, 38, 0.5);
@@ -819,6 +820,10 @@ i.mana-icon {
 
 #timeline-container.show {
   transform: translate(-50%, 6.5rem);
+}
+
+#timeline-container.show.mobile {
+  transform: translate(-50%, calc(100vh + 6rem - 100% - 5px));
 }
 
 #timeline-container.bounce {
