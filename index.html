@@ -1381,10 +1381,12 @@
       
         if (!timelineContainer.classList.contains('show')) {
           timelineContainer.classList.add("show");
-          timelineContainer.classList.add("bounce");
-          setTimeout(() => {
-            timelineContainer.classList.remove("bounce");
-          }, 800);
+          if(window.innerWidth > 630) {
+            timelineContainer.classList.add("bounce");
+            setTimeout(() => {
+              timelineContainer.classList.remove("bounce");
+            }, 800);
+          }
         } else {
           timelineContainer.classList.remove("show");
           socialLinks.classList.remove('hide');
