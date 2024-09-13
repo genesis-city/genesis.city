@@ -1370,14 +1370,28 @@
 
       // Time Machine
       function toggleTimelineContainer() {
+        
+        //Mobile
+        if(window.innerWidth < 630) {
+          socialLinks.classList.add('hide');
+          updateDate.classList.add('hide');
+          daoRecognition.classList.add('hide');
+          timelineContainer.classList.add("mobile");
+        }
+      
         if (!timelineContainer.classList.contains('show')) {
           timelineContainer.classList.add("show");
-          timelineContainer.classList.add("bounce");
-          setTimeout(() => {
-            timelineContainer.classList.remove("bounce");
-          }, 800);
+          if(window.innerWidth > 630) {
+            timelineContainer.classList.add("bounce");
+            setTimeout(() => {
+              timelineContainer.classList.remove("bounce");
+            }, 800);
+          }
         } else {
           timelineContainer.classList.remove("show");
+          socialLinks.classList.remove('hide');
+          updateDate.classList.remove('hide');
+          daoRecognition.classList.remove('hide');
           //set default value (newest date)
           timelineSlider.value = 2;
         }
