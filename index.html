@@ -1399,13 +1399,14 @@
 
       function selectDate() {
         const index = parseInt(timelineSlider.value);
+        const repoBaseUrl = 'https://media.githubusercontent.com/media/genesis-city/parcels/master'
 
         switch (index) {
           case 0:
-            mapSource.setUrl('map/0/{z}/{x},{y}.jpg');
+            mapSource.setUrl(`${repoBaseUrl}/maps/2023-06-11/{z}/{x},{y}.jpg`);
             break;
           case 1:
-            mapSource.setUrl('map/prevWeek/{z}/{x},{y}.jpg');
+            mapSource.setUrl(`${repoBaseUrl}/maps/2024-08-20/{z}/{x},{y}.jpg`);
             break;
           case 2:
             mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
