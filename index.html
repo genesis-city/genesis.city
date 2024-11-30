@@ -902,9 +902,7 @@
     <div id="timeline-container" class="overlay blur">
       <input type="range" id="timeline-slider" min="0" max="2" step="1" value="2">
       <div id="timeline-labels">
-        <span class="timeline-label" data-value="2">June 11, 2023</span>
-        <span class="timeline-label" data-value="1">Aug. 20, 2024</span>
-        <span class="timeline-label" data-value="0">Nov. 28, 2024</span>
+        <span id="selected-date"></span>
       </div>
     </div>
     <div id="toolTip" class="ol-popup">
@@ -1151,7 +1149,15 @@
       const timelineSlider = document.getElementById('timeline-slider');
       const timelineLabels = document.getElementById('timeline-labels');
       const timeMachineToggle = document.getElementById('time-machine-toggle');
+      const dateDisplay = document.getElementById('selected-date');
 
+      //Time Machine archive
+      const timelineDates = [
+        { value: 0, path: '2023-06-11', date: new Date('2023-06-11') },
+        { value: 1, path: '2024-08-20', date: new Date('2024-08-20') },
+        { value: 2, path: 'latest', date: new Date('2024-11-28') }
+      ];
+      
       const normalizePosition = (mouseX, mouseY) => {
         // ? compute what is the mouse position relative to the container element (scope)
         let {
@@ -1370,7 +1376,9 @@
 
       // Time Machine
       function toggleTimelineContainer() {
-        
+        // Set initial date
+        selectDate();
+
         //Mobile
         if(window.innerWidth < 630) {
           socialLinks.classList.add('hide');
@@ -1399,24 +1407,30 @@
 
       function selectDate() {
         const index = parseInt(timelineSlider.value);
-        const repoBaseUrl = 'https://media.githubusercontent.com/media/genesis-city/parcels/master'
-
-        switch (index) {
-          case 0:
-            mapSource.setUrl(`${repoBaseUrl}/maps/2023-06-11/{z}/{x},{y}.jpg`);
-            break;
-          case 1:
-            mapSource.setUrl(`${repoBaseUrl}/maps/2024-08-20/{z}/{x},{y}.jpg`);
-            break;
-          case 2:
-            mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
-            break
-          default:
-            mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
-            break;
+        const repoBaseUrl = 'https://media.githubusercontent.com/media/genesis-city/parcels/master';
+        const selectedTimelineDate = timelineDates[index];
+        
+        // Update map source
+        if (selectedTimelineDate.path === 'latest') {
+          mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+        } else {
+          mapSource.setUrl(`${repoBaseUrl}/maps/${selectedTimelineDate.path}/{z}/{x},{y}.jpg`);
         }
         
+        // Update date display
+        const dateDisplay = document.getElementById('selected-date');
+        dateDisplay.textContent = formatDate(selectedTimelineDate.date);
       }
+
+      function formatDate(date) {
+        return new Intl.DateTimeFormat('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          timeZone: 'UTC'
+        }).format(date);
+      }
+
       timelineSlider.addEventListener('input', selectDate);
 
       
