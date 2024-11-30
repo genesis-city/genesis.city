@@ -900,7 +900,7 @@
   <body onload="initialize()">
     <div id="map"></div>
     <div id="timeline-container" class="overlay blur">
-      <input type="range" id="timeline-slider" min="0" max="2" step="1" value="2">
+      <input type="range" id="timeline-slider" min="0" max="5" step="1" value="5">
       <div id="timeline-labels">
         <span id="selected-date"></span>
       </div>
@@ -1154,8 +1154,11 @@
       //Time Machine archive
       const timelineDates = [
         { value: 0, path: '2023-06-11', date: new Date('2023-06-11') },
-        { value: 1, path: '2024-08-20', date: new Date('2024-08-20') },
-        { value: 2, path: 'latest', date: new Date('2024-11-28') }
+        { value: 1, path: '2023-07-02', date: new Date('2023-07-02') },
+        { value: 2, path: '2023-08-07', date: new Date('2023-08-07') },
+        { value: 3, path: '2023-09-03', date: new Date('2023-09-03') },
+        { value: 4, path: '2024-08-20', date: new Date('2024-08-20') },
+        { value: 5, path: 'latest', date: new Date('2024-11-28') }
       ];
       
       const normalizePosition = (mouseX, mouseY) => {
@@ -1401,7 +1404,7 @@
           updateDate.classList.remove('hide');
           daoRecognition.classList.remove('hide');
           //set default value (newest date)
-          timelineSlider.value = 2;
+          timelineSlider.value = 5;
         }
       }
 
