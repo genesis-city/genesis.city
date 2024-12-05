@@ -70,6 +70,6 @@ def main(image_src, image_dst):
 
 if __name__ == '__main__':
     # Process Day Images
-    main('../raw_backup/2023-09-03/', '../parcels/maps/2023-09-03/')
+    main('raw', 'map/latest/')
     # Process Night Images
-    # main('raw-night', 'map-night/latest/')
+    main('raw-night', 'map-night/latest/')
