@@ -900,7 +900,7 @@
   <body onload="initialize()">
     <div id="map"></div>
     <div id="timeline-container" class="overlay blur">
-      <input type="range" id="timeline-slider" min="0" max="5" step="1" value="5">
+      <input type="range" id="timeline-slider" min="0" max="6" step="1" value="6">
       <div id="timeline-labels">
         <span id="selected-date"></span>
       </div>
@@ -1158,7 +1158,8 @@
         { value: 2, path: '2023-08-07', date: new Date('2023-08-07') },
         { value: 3, path: '2023-09-03', date: new Date('2023-09-03') },
         { value: 4, path: '2024-08-20', date: new Date('2024-08-20') },
-        { value: 5, path: 'latest', date: new Date('2024-12-08') },
+        { value: 5, path: 'lod-0', date: 'LOD 0' },
+        { value: 6, path: 'latest', date: 'Scene' },
       ];
       
       const normalizePosition = (mouseX, mouseY) => {
@@ -1404,25 +1405,30 @@
           updateDate.classList.remove('hide');
           daoRecognition.classList.remove('hide');
           //set default value (newest date)
-          timelineSlider.value = 5;
+          timelineSlider.value = 6;
         }
       }
 
       function selectDate() {
         const index = parseInt(timelineSlider.value);
-        const repoBaseUrl = 'https://media.githubusercontent.com/media/genesis-city/parcels/master';
+        const repoBaseUrl = 'https://media.githubusercontent.com/media/genesis-city/parcels/new-client-images';
         const selectedTimelineDate = timelineDates[index];
         
         // Update map source
         if (selectedTimelineDate.path === 'latest') {
           mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+          dateDisplay.textContent = selectedTimelineDate.date;
+        } else if (selectedTimelineDate.path === 'lod-0') {
+          mapSource.setUrl(`${repoBaseUrl}/maps/${selectedTimelineDate.path}/{z}/{x},{y}.jpg`);
+          dateDisplay.textContent = selectedTimelineDate.date;
         } else {
           mapSource.setUrl(`${repoBaseUrl}/maps/${selectedTimelineDate.path}/{z}/{x},{y}.jpg`);
+          dateDisplay.textContent = formatDate(selectedTimelineDate.date);
         }
         
         // Update date display
-        const dateDisplay = document.getElementById('selected-date');
-        dateDisplay.textContent = formatDate(selectedTimelineDate.date);
+        // const dateDisplay = document.getElementById('selected-date');
+        // dateDisplay.textContent = formatDate(selectedTimelineDate.date);
       }
 
       function formatDate(date) {
