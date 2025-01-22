@@ -53,6 +53,8 @@
       const mid = '#ff7f00';
       const highMid = '#dc0000';
       const high = '#fd00ff'; 
+      // Repo images URL
+      const repoBaseUrl = 'https://media.githubusercontent.com/media/genesis-city/parcels/new-client-images';
 
       //Recent changes layer
       const vectorLayer = new ol.layer.Vector({
@@ -204,7 +206,7 @@
         }
 
         mapSource = new ol.source.TileImage({
-          url: 'map/latest/{z}/{x},{y}.jpg',
+          url: `${repoBaseUrl}/maps/expanded-coverage/{z}/{x},{y}.jpg`,
           wrapX: false,
           tileGrid: new ol.tilegrid.TileGrid({
             extent: extent,
@@ -712,7 +714,7 @@
       function toggleTimeMachine() {
         toggleTimelineContainer();
         if (showTimeMachine && !showNightModeLayer) {
-          mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+          mapSource.setUrl(`${repoBaseUrl}/maps/expanded-coverage/{z}/{x},{y}.jpg`);
         }
 
         if (showNightModeLayer) {
@@ -873,7 +875,7 @@
           mapSource.setUrl('map-night/latest/{z}/{x},{y}.jpg');
           activeLocationHash('nightMode', true);
         } else {
-          mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+          mapSource.setUrl(`${repoBaseUrl}/maps/expanded-coverage/{z}/{x},{y}.jpg`);
           activeLocationHash('nightMode', false);
         }
         showNightModeLayer = !showNightModeLayer
@@ -1160,7 +1162,7 @@
         { value: 3, path: '2023-09-03', date: new Date('2023-09-03') },
         { value: 4, path: '2024-08-20', date: new Date('2024-08-20') },
         { value: 5, path: 'lod-0', date: 'LOD 0' },
-        { value: 6, path: 'latest', date: 'Scene' },
+        { value: 6, path: 'latest', date: 'Expanded coverage' },
       ];
       
       const normalizePosition = (mouseX, mouseY) => {
@@ -1412,12 +1414,12 @@
 
       function selectDate() {
         const index = parseInt(timelineSlider.value);
-        const repoBaseUrl = 'https://media.githubusercontent.com/media/genesis-city/parcels/new-client-images';
+        // const repoBaseUrl = 'https://media.githubusercontent.com/media/genesis-city/parcels/new-client-images';
         const selectedTimelineDate = timelineDates[index];
         
         // Update map source
         if (selectedTimelineDate.path === 'latest') {
-          mapSource.setUrl('map/latest/{z}/{x},{y}.jpg');
+          mapSource.setUrl(`${repoBaseUrl}/maps/expanded-coverage/{z}/{x},{y}.jpg`);
           dateDisplay.textContent = selectedTimelineDate.date;
         } else if (selectedTimelineDate.path === 'lod-0') {
           mapSource.setUrl(`${repoBaseUrl}/maps/${selectedTimelineDate.path}/{z}/{x},{y}.jpg`);
