@@ -26,10 +26,11 @@
       var zoom = 6;
       var side = 200
       var n = 5;
-      var tiles = 61;
-      var extent = [0, 0, side*tiles, side*tiles];
-      var dclExtent = [-150-n/2, -150-n/2, 150+n/2, 150+n/2];
-      var origin = [side*0, side * tiles];
+      var tiles_x = 63;
+      var tiles_y = 62;
+      var extent = [0, 0, side*tiles_x, side*tiles_y];
+      var dclExtent = [-150-n/2, -150-n/2, 160+n/2, 155+n/2];
+      var origin = [side*0, side * tiles_y];
       const maxCoords = 152;
       let lastParcelPointer;
       var placeToolTipOverlay;
